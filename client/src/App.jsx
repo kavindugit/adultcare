@@ -1,10 +1,15 @@
 import LoginPage from "./pages/Auth/LoginPage"
+import React from "react"
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <LoginPage/>
+    <>
+    
+     <div className="text-4xl">Hellow</div>
+      
+    </>
+  
     
   )
    
