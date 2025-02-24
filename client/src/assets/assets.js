@@ -1,20 +1,15 @@
-import header from './users/header_img.png'
-import login from './users/login.jpg'
-import logo from './users/logo.svg'
-import handwave from './users/hand_wave.png'
-import mail_icon from './users/mail_icon.svg'
-import favicon from './users/favicon.svg'
-import person from './users/person_icon.svg'
+
+
+import elderbliss from './users/Elder_Bliss.png'
+import profile_pic from './users/profile_pic.jpg'
+import dropdown_icon from './users/dropdown_icon2.png'
 
 
 export const assets = {
-    login,
-    header,
-    logo,
-    handwave,
-    mail_icon,
-    favicon,
-    person
+ 
+    elderbliss,
+    profile_pic,
+    dropdown_icon
 
 }
 
