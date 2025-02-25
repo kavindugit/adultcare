@@ -1,28 +1,44 @@
-import React from 'react'
-import assets from '../../assets/assets'
+import React from "react";
 
-const Header = () => {
+const Header = ({ user, onLogout }) => {
   return (
-    <div className='flex flex-col items-center mt-20 px-4 test-center
-    text-gray-800'> 
-        <img src={assets.header} alt="" 
-        className='w-36 h-36 rounded-full mb-6'/>
+    <header className="bg-blue-900 text-white p-4 fixed top-0 w-full shadow-md z-50">
+      <div className="container mx-auto flex justify-between items-center">
+        {/* Website Title */}
+        <h1 className="text-2xl font-bold">Elder Bliss</h1>
 
-        <h1 className='flex items-center gap-2 text-xl sm:text-3xl font-medium mb-2'>Hey Developer
+        {/* Navigation Links (Centered) */}
+        <nav className="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
+          <ul className="flex space-x-6">
+            <li><a href="#about" className="hover:text-gray-300">About Us</a></li>
+            <li><a href="#services" className="hover:text-gray-300">Services</a></li>
+            <li><a href="#testimonials" className="hover:text-gray-300">Testimonials</a></li>
+            <li><a href="#contact" className="hover:text-gray-300">Contact</a></li>
+          </ul>
+        </nav>
 
-          <img className='w-8 aspect-square' src = {assets.handwave}/>
+        {/* Right Section (Login/Logout & Profile) */}
+        <div className="flex items-center space-x-4">
+          {!user ? (
+            <a href="/login" className="bg-white text-blue-900 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200">
+              Login
+            </a>
+          ) : (
+            <div className="flex items-center space-x-4">
+              <span className="text-lg font-semibold">{user.username}</span>
+              <img src={user.profileImage} alt="User" className="w-10 h-10 rounded-full border-2 border-white" />
+              <button
+                onClick={onLogout}
+                className="bg-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-700"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+};
 
-        </h1>
-        
-        <h2 className='text-3xl sm:text-5xl font-semiblod mb-4'>Welcome to our app</h2>
-        
-        <p>Lets start with a quick product tour and we will have you up and 
-        running in no time.
-        </p>
-        
-        <button className='bg-blue-500 text-white px-4 py-2 rounded-lg mt-4 hover:bg-red-100'>Get Started</button>
-    </div>
-  )
-}
-
-export default Header
+export default Header;

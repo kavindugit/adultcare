@@ -6,8 +6,10 @@ import Home from "./pages/Home"
 import Login from "./pages/Auth/Login"
 import EmailVerify from "./pages/Auth/EmailVerify"
 import ResetPassword from "./pages/Auth/ResetPassword"
-import Navbar from "./components/User/Navbar"
-import SignUp from "./pages/Auth/Signup"
+
+import Gallery from "./pages/Gallery"
+import SignUp from "./pages/Auth/SignUp"
+
 
 const App = () => {
 
@@ -20,6 +22,7 @@ const App = () => {
         <Route path="/signup" element={<SignUp/>} />
         <Route path="/email-verify" element={<EmailVerify/>} />
         <Route path="/reset-password" element={<ResetPassword/>} />
+        <Route path="/gallery" element={<Gallery/>} />
 
       </Routes>
     </div>

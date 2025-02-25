@@ -1,14 +1,31 @@
-import React from 'react'
-import Navbar from '../components/User/Navbar'
-import Header from '../components/User/Header'
+// Home.jsx
+
+import AboutUs from "../components/User/AboutUs";
+import ContactUs from "../components/User/ContactUs";
+import Footer from "../components/User/Footer";
+import Header from "../components/User/Header";
+import HeroSection from "../components/User/HeroSection";
+import Services from "../components/User/Services";
+import Testimonials from "../components/User/Testimonials";
+import WhyChooseUs from "../components/User/WhyChooseUs";
+
 
 const Home = () => {
   return (
-    
-        <Navbar />
-        
+    <div>
+  
+      <Header />
+      <HeroSection/>
+      <AboutUs/>
+      <Services/>
+      <WhyChooseUs/>
+      <Testimonials/>
+      <ContactUs/>
+      <Footer/>
+      
 
-  )
-}
+    </div>
+  );
+};
 
-export default Home
+export default Home;
