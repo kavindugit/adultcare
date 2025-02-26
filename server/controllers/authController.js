@@ -2,17 +2,18 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
 import transporter from '../config/nodemaler.js';
+import adultModel from '../models/adultModel.js';
 
 
 export const register = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { fullName ,nic, email,phoneNo , address ,  password } = req.body;
 
-    if(!name || !email || !password) {
+    if(!fullName || !email || !password || !phoneNo ||  !address || !nic) {
         return res.json({success: false , message: 'Please fill all the fields'});
     }
 
     try{
-        const existingUser = await userModel.findOne({email});
+        const existingUser = await userModel.findOne({nic});
 
         if(existingUser) {
             return res.json({success: false, message: 'User already exists'});
@@ -21,8 +22,11 @@ export const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await userModel.create({
-            name,
+            fullName,
+            nic,
             email,
+            phoneNo,
+            address,
             password: hashedPassword,
         });
 
@@ -41,7 +45,7 @@ export const register = async (req, res) => {
             from: process.env.SENDER_EMAIL,
             to: email,
             subject: 'Welcome to our website',
-            text: `Hello ${name}, Welcome to our website. We are glad to have you with us.`
+            text: `Hello ${fullName}, Welcome to our website. We are glad to have you with us.`
         };
 
         await transporter.sendMail(mailOptions);
@@ -265,3 +269,101 @@ export const resetPassword = async(req , res) =>{
     }
     
 }
+
+export const adultRegistration = async (req, res) => {
+    const { 
+        fullName, 
+        nic, 
+        dob, 
+        address,
+        dietaryPreference, 
+        smokingStatus, 
+        drinkingStatus, 
+        homeType, 
+        preferredLanguage, 
+        chronicConditions, 
+        medications, 
+        doctorName, 
+        bloodGroup 
+    } = req.body;
+    
+    try{
+        const existingAdult = await adultModel.findOne({nic});
+
+        if(existingAdult) {
+            return res.json({success: false, message: 'User already exists'});
+        }
+
+        const adult = await adultModel.create({
+            fullName,
+            nic,
+            dob,
+            address,
+            dietaryPreference,
+            smokingStatus,
+            drinkingStatus,
+            homeType,
+            preferredLanguage,
+            chronicConditions,
+            medications,
+            doctorName,
+            bloodGroup
+        });
+
+
+        await adult.save();
+        return res.json({success: true, message: 'Adult registered successfully'});
+ 
+
+    }catch(error) {
+        console.error('Error:', error);
+        return res.json({success: false, message: error.message});
+    }
+
+}
+
+export const adultUserRegistration = async (req, res) => {
+    const { nic, email, phoneNo, password } = req.body;
+
+    if (!email || !password || !phoneNo || !nic) {
+        return res.json({ success: false, message: 'Please fill all the fields' });
+    }
+
+    try {
+        // Check if user already exists
+        const existingUser = await userModel.findOne({ nic });
+
+        if (existingUser) {
+            return res.json({ success: false, message: 'User already exists' });
+        }
+
+        // Fetch adult data from adultModel
+        const adultdata = await adultModel.findOne({ nic });
+
+        // ✅ Check if adultdata is null
+        if (!adultdata) {
+            return res.json({ success: false, message: 'No adult data found for this NIC' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create a user in userModel
+        const user = await userModel.create({
+            fullName: adultdata.fullName,
+            nic,
+            email,
+            phoneNo,
+            address: adultdata.address,
+            password: hashedPassword,
+            role : 'Adult'
+        });
+
+        await user.save();
+
+        return res.json({ success: true, message: 'Registered successfully' });
+
+    } catch (error) {
+        console.error('Error:', error);
+        return res.json({ success: false, message: error.message });
+    }
+};

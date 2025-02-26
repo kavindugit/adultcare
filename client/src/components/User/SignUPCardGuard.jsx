@@ -1,16 +1,19 @@
 import * as React from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MuiCard from '@mui/material/Card';
 import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
-import { GoogleIcon, FacebookIcon } from './CustomeIcons';
+import { GoogleIcon } from './CustomeIcons';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -18,95 +21,146 @@ const Card = styled(MuiCard)(({ theme }) => ({
   alignSelf: 'center',
   width: '600px',
   minHeight: '500px',
-  backgroundColor: '#00296b', // Deep blue background for card
+  backgroundColor: '#00296b',
   color: '#FFFFFF',
-  paddingTop: theme.spacing(2),
-  paddingBottom:theme.spacing(2),
-  paddingLeft:theme.spacing(4),
-  paddingRight:theme.spacing(4),
-
+  padding: theme.spacing(4),
   gap: theme.spacing(2),
-  borderRadius: '8px', // Rounded edges
+  borderRadius: '8px',
   boxShadow: '0px 5px 15px rgba(0, 40, 85, 0.3)',
-  marginRight: "20px",
-  marginTop:"10px",
-  marginBottom:"10px"
+  margin: '10px 20px',
 }));
 
 export default function SignUPCardGuard() {
+  const navigate = useNavigate();
+
+  // State for form inputs
+  const [formData, setFormData] = useState({
+    fullName: '',
+    nic: '',
+    email: '',
+    address: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  // Handle form submission
+  const OnSubmitHandler = async (e) => {
+    e.preventDefault();
+
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    try {
+      // Make the request
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post('http://localhost:4000/api/auth/register', {
+        fullName: formData.fullName,
+        nic: formData.nic,
+        email: formData.email,
+        address: formData.address,
+        phoneNo: formData.phone,
+        password: formData.password,
+      });
+
+      console.log('Response Data:', data);
+
+      if (data.success) {
+        toast.success('Registration successful');
+        setIsLoggedin(true)
+        getUserData()
+        navigate('/'); // Redirect to home after successful registration
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error('Registration failed. Please try again.');
+      console.error('Error submitting form:', error);
+    }
+  };
+
   return (
     <Card variant="outlined">
       <Typography component="h1" variant="h5" sx={{ textAlign: 'center', fontWeight: 'bold', color: '#A5C4D9' }}>
         Create an Account
       </Typography>
-      <Box component="form" noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
+
+      <form onSubmit={OnSubmitHandler} style={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '16px' }}>
         {[
-          { label: 'Full Name', placeholder: 'John Doe' },
-          { label: 'NIC', placeholder: '123456789V' },
-          { label: 'Email', placeholder: 'your@email.com', type: 'email' },
-          { label: 'Address', placeholder: '123 Street, City, Country' },
-          { label: 'Phone Number', placeholder: '0771234567' },
-          { label: 'Password', placeholder: '••••••', type: 'password' },
-          { label: 'Confirm Password', placeholder: '••••••', type: 'password' },
-        ].map(({ label, placeholder, type = 'text' }, index) => (
+          { label: 'Full Name', id: 'fullName', placeholder: 'John Doe' },
+          { label: 'NIC', id: 'nic', placeholder: '123456789V' },
+          { label: 'Email', id: 'email', placeholder: 'your@email.com', type: 'email' },
+          { label: 'Address', id: 'address', placeholder: '123 Street, City, Country' },
+          { label: 'Phone Number', id: 'phone', placeholder: '0771234567' },
+          { label: 'Password', id: 'password', placeholder: '••••••', type: 'password' },
+          { label: 'Confirm Password', id: 'confirmPassword', placeholder: '••••••', type: 'password' },
+        ].map(({ label, id, placeholder, type = 'text' }, index) => (
           <Grid container key={index} alignItems="center" spacing={2}>
             <Grid item xs={4}>
               <FormLabel sx={{ color: '#AAB4BE', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{label}:</FormLabel>
             </Grid>
             <Grid item xs={8}>
               <TextField
+                id={id}
                 type={type}
                 placeholder={placeholder}
                 required
                 fullWidth
                 variant="outlined"
                 size="small"
+                value={formData[id]}
+                onChange={handleInputChange}
                 sx={{
-                  backgroundColor: '#025B8A', // Darker blue background for input fields
+                  backgroundColor: '#025B8A',
                   color: '#FFFFFF',
                   borderRadius: '6px',
-                  input: { color: '#FFFFFF' }, // Text color inside input fields
+                  input: { color: '#FFFFFF' },
                 }}
               />
             </Grid>
           </Grid>
         ))}
+
         <Button
           type="submit"
           fullWidth
           variant="contained"
-          sx={{
-            backgroundColor: '#A5C4D9', // Lighter blue for the button
-            color: '#013B66', // Dark blue text color
-            fontWeight: 'bold',
-            '&:hover': { backgroundColor: '#7AA1B1' }, // Slightly darker hover color
-          }}
+          sx={{ backgroundColor: '#A5C4D9', color: '#013B66', fontWeight: 'bold', '&:hover': { backgroundColor: '#7AA1B1' } }}
         >
           Sign Up
         </Button>
+
         <Typography sx={{ textAlign: 'center', color: '#AAB4BE' }}>
           Already have an account?{' '}
           <Link href="/login" variant="body2" sx={{ color: '#A5C4D9', fontWeight: 'bold' }}>
             Sign in
           </Link>
         </Typography>
-      </Box>
+      </form>
+
       <Divider sx={{ backgroundColor: '#2C3748' }}>or</Divider>
+
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         <Button
           fullWidth
           variant="outlined"
           startIcon={<GoogleIcon />}
-          sx={{
-            backgroundColor: '#013B66',
-            color: '#A5C4D9',
-            borderColor: '#AAB4BE',
-            '&:hover': { backgroundColor: '#1A4D7E' },
-          }}
+          sx={{ backgroundColor: '#013B66', color: '#A5C4D9', borderColor: '#AAB4BE', '&:hover': { backgroundColor: '#1A4D7E' } }}
         >
           Sign up with Google
         </Button>
-        
       </Box>
     </Card>
   );

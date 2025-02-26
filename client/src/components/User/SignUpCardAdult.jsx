@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MuiCard from '@mui/material/Card';
 import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -18,24 +21,82 @@ const Card = styled(MuiCard)(({ theme }) => ({
   alignSelf: 'center',
   width: '600px',
   minHeight: '450px',
-  backgroundColor: '#00296b', // Deep blue background for card
+  backgroundColor: '#00296b',
   color: '#FFFFFF',
   padding: theme.spacing(4),
   gap: theme.spacing(2),
-  borderRadius: '8px', // Rounded edges
+  borderRadius: '8px',
   boxShadow: '0px 5px 15px rgba(0, 40, 85, 0.3)',
-  marginRight: "20px",
-  marginTop: "10px",
-  marginBottom: "10px"
+  marginRight: '20px',
+  marginTop: '10px',
+  marginBottom: '10px',
 }));
 
-export default function SignUpCardAdult() {
+const SignUpCardAdult = () => {
+  const navigate = useNavigate();
+
+  // State for form inputs
+  const [formData, setFormData] = useState({
+    nic: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  // Handle form submission
+  const OnSubmitHandler = async (e) => {
+    e.preventDefault();
+
+    // Validate inputs
+    if (!formData.nic || !formData.email || !formData.phone || !formData.password || !formData.confirmPassword) {
+      toast.error('All fields are required');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    try {
+      // Make the request
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post('http://localhost:4000/api/auth/register-adult-user', {
+        nic: formData.nic,
+        email: formData.email,
+        phoneNo: formData.phone,
+        password: formData.password,
+      });
+
+      console.log('Response Data:', data);
+
+      if (data.success) {
+        toast.success('Registration successful');
+        navigate('/'); // Redirect to home after successful registration
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log('Error signing up:', error.response ? error.response.data : error.message);
+      toast.error('Registration failed. Please try again.');
+    }
+  };
+
   return (
     <Card variant="outlined">
-      {/* Notice Section */}
       <Box
         sx={{
-          backgroundColor: '#FFD700', // Gold color for highlight
+          backgroundColor: '#FFD700',
           color: '#013B66',
           textAlign: 'center',
           padding: 2,
@@ -49,64 +110,67 @@ export default function SignUpCardAdult() {
         </Typography>
       </Box>
 
-      {/* Title */}
       <Typography component="h1" variant="h5" sx={{ textAlign: 'center', fontWeight: 'bold', color: '#A5C4D9' }}>
         Create an Account
       </Typography>
 
-      {/* Form */}
-      <Box component="form" noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
-        {[
-          { label: 'NIC', placeholder: '123456789V' },
-          { label: 'Email', placeholder: 'your@email.com', type: 'email' },
-          { label: 'Phone Number', placeholder: '0771234567' },
-          { label: 'Password', placeholder: '••••••', type: 'password' },
-          { label: 'Confirm Password', placeholder: '••••••', type: 'password' },
-        ].map(({ label, placeholder, type = 'text' }, index) => (
-          <Grid container key={index} alignItems="center" spacing={2}>
-            <Grid item xs={4}>
-              <FormLabel sx={{ color: '#AAB4BE', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{label}:</FormLabel>
+      <form onSubmit={OnSubmitHandler} noValidate>
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
+          {[
+            { id: 'nic', label: 'NIC', placeholder: '123456789V' },
+            { id: 'email', label: 'Email', placeholder: 'your@email.com', type: 'email' },
+            { id: 'phone', label: 'Phone Number', placeholder: '0771234567' },
+            { id: 'password', label: 'Password', placeholder: '••••••', type: 'password' },
+            { id: 'confirmPassword', label: 'Confirm Password', placeholder: '••••••', type: 'password' },
+          ].map(({ id, label, placeholder, type = 'text' }, index) => (
+            <Grid container key={index} alignItems="center" spacing={2}>
+              <Grid item xs={4}>
+                <FormLabel sx={{ color: '#AAB4BE', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{label}:</FormLabel>
+              </Grid>
+              <Grid item xs={8}>
+                <TextField
+                  id={id}
+                  type={type}
+                  placeholder={placeholder}
+                  required
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  value={formData[id]}
+                  onChange={handleInputChange}
+                  sx={{
+                    backgroundColor: '#025B8A',
+                    color: '#FFFFFF',
+                    borderRadius: '6px',
+                    input: { color: '#FFFFFF' },
+                  }}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={8}>
-              <TextField
-                type={type}
-                placeholder={placeholder}
-                required
-                fullWidth
-                variant="outlined"
-                size="small"
-                sx={{
-                  backgroundColor: '#025B8A', // Darker blue background for input fields
-                  color: '#FFFFFF',
-                  borderRadius: '6px',
-                  input: { color: '#FFFFFF' }, // Text color inside input fields
-                }}
-              />
-            </Grid>
-          </Grid>
-        ))}
+          ))}
 
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{
-            backgroundColor: '#A5C4D9', // Lighter blue for the button
-            color: '#013B66', // Dark blue text color
-            fontWeight: 'bold',
-            '&:hover': { backgroundColor: '#7AA1B1' },
-          }}
-        >
-          Sign Up
-        </Button>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{
+              backgroundColor: '#A5C4D9',
+              color: '#013B66',
+              fontWeight: 'bold',
+              '&:hover': { backgroundColor: '#7AA1B1' },
+            }}
+          >
+            Sign Up
+          </Button>
+        </Box>
+      </form>
 
-        <Typography sx={{ textAlign: 'center', color: '#AAB4BE' }}>
-          Already have an account?{' '}
-          <Link href="/login" variant="body2" sx={{ color: '#A5C4D9', fontWeight: 'bold' }}>
-            Sign in
-          </Link>
-        </Typography>
-      </Box>
+      <Typography sx={{ textAlign: 'center', color: '#AAB4BE' }}>
+        Already have an account?{' '}
+        <Link href="/login" variant="body2" sx={{ color: '#A5C4D9', fontWeight: 'bold' }}>
+          Sign in
+        </Link>
+      </Typography>
 
       <Divider sx={{ backgroundColor: '#2C3748' }}>or</Divider>
 
@@ -127,4 +191,6 @@ export default function SignUpCardAdult() {
       </Box>
     </Card>
   );
-}
+};
+
+export default SignUpCardAdult;
