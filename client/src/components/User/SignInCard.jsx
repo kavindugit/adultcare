@@ -17,7 +17,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useContext } from "react";
-import { AppContext } from "../../context/AppContext";
+
+import { AppContent } from "../../context/AppContext";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -43,7 +44,7 @@ export default function SignInCard() {
   const [open, setOpen] = React.useState(false);
 
   const navigate = useNavigate();
-  const { backendUrl, setIsLoggedin, getUserData } = useContext(AppContext);
+  const { backendUrl, getUserData } = useContext(AppContent);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -98,17 +99,28 @@ export default function SignInCard() {
         password,
       });
 
+      console.log("Backend Response:", data); // Debugging log
+
       if (data.success) {
-        setIsLoggedin(true); // Update login state
-        await getUserData(); // Fetch user data
+        getUserData()
         toast.success("Login successful");
         navigate("/"); // Redirect to home after successful login
       } else {
-        toast.error(data.message);
+        toast.error(data.message || "Login failed. Please check your credentials.");
       }
     } catch (error) {
-      console.error("Error logging in:", error.response ? error.response.data : error.message);
-      toast.error("Login failed. Please try again.");
+      console.error("Error logging in:", error); // Debugging log
+
+      if (error.response) {
+        // Backend returned an error response
+        toast.error(error.response.data.message || "Login failed. Please try again.");
+      } else if (error.request) {
+        // No response received from the backend
+        toast.error("No response from the server. Please check your network connection.");
+      } else {
+        // Other errors (e.g., network issues)
+        toast.error("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -224,34 +236,6 @@ export default function SignInCard() {
           Sign up
         </Link>
       </Typography>
-
-      <Divider sx={{ backgroundColor: "#2C3748" }}>or</Divider>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<GoogleIcon />}
-          sx={{
-            borderColor: "#2C3748",
-            color: "#FFFFFF",
-            "&:hover": { borderColor: "#AAB4BE", backgroundColor: "#0F151D" },
-          }}
-        >
-          Sign in with Google
-        </Button>
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<FacebookIcon />}
-          sx={{
-            borderColor: "#2C3748",
-            color: "#FFFFFF",
-            "&:hover": { borderColor: "#AAB4BE", backgroundColor: "#0F151D" },
-          }}
-        >
-          Sign in with Facebook
-        </Button>
-      </Box>
     </Card>
   );
 }

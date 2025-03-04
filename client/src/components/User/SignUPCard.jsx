@@ -13,7 +13,6 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
-import { GoogleIcon } from './CustomeIcons';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -30,7 +29,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   margin: '10px 20px',
 }));
 
-export default function SignUPCardGuard() {
+export default function SignUPCard() {
   const navigate = useNavigate();
 
   // State for form inputs
@@ -42,6 +41,8 @@ export default function SignUPCardGuard() {
     phone: '',
     password: '',
     confirmPassword: '',
+    dob: '',
+    gender: '',
   });
 
   // Handle input changes
@@ -73,14 +74,15 @@ export default function SignUPCardGuard() {
         address: formData.address,
         phoneNo: formData.phone,
         password: formData.password,
+        dob: formData.dob,
+        gender: formData.gender,
+
       });
 
       console.log('Response Data:', data);
 
       if (data.success) {
         toast.success('Registration successful');
-        setIsLoggedin(true)
-        getUserData()
         navigate('/'); // Redirect to home after successful registration
       } else {
         toast.error(data.message);
@@ -104,6 +106,8 @@ export default function SignUPCardGuard() {
           { label: 'Email', id: 'email', placeholder: 'your@email.com', type: 'email' },
           { label: 'Address', id: 'address', placeholder: '123 Street, City, Country' },
           { label: 'Phone Number', id: 'phone', placeholder: '0771234567' },
+          { label: 'Date of Birth', id: 'dob', placeholder: 'YYYY-MM-DD', type: 'date' },
+          { label: 'Gender', id: 'gender', placeholder: 'Male/Female', type: 'text' },
           { label: 'Password', id: 'password', placeholder: '••••••', type: 'password' },
           { label: 'Confirm Password', id: 'confirmPassword', placeholder: '••••••', type: 'password' },
         ].map(({ label, id, placeholder, type = 'text' }, index) => (
@@ -149,19 +153,6 @@ export default function SignUPCardGuard() {
           </Link>
         </Typography>
       </form>
-
-      <Divider sx={{ backgroundColor: '#2C3748' }}>or</Divider>
-
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<GoogleIcon />}
-          sx={{ backgroundColor: '#013B66', color: '#A5C4D9', borderColor: '#AAB4BE', '&:hover': { backgroundColor: '#1A4D7E' } }}
-        >
-          Sign up with Google
-        </Button>
-      </Box>
     </Card>
   );
 }

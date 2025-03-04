@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
-import { AppContext } from "../../context/AppContext";
+import { AppContent} from "../../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const { userData, setUserData, setIsLoggedin } = useContext(AppContext);
+  const {userData , setUserData , setIsLoggedin} = useContext(AppContent);
   const navigate = useNavigate();
   
 

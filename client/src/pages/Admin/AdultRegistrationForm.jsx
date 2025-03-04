@@ -18,24 +18,27 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-// Admin theme colors
+// Elder Bliss Theme Colors
 const themeColors = {
-  primary: "#F5EDF0", // Deep Blue
-  secondary: "#3b82f6", // Light Blue
-  error: "#ef4444", // Red
-  background: "#f1f5f9", // Slightly darker Light Gray for page background
-  formBackground: "#7b2cb2", // Light Gray for form background (softer than pure white)
-  borderColor: "#e5e7eb", // Light Gray for form border
+  primary: "#1A73E8", // Vibrant Blue (Primary)
+  secondary: "#0F4C81", // Dark Blue (Secondary)
+  background: "#E3F2FD", // Light Blue (Background)
+  formBackground: "#FFFFFF", // White (Form Background)
+  textPrimary: "#1A237E", // Dark Blue (Text)
+  textSecondary: "#546E7A", // Grayish Blue (Secondary Text)
+  error: "#D32F2F", // Red (Error)
+  borderColor: "#BBDEFB", // Light Blue (Border)
 };
 
-// Styled components for the form layout with updated theme colors
+// Styled components for the form layout
 const PageContainer = styled(Container)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  marginTop: theme.spacing(4),
-  backgroundColor: themeColors.background,
+  justifyContent: "center",
   minHeight: "100vh",
+  backgroundColor: themeColors.background,
+  padding: theme.spacing(4),
 }));
 
 const FormContainer = styled(Paper)(({ theme }) => ({
@@ -43,20 +46,20 @@ const FormContainer = styled(Paper)(({ theme }) => ({
   flexDirection: "column",
   padding: theme.spacing(4),
   gap: theme.spacing(3),
-  borderRadius: "8px",
-  boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
+  borderRadius: "12px",
+  boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.1)",
   width: "100%",
-  maxWidth: "1800px",
-  backgroundColor: themeColors.formBackground, // Softer background
-  border: `1px solid ${themeColors.borderColor}`, // Adding a border around the form
+  maxWidth: "800px",
+  backgroundColor: themeColors.formBackground,
+  border: `1px solid ${themeColors.borderColor}`,
 }));
 
 const FormTitle = styled(Typography)(({ theme }) => ({
-  fontSize: "2rem",
+  fontSize: "2.5rem",
   fontWeight: "bold",
   textAlign: "center",
-  marginBottom: theme.spacing(3),
-  color: themeColors.primary,
+  marginBottom: theme.spacing(2),
+  color: themeColors.textPrimary,
 }));
 
 const FormSection = styled(Box)(({ theme }) => ({
@@ -67,7 +70,9 @@ const FormSection = styled(Box)(({ theme }) => ({
 
 const SubmitButton = styled(Button)(({ theme }) => ({
   backgroundColor: themeColors.primary,
-  color: "#fff",
+  color: "#FFFFFF",
+  fontWeight: "bold",
+  padding: theme.spacing(1.5),
   "&:hover": {
     backgroundColor: themeColors.secondary,
   },
@@ -233,9 +238,15 @@ const AdultRegistrationForm = () => {
   };
 
   return (
-    <PageContainer maxWidth="sm">
+    <PageContainer maxWidth="md">
       <FormContainer elevation={3}>
         <FormTitle>Adult Registration Form</FormTitle>
+        <Typography
+          variant="subtitle1"
+          sx={{ textAlign: "center", color: themeColors.textSecondary, mb: 4 }}
+        >
+          Please fill out the form to register an adult for Elder Bliss care services.
+        </Typography>
 
         <form onSubmit={OnSubmitHandler}>
           <FormSection>
@@ -250,6 +261,7 @@ const AdultRegistrationForm = () => {
               error={!!errors.fullName}
               helperText={errors.fullName}
               margin="normal"
+              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
             />
 
             <TextField
@@ -263,6 +275,7 @@ const AdultRegistrationForm = () => {
               error={!!errors.nic}
               helperText={errors.nic}
               margin="normal"
+              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
             />
 
             <TextField
@@ -278,6 +291,7 @@ const AdultRegistrationForm = () => {
               helperText={errors.dob}
               margin="normal"
               InputLabelProps={{ shrink: true }}
+              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
             />
 
             <TextField
@@ -293,6 +307,7 @@ const AdultRegistrationForm = () => {
               error={!!errors.address}
               helperText={errors.address}
               margin="normal"
+              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
             />
 
             <FormControl fullWidth margin="normal">
@@ -303,6 +318,7 @@ const AdultRegistrationForm = () => {
                 value={formData.dietaryPreference}
                 onChange={handleInputChange}
                 error={!!errors.dietaryPreference}
+                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
               >
                 <MenuItem value="Vegetarian">Vegetarian</MenuItem>
                 <MenuItem value="Non-Vegetarian">Non-Vegetarian</MenuItem>
@@ -325,6 +341,7 @@ const AdultRegistrationForm = () => {
                 value={formData.smokingStatus}
                 onChange={handleInputChange}
                 error={!!errors.smokingStatus}
+                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
               >
                 <MenuItem value="Non-smoker">Non-smoker</MenuItem>
                 <MenuItem value="Smoker">Smoker</MenuItem>
@@ -345,6 +362,7 @@ const AdultRegistrationForm = () => {
                 value={formData.drinkingStatus}
                 onChange={handleInputChange}
                 error={!!errors.drinkingStatus}
+                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
               >
                 <MenuItem value="Non-drinker">Non-drinker</MenuItem>
                 <MenuItem value="Drinker">Drinker</MenuItem>
@@ -365,6 +383,7 @@ const AdultRegistrationForm = () => {
                 value={formData.homeType}
                 onChange={handleInputChange}
                 error={!!errors.homeType}
+                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
               >
                 <MenuItem value="Apartment">Apartment</MenuItem>
                 <MenuItem value="Home">Home</MenuItem>
@@ -386,6 +405,7 @@ const AdultRegistrationForm = () => {
               error={!!errors.preferredLanguage}
               helperText={errors.preferredLanguage}
               margin="normal"
+              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
             />
 
             <TextField
@@ -399,6 +419,7 @@ const AdultRegistrationForm = () => {
               error={!!errors.chronicConditions}
               helperText={errors.chronicConditions}
               margin="normal"
+              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
             />
 
             <TextField
@@ -412,6 +433,7 @@ const AdultRegistrationForm = () => {
               error={!!errors.medications}
               helperText={errors.medications}
               margin="normal"
+              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
             />
 
             <TextField
@@ -425,6 +447,7 @@ const AdultRegistrationForm = () => {
               error={!!errors.doctorName}
               helperText={errors.doctorName}
               margin="normal"
+              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
             />
 
             <FormControl fullWidth margin="normal">
@@ -435,6 +458,7 @@ const AdultRegistrationForm = () => {
                 value={formData.bloodGroup}
                 onChange={handleInputChange}
                 error={!!errors.bloodGroup}
+                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
               >
                 <MenuItem value="A+">A+</MenuItem>
                 <MenuItem value="A-">A-</MenuItem>

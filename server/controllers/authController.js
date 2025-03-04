@@ -3,36 +3,40 @@ import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
 import transporter from '../config/nodemaler.js';
 import adultModel from '../models/adultModel.js';
+import {nanoid} from 'nanoid';
 
 
 export const register = async (req, res) => {
-    const { fullName ,nic, email,phoneNo , address ,  password } = req.body;
+    const { fullName ,nic, email,phoneNo , address ,  password  , gender , dob} = req.body;
 
-    if(!fullName || !email || !password || !phoneNo ||  !address || !nic) {
+    if(!fullName || !email || !password || !phoneNo ||  !address || !nic || !gender || !dob) {
         return res.json({success: false , message: 'Please fill all the fields'});
     }
 
     try{
-        const existingUser = await userModel.findOne({nic});
+        const existingUser = await userModel.findOne({ $or: [{ nic }, { email }] });
 
         if(existingUser) {
             return res.json({success: false, message: 'User already exists'});
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
+        const userId = nanoid(12);
         const user = await userModel.create({
+            userId : userId,
             fullName,
             nic,
             email,
             phoneNo,
             address,
+            gender,
+            dob,
             password: hashedPassword,
         });
 
         await user.save();
 
-        const token = jwt.sign({id:user._id}, process.env.JWT_SECRET, {expiresIn: '7d'});
+        const token = jwt.sign({id:userId}, process.env.JWT_SECRET, {expiresIn: '7d'});
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -44,8 +48,18 @@ export const register = async (req, res) => {
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: email,
-            subject: 'Welcome to our website',
-            text: `Hello ${fullName}, Welcome to our website. We are glad to have you with us.`
+            subject: 'Welcome to Elder Bliss – Caring for Your Loved Ones',
+            text: `Hello ${fullName},
+        
+        Welcome to Elder Bliss! We are delighted to have you as part of our community dedicated to providing compassionate care and support for elderly individuals.
+        
+        At Elder Bliss, we ensure peace of mind for families by offering top-quality adult care services, including medical assistance, caregiver support, and essential well-being solutions. Whether it's health monitoring, caregiver visits, or personalized care plans, we are here for you.
+        
+        If you have any questions or need assistance, feel free to reach out. We look forward to serving you and making a meaningful impact in your life.
+        
+        Warm regards,  
+        The Elder Bliss Team  
+        www.elderbliss.com`
         };
 
         await transporter.sendMail(mailOptions);
@@ -78,7 +92,7 @@ export const login = async(req , res)=>{
             return res.json({success: false, message: 'Invalid Password'});
         }
 
-        const token = jwt.sign({id:user._id}, process.env.JWT_SECRET, {expiresIn: '7d'});
+        const token = jwt.sign({id:user.userId}, process.env.JWT_SECRET, {expiresIn: '7d'});
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -116,7 +130,7 @@ export const logout = async(req, res) => {
 export const sendVerifyOtp = async(req, res) => {
     try{
         const {userId} = req.body;
-        const user = await userModel.findById(userId); 
+        const user = await userModel.findOne({userId}); 
         // check if user is already verified
 
         if(user.isVerified) {
@@ -155,7 +169,7 @@ export const verifyEmail = async(req, res) => {
             return res.json({success: false, message: 'Please fill all the fields'});
         }
 
-        const user = await userModel.findById(userId);
+        const user = await userModel.findOne({userId});
 
         if(!user) {
             return res.json({success: false, message: 'User not found'});
@@ -322,48 +336,3 @@ export const adultRegistration = async (req, res) => {
 
 }
 
-export const adultUserRegistration = async (req, res) => {
-    const { nic, email, phoneNo, password } = req.body;
-
-    if (!email || !password || !phoneNo || !nic) {
-        return res.json({ success: false, message: 'Please fill all the fields' });
-    }
-
-    try {
-        // Check if user already exists
-        const existingUser = await userModel.findOne({ nic });
-
-        if (existingUser) {
-            return res.json({ success: false, message: 'User already exists' });
-        }
-
-        // Fetch adult data from adultModel
-        const adultdata = await adultModel.findOne({ nic });
-
-        // ✅ Check if adultdata is null
-        if (!adultdata) {
-            return res.json({ success: false, message: 'No adult data found for this NIC' });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create a user in userModel
-        const user = await userModel.create({
-            fullName: adultdata.fullName,
-            nic,
-            email,
-            phoneNo,
-            address: adultdata.address,
-            password: hashedPassword,
-            role : 'Adult'
-        });
-
-        await user.save();
-
-        return res.json({ success: true, message: 'Registered successfully' });
-
-    } catch (error) {
-        console.error('Error:', error);
-        return res.json({ success: false, message: error.message });
-    }
-};
