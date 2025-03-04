@@ -226,7 +226,7 @@ export const sendResetOtp = async(req , res) =>{
         const otp = String(Math.floor(100000 + Math.random() * 9000000));
         user.resetOtp = otp;   // save otp in user document
 
-        user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+        user.resetOtpExpireAt = Date.now() + 5 * 60 * 1000;
 
         await user.save();
 
@@ -249,41 +249,43 @@ export const sendResetOtp = async(req , res) =>{
 
 // reset user  password
 
-export const resetPassword = async(req , res) =>{
-    const {email , otp , newPassword} = req.body
-
-    if(!email || !otp || !newPassword){
-        return res.json({success : false , message : 'Please fill all the fields'})
+export const resetPassword = async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+  
+    console.log('Request Body:', req.body); // Log the request payload
+  
+    if (!email || !otp || !newPassword) {
+      return res.json({ success: false, message: 'Please fill all the fields' });
     }
-
-    try{
-        const user = await userModel.findOne({email})
-        if(!user){
-            return res.json({success : false , message : 'User not found'})
-        }
-
-        if(user.resetOtp !== otp || user.resetOtp === ''){
-            return res.json({success : false , message : 'Invalid OTP'})
-        }
-
-        if(user.resetOtpExpireAt < Date.now()){
-            return res.json({success : false , message : 'OTP expired'})
-        }
-
-        user.password = await bcrypt.hash(newPassword, 10);
-        user.resetOtp = '';
-        user.resetOtpExpireAt = 0;
-        await user.save();
-
-        return res.json({success : true , message : 'Password has been reset successfully'})
-
-    }catch(error){
-        return res.json({success : false , message : error.message})
-
+  
+    try {
+      const user = await userModel.findOne({ email });
+      if (!user) {
+        return res.json({ success: false, message: 'User not found' });
+      }
+  
+      console.log('User:', user); // Log the user document
+  
+      if (user.resetOtp !== otp || user.resetOtp === '') {
+        return res.json({ success: false, message: 'Invalid OTP' });
+      }
+  
+      if (user.resetOtpExpireAt < Date.now()) {
+        return res.json({ success: false, message: 'OTP expired' });
+      }
+  
+      user.password = await bcrypt.hash(newPassword, 10);
+      user.resetOtp = '';
+      user.resetOtpExpireAt = 0;
+      await user.save();
+  
+      return res.json({ success: true, message: 'Password has been reset successfully' });
+    } catch (error) {
+      console.error('Error:', error); // Log the error
+      return res.json({ success: false, message: error.message });
     }
-    
-}
-
+  };
+  
 export const adultRegistration = async (req, res) => {
     const { 
         fullName, 
