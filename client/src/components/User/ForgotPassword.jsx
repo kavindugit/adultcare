@@ -51,7 +51,7 @@ export default function ForgotPassword({ open, handleClose }) {
 
   return (
     <Dialog open={open} onClose={handleClose} PaperProps={{ component: 'form', onSubmit: handleSubmit }}>
-      <DialogTitle>Reset Password</DialogTitle>
+      <DialogTitle>Reset Passwor</DialogTitle>
       <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <DialogContentText>
           Enter your email, and we&apos;ll send you a reset OTP.
