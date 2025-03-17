@@ -16,6 +16,7 @@ authRouter.post('/register-adult',adultRegistration)
 
 
 
+
 export default authRouter;
 
 

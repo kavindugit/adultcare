@@ -11,8 +11,10 @@ import Gallery from "./pages/Gallery"
 import SignUp from "./pages/Auth/SignUp"
 import AdultRegistrationForm from "./pages/Admin/adultRegistrationForm"
 import DoctorRegistration from "./pages/Admin/DoctorRegistration"
-import EmployeeApplication from "./pages/Auth/EmployeeApplication"
+import EmployeeApplication from "./pages/Admin/EmployeeApplication"
 import UserProfile from "./pages/UserManagement/userProfile"
+import AdminPanel from "./pages/Admin/AdminPanel"
+
 
 
 const App = () => {
@@ -31,6 +33,8 @@ const App = () => {
         <Route path="/doctor-registration" element={<DoctorRegistration/>}/>
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
+        <Route path = "/admin" element ={<AdminPanel/>}/>
+
 
       </Routes>
     </div>
