@@ -14,6 +14,12 @@ import DoctorRegistration from "./pages/Admin/DoctorRegistration"
 import EmployeeApplication from "./pages/Auth/EmployeeApplication"
 import UserProfile from "./pages/UserManagement/userProfile"
 
+import PrescriptionProcessing from "./pages/InventoryManagement/PrescriptionProcessing";
+import StockManagement from "./pages/InventoryManagement/StockManagement";
+import RestockManagement from "./pages/InventoryManagement/RestockManagement";
+import SupplierManagement from "./pages/InventoryManagement/SupplierManagement";
+import InventoryDashboard from "./pages/InventoryManagement/InventoryDashboard";
+
 
 const App = () => {
 
@@ -31,6 +37,13 @@ const App = () => {
         <Route path="/doctor-registration" element={<DoctorRegistration/>}/>
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
+
+        {/* Inventory Management Routes */}
+        <Route path="/inventory-dashboard" element={<InventoryDashboard />} />
+        <Route path="/prescriptions" element={<PrescriptionProcessing />} />
+        <Route path="/stock" element={<StockManagement />} />
+        <Route path="/restock" element={<RestockManagement />} />
+        <Route path="/supliers" element={<SupplierManagement />} />
 
       </Routes>
     </div>
