@@ -6,6 +6,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
 import { styled } from "@mui/material/styles";
 
 // Icons
@@ -19,8 +21,9 @@ import SecurityIcon from "@mui/icons-material/Security";
 // Components for each section
 import Dashboard from "../../components/AdminPanel/Dashboard";
 import UsersManagement from "../../components/AdminPanel/UsersManagement";
-
-
+import EmployeeManagement from "../../components/AdminPanel/EmployeeManagement";
+import Notifications from "../../components/AdminPanel/Notifications";
+import SecurityLogs from "../../components/AdminPanel/SecurityLogs";
 
 // Styled Components
 const Sidebar = styled(Box)(({ theme }) => ({
@@ -29,16 +32,31 @@ const Sidebar = styled(Box)(({ theme }) => ({
   color: "#FFFFFF",
   height: "100vh",
   padding: theme.spacing(2),
+  transition: "transform 0.3s ease-in-out",
+  position: "fixed", // Fixed position for smooth transitions
+  left: 0,
+  top: 0,
+  zIndex: 1000,
 }));
 
 const MainContent = styled(Box)(({ theme }) => ({
   flex: 1,
   backgroundColor: "#F5F5F5",
   padding: theme.spacing(4),
+  marginLeft: "250px", // Default margin for sidebar
+  transition: "margin-left 0.3s ease-in-out",
 }));
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = React.useState("dashboard");
+  const [isSidebarVisible, setIsSidebarVisible] = React.useState(true);
+
+  // Dummy admin data (replace with actual data from your backend)
+  const admin = {
+    name: "John Doe",
+    role: "Super Admin",
+    image: "https://via.placeholder.com/150", // Replace with actual image URL
+  };
 
   const menuItems = [
     { id: "dashboard", text: "Dashboard", icon: <DashboardIcon /> },
@@ -54,15 +72,13 @@ const AdminPanel = () => {
       case "dashboard":
         return <Dashboard />;
       case "users":
-        return <UsersManagement/>;
-      /* case "employees":
-        return <Employees />;
-      case "payments":
-        return <Payments />;
+        return <UsersManagement />;
+      case "employees":
+        return <EmployeeManagement />;
       case "notifications":
         return <Notifications />;
       case "security":
-        return <SecurityLogs />; */
+        return<SecurityLogs/>;
       default:
         return <Typography variant="h4">Welcome to Admin Panel</Typography>;
     }
@@ -71,11 +87,37 @@ const AdminPanel = () => {
   return (
     <Box display="flex">
       {/* Sidebar */}
-      <Sidebar>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Admin Panel
-        </Typography>
+      <Sidebar
+        sx={{
+          transform: isSidebarVisible ? "translateX(0)" : "translateX(-100%)",
+        }}
+      >
+        {/* Admin Profile Section */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+            mb: 2,
+          }}
+        >
+          <Avatar
+            alt={admin.name}
+            src={admin.image}
+            sx={{ width: 80, height: 80, mb: 2 }}
+          />
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            {admin.name}
+          </Typography>
+          <Typography variant="body2" sx={{ color: "#AAB4BE" }}>
+            {admin.role}
+          </Typography>
+        </Box>
+
         <Divider sx={{ backgroundColor: "#FFFFFF", mb: 2 }} />
+
+        {/* Sidebar Menu */}
         <List>
           {menuItems.map((item) => (
             <ListItem
@@ -98,7 +140,22 @@ const AdminPanel = () => {
       </Sidebar>
 
       {/* Main Content */}
-      <MainContent>
+      <MainContent
+        sx={{
+          marginLeft: isSidebarVisible ? "250px" : "0",
+        }}
+      >
+        {/* Toggle Sidebar Button */}
+        <Box sx={{ mb: 2 }}>
+          <Button
+            variant="contained"
+            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+          >
+            {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
+          </Button>
+        </Box>
+
+        {/* Content */}
         <Box
           sx={{
             backgroundColor: "#FFFFFF",

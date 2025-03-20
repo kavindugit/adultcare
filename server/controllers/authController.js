@@ -338,3 +338,8 @@ export const adultRegistration = async (req, res) => {
 
 }
 
+
+
+
+
+
