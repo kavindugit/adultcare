@@ -1,6 +1,6 @@
 
 import React from "react"
-import {Routes , Route} from "react-router-dom"
+import {AppRouter, Route} from "react-router-dom"
 
 import Home from "./pages/Home"
 import Login from "./pages/Auth/Login"
@@ -14,13 +14,18 @@ import DoctorRegistration from "./pages/Admin/DoctorRegistration"
 import EmployeeApplication from "./pages/Auth/EmployeeApplication"
 import UserProfile from "./pages/UserManagement/userProfile"
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import Index from "./pages/Packages/Index";
+
+const queryClient = new QueryClient();
 
 const App = () => {
 
   return (
     <div>
       <ToastContainer/>
-      <Routes>
+      <AppRouter>
         <Route path="/" element={<Home/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<SignUp/>} />
@@ -31,11 +36,11 @@ const App = () => {
         <Route path="/doctor-registration" element={<DoctorRegistration/>}/>
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
-
-      </Routes>
+        <Route path= "/packages" element ={<Index/>}/>
+      </AppRouter>
     </div>
   )
-   
 }
 
-export default App
+   
+export default App;
