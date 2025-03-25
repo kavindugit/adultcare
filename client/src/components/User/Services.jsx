@@ -35,6 +35,13 @@ const Services = () => {
           </div>
         ))}
       </div>
+
+      {/* Navigation Links (Centered) */}
+      <nav className="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
+          <ul className="flex space-x-6">
+            <li><a href="/report-module" className="hover:text-gray-300">Report Management</a></li>
+          </ul>
+        </nav>
     </section>
   );
 };

@@ -13,6 +13,7 @@ import AdultRegistrationForm from "./pages/Admin/adultRegistrationForm"
 import DoctorRegistration from "./pages/Admin/DoctorRegistration"
 import EmployeeApplication from "./pages/Auth/EmployeeApplication"
 import UserProfile from "./pages/UserManagement/userProfile"
+import Report from "./components/reports/ReportHome"
 
 
 const App = () => {
@@ -31,6 +32,8 @@ const App = () => {
         <Route path="/doctor-registration" element={<DoctorRegistration/>}/>
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
+        
+        <Route path="/report-module" element={<Report/>} />
 
       </Routes>
     </div>
