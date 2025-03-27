@@ -27,6 +27,7 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
+  Button,
 } from "@mui/material";
 import {
   MoreVert as MoreVertIcon,
@@ -39,6 +40,10 @@ import {
 import PermissionAssignmentDialog from "./PermissionAssignmentDialog";
 import TaskAssignmentDialog from "./TaskAssignmentDialog";
 import NotificationDialog from "./NotificationDialog";
+import DoctorRegistrationForm from "./RegistationForms/DoctorRegistrationForm";
+import NurseRegistrationForm from "./RegistationForms/NurseRegistrationForm";
+import CaregiverRegistrationForm from "./RegistationForms/CaregiverRegistrationForm";
+import DriverRegistrationForm from "./RegistationForms/DriverRegistrationForm";
 
 // Dummy Data
 const dummyApplications = [
@@ -79,9 +84,11 @@ const EmployeeManagement = () => {
   const [openEmployeeDialog, setOpenEmployeeDialog] = useState(false);
   const [openApplicationDialog, setOpenApplicationDialog] = useState(false);
   const [tabValue, setTabValue] = useState(0);
-  const [openPermissionDialog, setOpenPermissionDialog] = useState(false); // For PermissionAssignmentDialog
-  const [openTaskDialog, setOpenTaskDialog] = useState(false); // For TaskAssignmentDialog
-  const [openNotificationDialog, setOpenNotificationDialog] = useState(false); // For NotificationDialog
+  const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
+  const [openTaskDialog, setOpenTaskDialog] = useState(false);
+  const [openNotificationDialog, setOpenNotificationDialog] = useState(false);
+  const [registerRole, setRegisterRole] = useState("");
+  const [activeForm, setActiveForm] = useState(null); // for dynamic form view
 
   const itemsPerPage = 5;
 
@@ -92,7 +99,7 @@ const EmployeeManagement = () => {
         if (data.success) {
           setEmployees(data.employees);
         } else {
-          toast.error(data.message);
+          toast.error(data.message || "No employees available");
         }
       } catch (error) {
         toast.error("Failed to fetch users data. Please try again.");
@@ -103,88 +110,59 @@ const EmployeeManagement = () => {
     fetchAllEmployeesData();
   }, []);
 
-  // Handle Menu Open
   const handleMenuOpen = (event, employee) => {
     setAnchorEl(event.currentTarget);
-    setSelectedEmployee(employee); // Set the selected employee
+    setSelectedEmployee(employee);
   };
 
-  // Handle Menu Close
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  // Handle Permission Assignment Dialog Open
   const handlePermissionAssignment = () => {
-    if (selectedEmployee) {
-      setOpenPermissionDialog(true); // Open PermissionAssignmentDialog
-    }
+    if (selectedEmployee) setOpenPermissionDialog(true);
     handleMenuClose();
   };
 
-  // Handle Task Assignment Dialog Open
   const handleTaskAssignment = () => {
-    if (selectedEmployee) {
-      setOpenTaskDialog(true); // Open TaskAssignmentDialog
-    }
+    if (selectedEmployee) setOpenTaskDialog(true);
     handleMenuClose();
   };
 
-  // Handle Notification Dialog Open
   const handleNotification = () => {
-    if (selectedEmployee) {
-      setOpenNotificationDialog(true); // Open NotificationDialog
-    }
+    if (selectedEmployee) setOpenNotificationDialog(true);
     handleMenuClose();
   };
 
-  // Handle Search
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
     setPage(1);
   };
 
-  // Handle Role Filter
   const handleRoleFilter = (e) => {
     setFilterRole(e.target.value);
     setPage(1);
   };
 
-  // Handle Status Filter
   const handleStatusFilter = (e) => {
     setFilterStatus(e.target.value);
     setPage(1);
   };
 
-  // Filter Employees
-  const filteredEmployees = employees ? employees.filter((employee) => {
+  const filteredEmployees = employees.filter((employee) => {
     const matchesSearch =
       employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       employee.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = filterRole === "all" || employee.role === filterRole;
     const matchesStatus = filterStatus === "all" || employee.status === filterStatus;
     return matchesSearch && matchesRole && matchesStatus;
-  }) : [];
+  });
 
-  // Paginate Employees
   const paginatedEmployees = filteredEmployees.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
 
-  // Handle View Employee
-  const handleViewEmployee = (employee) => {
-    setSelectedEmployee(employee);
-    setOpenEmployeeDialog(true);
-  };
-
-  // Handle View Application
-  const handleViewApplication = (application) => {
-    setSelectedApplication(application);
-    setOpenApplicationDialog(true);
-  };
-
-  // Handle Tab Change
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -196,17 +174,16 @@ const EmployeeManagement = () => {
         Employees Management
       </Typography>
 
-      {/* Tabs for Employees, Applications, and Onboarding */}
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="Employees" />
         <Tab label="Applications" />
         <Tab label="Onboarding" />
+        <Tab label="Register Employee" />
       </Tabs>
 
       {/* Employees Tab */}
       {tabValue === 0 && (
         <Box>
-          {/* Search and Filters */}
           <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
             <TextField
               fullWidth
@@ -238,7 +215,6 @@ const EmployeeManagement = () => {
             </FormControl>
           </Box>
 
-          {/* Employee Table */}
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -275,7 +251,6 @@ const EmployeeManagement = () => {
             </Table>
           </TableContainer>
 
-          {/* Pagination */}
           <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
             <Pagination
               count={Math.ceil(filteredEmployees.length / itemsPerPage)}
@@ -284,7 +259,6 @@ const EmployeeManagement = () => {
             />
           </Box>
 
-          {/* Employee Actions Menu */}
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
@@ -301,37 +275,34 @@ const EmployeeManagement = () => {
             </MenuItem>
           </Menu>
 
-          {/* Permission Assignment Dialog */}
           {openPermissionDialog && (
             <PermissionAssignmentDialog
               open={openPermissionDialog}
               onClose={() => {
                 setOpenPermissionDialog(false);
-                setSelectedEmployee(null); // Reset selectedEmployee
+                setSelectedEmployee(null);
               }}
               selectedEmployee={selectedEmployee}
             />
           )}
 
-          {/* Task Assignment Dialog */}
           {openTaskDialog && (
             <TaskAssignmentDialog
               open={openTaskDialog}
               onClose={() => {
                 setOpenTaskDialog(false);
-                setSelectedEmployee(null); // Reset selectedEmployee
+                setSelectedEmployee(null);
               }}
               selectedEmployee={selectedEmployee}
             />
           )}
 
-          {/* Notification Dialog */}
           {openNotificationDialog && (
             <NotificationDialog
               open={openNotificationDialog}
               onClose={() => {
                 setOpenNotificationDialog(false);
-                setSelectedEmployee(null); // Reset selectedEmployee
+                setSelectedEmployee(null);
               }}
               selectedEmployee={selectedEmployee}
             />
@@ -342,7 +313,6 @@ const EmployeeManagement = () => {
       {/* Applications Tab */}
       {tabValue === 1 && (
         <Box>
-          {/* Applications Table */}
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -373,7 +343,7 @@ const EmployeeManagement = () => {
                     </TableCell>
                     <TableCell>{application.applicationDate}</TableCell>
                     <TableCell>
-                      <IconButton onClick={() => handleViewApplication(application)}>
+                      <IconButton onClick={() => setSelectedApplication(application)}>
                         <MoreVertIcon />
                       </IconButton>
                     </TableCell>
@@ -398,7 +368,7 @@ const EmployeeManagement = () => {
                   <TaskIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary={`Employee: ${employees && employees.find((e) => e.id === task.employeeId)?.name}`}
+                  primary={`Employee: ${employees.find((e) => e.id === task.employeeId)?.name || "Unknown"}`}
                   secondary={
                     <Box>
                       {task.tasks.map((t) => (
@@ -414,6 +384,46 @@ const EmployeeManagement = () => {
           </List>
         </Box>
       )}
+
+      {/* Register Employee Tab */}
+      {tabValue === 3 && (
+  <Box sx={{ mt: 3 }}>
+    {activeForm === null && (
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
+        <Typography variant="h6" gutterBottom>Select Role to Register</Typography>
+        <Button variant="contained" onClick={() => setActiveForm("doctor")}>Register a Doctor</Button>
+        <Button variant="contained" onClick={() => setActiveForm("nurse")}>Register a Nurse</Button>
+        <Button variant="contained" onClick={() => setActiveForm("caregiver")}>Register a Caregiver</Button>
+        <Button variant="contained" onClick={() => setActiveForm("driver")}>Register a Driver</Button>
+      </Box>
+    )}
+
+    {activeForm === "doctor" && (
+      <>
+        <Button variant="outlined" sx={{ mb: 2 }} onClick={() => setActiveForm(null)}>← Back</Button>
+        <DoctorRegistrationForm />
+      </>
+    )}
+    {activeForm === "nurse" && (
+      <>
+        <Button variant="outlined" sx={{ mb: 2 }} onClick={() => setActiveForm(null)}>← Back</Button>
+        <NurseRegistrationForm />
+      </>
+    )}
+    {activeForm === "caregiver" && (
+      <>
+        <Button variant="outlined" sx={{ mb: 2 }} onClick={() => setActiveForm(null)}>← Back</Button>
+        <CaregiverRegistrationForm />
+      </>
+    )}
+    {activeForm === "driver" && (
+      <>
+        <Button variant="outlined" sx={{ mb: 2 }} onClick={() => setActiveForm(null)}>← Back</Button>
+        <DriverRegistrationForm />
+      </>
+    )}
+  </Box>
+)}
     </Box>
   );
 };

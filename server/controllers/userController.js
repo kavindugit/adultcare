@@ -3,8 +3,7 @@ import userModel from '../models/userModel.js';
 // Get a single user's data
 export const getUserData = async (req, res) => {
   try {
-    const { userId } = req.query; // Use req.query for GET requests
-    const user = await userModel.findOne({ userId });
+    const user = await userModel.findOne({ userId: req.userId });
 
     if (!user) {
       return res.json({ success: false, message: 'User not found' });
@@ -13,6 +12,7 @@ export const getUserData = async (req, res) => {
     res.json({
       success: true,
       userData: {
+        userId: user.userId,
         name: user.fullName,
         nic: user.nic,
         dob: user.dob,
@@ -159,5 +159,43 @@ export const getAllEmployeeData = async (req, res) => {
   } catch (error) {
     console.error("Error fetching employees:", error);
     return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+// Get users by role/category
+export const getUsersByRole = async (req, res) => {
+  try {
+    const { role } = req.query;
+
+    if (!role) {
+      return res.status(400).json({ success: false, message: "User role is required" });
+    }
+
+    const users = await userModel.find({ role });
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ success: false, message: `No users found for role: ${role}` });
+    }
+
+    const userData = users.map((user) => ({
+      userId: user.userId,
+      name: user.fullName,
+      nic: user.nic,
+      dob: user.dob,
+      address: user.address,
+      phoneNo: user.phoneNo,
+      gender: user.gender,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+      isVerified: user.isVerified,
+      isAdmin: user.isAdmin,
+    }));
+
+    return res.status(200).json({ success: true, users: userData });
+  } catch (error) {
+    console.error("Error fetching users by role:", error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };

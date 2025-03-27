@@ -15,15 +15,16 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import WorkIcon from "@mui/icons-material/Work";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import SecurityIcon from "@mui/icons-material/Security";
+import NotificationsIcon from "@mui/icons-material/Notifications"; // ✅ Add this
 
 // Components for each section
 import Dashboard from "../../components/AdminPanel/Dashboard";
 import UsersManagement from "../../components/AdminPanel/UsersManagement";
 import EmployeeManagement from "../../components/AdminPanel/EmployeeManagement";
-import Notifications from "../../components/AdminPanel/Notifications";
+
 import SecurityLogs from "../../components/AdminPanel/SecurityLogs";
+import NotificationManagement from "../../components/AdminPanel/NotificationManagement";
 
 // Styled Components
 const Sidebar = styled(Box)(({ theme }) => ({
@@ -76,7 +77,7 @@ const AdminPanel = () => {
       case "employees":
         return <EmployeeManagement />;
       case "notifications":
-        return <Notifications />;
+        return <NotificationManagement/>;
       case "security":
         return<SecurityLogs/>;
       default:
