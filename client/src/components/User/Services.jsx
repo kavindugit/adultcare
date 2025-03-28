@@ -1,5 +1,4 @@
 import React from "react";
-
 const services = [
   { 
     title: "Comprehensive Care Packages", 
@@ -18,8 +17,9 @@ const services = [
     description: "Provide drivers and caregivers to accompany seniors for travel and appointments." 
   },
 ];
-
 const Services = () => {
+
+  
   return (
     <section id="services" className="py-20 px-6 bg-gray-100 text-center">
       <h2 className="text-3xl font-bold text-blue-900">Our Services</h2>
@@ -34,14 +34,11 @@ const Services = () => {
             <p className="mt-2 text-gray-600">{service.description}</p>
           </div>
         ))}
-      </div>
-
+      </div>        
       {/* Navigation Links (Centered) */}
-      <nav className="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
-          <ul className="flex space-x-6">
-            <li><a href="/report-module" className="hover:text-gray-300">Report Management</a></li>
-          </ul>
-        </nav>
+
+       
+      
     </section>
   );
 };

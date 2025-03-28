@@ -3,11 +3,19 @@ import { AppContent} from "../../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import AdultSearch from "../reports/AdultSearch";
+import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
 const Header = () => {
   const {userData , setUserData , setIsLoggedin} = useContext(AppContent);
   const navigate = useNavigate();
-  
+  const [open, setOpen] = React.useState(false);
+const handleClose = () => {
+  setOpen(false);
+};
+const handleClickOpen = () => {
+  setOpen(true);
+};
 
 
   // Handle logout
@@ -43,6 +51,27 @@ const Header = () => {
             <li><a href="#services" className="hover:text-gray-300">Services</a></li>
             <li><a href="#testimonials" className="hover:text-gray-300">Testimonials</a></li>
             <li><a href="#contact" className="hover:text-gray-300">Contact</a></li>
+           { /* {userData ? (*/}
+            <li>
+              
+        <div>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      
+                      <Link
+                        component="button"
+                        type="button"
+                        onClick={handleClickOpen}
+                        variant="body2"
+                        sx={{ color: "#AAB4BE" }}
+                      >
+                        Report Module?
+                      </Link>
+                    </Box>
+      <AdultSearch open={open} handleClose={handleClose} />
+
+        </div>
+
+            </li> { /* }) : ""} */}
           </ul>
         </nav>
 

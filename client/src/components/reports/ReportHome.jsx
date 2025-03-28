@@ -1,15 +1,17 @@
 // Home.jsx
 
-import Header from "./Header";
-import ReportView from "./ReportView";
+import Header from "../User/Header";
+import Footer from "../User/Footer";
+import HealthReport from "./HealthReport";
 
 
 const ReportHome = () => {
   return (
     <div>
-  
-      <Header /><br/><br/><br/><br/><br/>
-      <ReportView/>  
+        <Header/>
+        <HealthReport/> 
+        <Footer/> 
+      
     </div>
   );
 };
