@@ -3,9 +3,8 @@ import userModel from '../models/userModel.js';
 
 export const getAdultData = async (req, res) => {
     try {
-        const {userId} = req.body;
-        const user = await userModel.findOne({userId});
-
+        const user = await userModel.findOne({email:'fdsf@dsfsdf.com'});
+        console.log(user);
         if(!user) {
             return res.json({success: false, message: 'User not found'});
         }
