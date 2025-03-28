@@ -37,7 +37,7 @@ const doctorSchema = new mongoose.Schema({
     default: [],
   },
   availableDate: {
-    type: Date,
+    type: [String],
     required: true,
   },
   availableWorkingHours: {

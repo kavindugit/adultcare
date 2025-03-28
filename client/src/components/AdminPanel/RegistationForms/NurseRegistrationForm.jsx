@@ -9,11 +9,13 @@ import {
   TextField,
   Typography,
   Grid,
-  MenuItem,
-  Select,
+  FormControl,
   InputLabel,
-  FormControl
+  MenuItem,
+  Select
 } from "@mui/material";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const NurseRegistrationForm = () => {
   const navigate = useNavigate();
@@ -24,39 +26,92 @@ const NurseRegistrationForm = () => {
     confirmPassword: "",
     phoneNumber: "",
     licenseNumber: "",
-    age: "",
     gender: "",
     address: "",
-    identificationNumber: "",
+    nic: "",
     yearsOfExperience: "",
     specialization: "",
     availableShifts: "",
     certifications: "",
     salary: "",
+    dob: ""
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const validateForm = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\+\d{10,15}$/;
+    if (!formData.fullName || formData.fullName.length > 100) {
+      toast.error("Full name is required and must be under 100 characters.");
+      return false;
+    }
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Invalid email format");
+      return false;
+    }
+    if (!phoneRegex.test(formData.phoneNumber)) {
+      toast.error("Phone number must include country code and be 10 to 15 digits long");
+      return false;
+    }
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return false;
+    }
+    if (!formData.dob) {
+      toast.error("Date of Birth is required");
+      return false;
+    }
+    if (!formData.gender) {
+      toast.error("Please select a gender");
+      return false;
+    }
+    if (!formData.salary || isNaN(formData.salary) || Number(formData.salary) <= 0) {
+      toast.error("Salary must be a positive number");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
+    if (!validateForm()) return;
+  
     try {
-      await axios.post("/api/nurses/register", formData);
-      alert("Nurse registered successfully");
-      navigate("/login");
+      // Log original input for debugging
+      console.log("Certifications raw input:", formData.certifications);
+  
+      // Prepare payload
+      const certificationsArray = typeof formData.certifications === "string"
+        ? formData.certifications.split(",").map(c => c.trim()).filter(c => c !== "")
+        : [];
+  
+      const payload = {
+        ...formData,
+        certifications: certificationsArray
+      };
+  
+      console.log("Final Payload:", payload); // Make sure certifications are included
+  
+      await axios.post("http://localhost:4000/api/employee/register-nurse", payload);
+      toast.success("Nurse registered successfully");
+      
     } catch (error) {
       console.error("Registration failed", error);
-      alert("Registration failed");
+      toast.error("Registration failed. Please try again.");
     }
   };
+  
 
   return (
     <Container maxWidth="sm">
+      <ToastContainer />
       <Paper elevation={4} sx={{ p: 4, mt: 5 }}>
         <Typography variant="h5" gutterBottom>
           Nurse Registration
@@ -82,9 +137,6 @@ const NurseRegistrationForm = () => {
               <TextField fullWidth name="licenseNumber" label="Nursing License Number" value={formData.licenseNumber} onChange={handleChange} required />
             </Grid>
             <Grid item xs={6}>
-              <TextField fullWidth name="age" label="Age" type="number" value={formData.age} onChange={handleChange} required />
-            </Grid>
-            <Grid item xs={6}>
               <FormControl fullWidth required>
                 <InputLabel>Gender</InputLabel>
                 <Select name="gender" value={formData.gender} onChange={handleChange} label="Gender">
@@ -96,10 +148,13 @@ const NurseRegistrationForm = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12}>
+              <TextField fullWidth name="dob" label="Date of Birth" type="date" value={formData.dob} onChange={handleChange} InputLabelProps={{ shrink: true }} required />
+            </Grid>
+            <Grid item xs={12}>
               <TextField fullWidth name="address" label="Address" value={formData.address} onChange={handleChange} required />
             </Grid>
             <Grid item xs={12}>
-              <TextField fullWidth name="identificationNumber" label="ID / NIC / Passport Number" value={formData.identificationNumber} onChange={handleChange} required />
+              <TextField fullWidth name="nic" label="NIC" value={formData.nic} onChange={handleChange} required />
             </Grid>
             <Grid item xs={6}>
               <TextField fullWidth name="yearsOfExperience" label="Years of Experience" type="number" value={formData.yearsOfExperience} onChange={handleChange} required />

@@ -17,6 +17,8 @@ import {
   Checkbox,
   ListItemText
 } from "@mui/material";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const skillsList = [
   "Bathing Assistance",
@@ -54,6 +56,8 @@ const CaregiverRegistrationForm = () => {
     skills: [],
     languagesSpoken: "",
     salary: "",
+    dob: "",
+    nic: ""
   });
 
   const handleChange = (e) => {
@@ -68,24 +72,72 @@ const CaregiverRegistrationForm = () => {
     setFormData({ ...formData, skills: typeof value === "string" ? value.split(",") : value });
   };
 
+  const validateForm = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\+\d{10,15}$/;
+    const nicRegex = /^[A-Za-z0-9]{6,20}$/;
+
+    if (!formData.fullName || formData.fullName.length > 100) {
+      toast.error("Full name is required and should be less than 100 characters.");
+      return false;
+    }
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Invalid email format");
+      return false;
+    }
+    if (!phoneRegex.test(formData.phoneNumber)) {
+      toast.error("Phone number must start with country code and contain 10 to 15 digits (e.g., +94123456789).");
+      return false;
+    }
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return false;
+    }
+    if (isNaN(formData.age) || +formData.age < 18 || +formData.age > 100) {
+      toast.error("Age should be between 18 and 100");
+      return false;
+    }
+    if (!nicRegex.test(formData.identificationNumber)) {
+      toast.error("Invalid NIC / ID / Passport Number");
+      return false;
+    }
+    if (!formData.dob) {
+      toast.error("Date of birth is required");
+      return false;
+    }
+    if (!formData.salary || isNaN(formData.salary) || formData.salary <= 0) {
+      toast.error("Salary should be a positive number");
+      return false;
+    }
+    if (formData.skills.length === 0) {
+      toast.error("Please select at least one skill");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
+    if (!validateForm()) return;
+
     try {
-      await axios.post("/api/caregivers/register", formData);
-      alert("Caregiver registered successfully");
-      navigate("/login");
+      await axios.post("http://localhost:4000/api/employee/register-caregiver", formData);
+      toast.success("Caregiver registered successfully");
+      setTimeout(() => navigate("/admin"), 1500);
     } catch (error) {
       console.error("Registration failed", error);
-      alert("Registration failed");
+      toast.error("Registration failed. Please try again.");
     }
   };
 
+
   return (
     <Container maxWidth="sm">
+      <ToastContainer />
       <Paper elevation={4} sx={{ p: 4, mt: 5 }}>
         <Typography variant="h5" gutterBottom>
           Caregiver Registration
@@ -122,7 +174,10 @@ const CaregiverRegistrationForm = () => {
               </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <TextField fullWidth name="identificationNumber" label="ID / NIC / Passport Number" value={formData.identificationNumber} onChange={handleChange} required />
+              <TextField fullWidth name="nic" label="ID / NIC / Passport Number" value={formData.identificationNumber} onChange={handleChange} required />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth name="dob" label="Date of Birth" type="date" value={formData.dob} onChange={handleChange} InputLabelProps={{ shrink: true }} required />
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth name="address" label="Address" value={formData.address} onChange={handleChange} required />
@@ -167,6 +222,7 @@ const CaregiverRegistrationForm = () => {
             <Grid item xs={12}>
               <TextField fullWidth name="salary" label="Salary (LKR/hour)" type="number" value={formData.salary} onChange={handleChange} required />
             </Grid>
+         
             <Grid item xs={12}>
               <Button fullWidth type="submit" variant="contained" color="primary">
                 Register
