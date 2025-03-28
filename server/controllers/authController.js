@@ -286,57 +286,6 @@ export const resetPassword = async (req, res) => {
     }
   };
   
-export const adultRegistration = async (req, res) => {
-    const { 
-        fullName, 
-        nic, 
-        dob, 
-        address,
-        dietaryPreference, 
-        smokingStatus, 
-        drinkingStatus, 
-        homeType, 
-        preferredLanguage, 
-        chronicConditions, 
-        medications, 
-        doctorName, 
-        bloodGroup 
-    } = req.body;
-    
-    try{
-        const existingAdult = await adultModel.findOne({nic});
-
-        if(existingAdult) {
-            return res.json({success: false, message: 'User already exists'});
-        }
-
-        const adult = await adultModel.create({
-            fullName,
-            nic,
-            dob,
-            address,
-            dietaryPreference,
-            smokingStatus,
-            drinkingStatus,
-            homeType,
-            preferredLanguage,
-            chronicConditions,
-            medications,
-            doctorName,
-            bloodGroup
-        });
-
-
-        await adult.save();
-        return res.json({success: true, message: 'Adult registered successfully'});
- 
-
-    }catch(error) {
-        console.error('Error:', error);
-        return res.json({success: false, message: error.message});
-    }
-
-}
 
 
 

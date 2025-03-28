@@ -8,6 +8,7 @@ import userRouter from './routes/userRoutes.js';
 import logsRouter from './routes/logRoutes.js'; // Add this line to include logsRouter in the app
 import notificationRouter from './routes/notificationRoutes.js';
 import employeeRouter from './routes/employeeRoutes.js';
+import adultRouter from './routes/adultRoutes.js';
 
 
 const app = express();
@@ -27,7 +28,8 @@ app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/logs', logsRouter); // Add this line to include logsRouter in the app
 app.use('/api/notifications', notificationRouter);
-app.use('/api/employeee', employeeRouter);
+app.use('/api/employee', employeeRouter);
+app.use('/api/adult', adultRouter);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
  

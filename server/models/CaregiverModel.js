@@ -1,12 +1,7 @@
 import mongoose from "mongoose";
 
-const nurseSchema = new mongoose.Schema({
+const caregiverSchema = new mongoose.Schema({
   userId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  licenseNumber: {
     type: String,
     required: true,
     unique: true,
@@ -15,18 +10,18 @@ const nurseSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  specialization: {
+  preferredWorkHours: {
     type: String,
+    enum: ["08:00 - 17:00", "17:00 - 00:00", "00:00 - 08:00", "Live-in", "Rotational"],
     required: true,
   },
-  availableShifts: {
-    type: String,
-    enum: ["Morning", "Evening", "Night", "Rotational"],
-    required: true,
-  },
-  certifications: {
+  skills: {
     type: [String],
     default: [],
+  },
+  languagesSpoken: {
+    type: String,
+    required: true,
   },
   salary: {
     type: Number,
@@ -42,5 +37,5 @@ const nurseSchema = new mongoose.Schema({
   },
 });
 
-const NurseModel = mongoose.models.Nurse || mongoose.model("Nurse", nurseSchema);
-export default NurseModel;
+const CaregiverModel = mongoose.models.Caregiver || mongoose.model("Caregiver", caregiverSchema);
+export default CaregiverModel;
