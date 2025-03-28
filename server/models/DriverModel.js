@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const nurseSchema = new mongoose.Schema({
+const driverSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: true,
@@ -22,6 +22,10 @@ const nurseSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  licenseExpiry: {
+    type: Date,
+    required: true,
   },
   age: {
     type: Number,
@@ -45,20 +49,22 @@ const nurseSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  specialization: {
+  availabilityHours: {
     type: String,
+    enum: [
+      "06:00 - 14:00",
+      "08:00 - 17:00",
+      "14:00 - 22:00",
+      "Night Shift",
+      "Flexible"
+    ],
     required: true,
   },
-  availableShifts: {
-    type: String,
-    enum: ["Morning", "Evening", "Night", "Rotational"],
+  monthlySalary: {
+    type: Number,
     required: true,
   },
-  certifications: {
-    type: [String],
-    default: [],
-  },
-  salary: {
+  otRate: {
     type: Number,
     required: true,
   },
@@ -72,5 +78,5 @@ const nurseSchema = new mongoose.Schema({
   },
 });
 
-const NurseModel = mongoose.models.Nurse || mongoose.model("Nurse", nurseSchema);
-export default NurseModel;
+const DriverModel = mongoose.models.Driver || mongoose.model("Driver", driverSchema);
+export default DriverModel;

@@ -27,7 +27,7 @@ import LocalMallIcon from "@mui/icons-material/LocalMall";
 
 // Dummy data for charts and activities
 const revenueData = [
-  { month: "Jan", revenue: 4000 },
+  { month: "Jan", revenue: 200000 },
   { month: "Feb", revenue: 3000 },
   { month: "Mar", revenue: 5000 },
   { month: "Apr", revenue: 6000 },
