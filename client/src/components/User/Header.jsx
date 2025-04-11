@@ -7,14 +7,15 @@ import AdultSearch from "../reports/AdultSearch";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 const Header = () => {
-  const {userData , setUserData , setIsLoggedin} = useContext(AppContent);
+  const {appState, logOut} = useContext(AppContent);
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
 const handleClose = () => {
   setOpen(false);
 };
 const handleClickOpen = () => {
-  setOpen(true);
+  if(appState.isLoggedin)
+    setOpen(true);
 };
 
 
@@ -24,8 +25,7 @@ const handleClickOpen = () => {
       await axios.post("http://localhost:4000/api/auth/logout", {}, { withCredentials: true });
 
       // Clear user data and update login state
-      setUserData(null);
-      setIsLoggedin(false);
+      logOut();
 
       // Show success message
       toast.success("Logged out successfully");
@@ -51,37 +51,22 @@ const handleClickOpen = () => {
             <li><a href="#services" className="hover:text-gray-300">Services</a></li>
             <li><a href="#testimonials" className="hover:text-gray-300">Testimonials</a></li>
             <li><a href="#contact" className="hover:text-gray-300">Contact</a></li>
-           { /* {userData ? (*/}
-            <li>
-              
-        <div>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                      
-                      <Link
-                        component="button"
-                        type="button"
-                        onClick={handleClickOpen}
-                        variant="body2"
-                        sx={{ color: "#AAB4BE" }}
-                      >
-                        Report Module?
-                      </Link>
-                    </Box>
-      <AdultSearch open={open} handleClose={handleClose} />
-
-        </div>
-
-            </li> { /* }) : ""} */}
+            {appState.userData ? (
+              <li><a href="#" className="hover:text-gray-300" onClick={handleClickOpen}>Report Module</a>
+                <div>              
+                  <AdultSearch open={open} handleClose={handleClose} />
+                </div>
+              </li>) : ""} 
           </ul>
         </nav>
 
         {/* Right Section (Login/Logout & Profile) */}
         <div className="flex items-center space-x-4">
-          {userData ? (
+          {appState.userData ? (
             <div className="flex items-center space-x-4">
-              <span className="text-lg font-semibold">{userData?.name || "User"}</span>
+              <span className="text-lg font-semibold">{appState.userData?.name || "User"}</span>
               <img
-                src={userData?.profileImage || "https://via.placeholder.com/40"}
+                src={appState.userData?.profileImage || "https://placehold.co/40x40"}
                 alt="User"
                 className="w-10 h-10 rounded-full border-2 border-white"
               />

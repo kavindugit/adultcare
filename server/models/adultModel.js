@@ -54,6 +54,10 @@ const adultSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    age: {
+        type:Number,
+        default:0,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -64,5 +68,5 @@ const adultSchema = new mongoose.Schema({
     },
 });
 
-const adultModel = mongoose.models.Adult || mongoose.model('Adult', adultSchema);
+const adultModel = mongoose.models.adult || mongoose.model('Adult', adultSchema);
 export default adultModel;

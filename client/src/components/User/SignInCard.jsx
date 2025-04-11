@@ -12,7 +12,6 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import ForgotPassword from "./ForgotPassword";
-import { GoogleIcon, FacebookIcon } from "./CustomeIcons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -45,7 +44,7 @@ export default function SignInCard() {
   const [open, setOpen] = React.useState(false);
 
   const navigate = useNavigate();
-  const { backendUrl, getUserData } = useContext(AppContent);
+  const { backendUrl, getUserData, setIsLoggedin } = useContext(AppContent);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -103,8 +102,9 @@ export default function SignInCard() {
       console.log("Backend Response:", data); // Debugging log
 
       if (data.success) {
-        getUserData()
-        toast.success("Login successful");
+        getUserData();
+        setIsLoggedin(true);
+        toast.success(data.message);
         navigate("/"); // Redirect to home after successful login
       } else {
         toast.error(data.message || "Login failed. Please check your credentials.");

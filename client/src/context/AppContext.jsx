@@ -1,15 +1,33 @@
-import { createContext, useState } from "react"; 
+import { createContext, useState, useEffect } from "react"; 
 import axios from "axios";  // Import axios
 import { toast } from "react-toastify";  // Import toast
 
 export const AppContent = createContext(); 
 
 export const AppContextProvider = (props) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;  
 
-  // State for login status and user data
-  const [isLoggedin, setIsLoggedin] = useState(false); 
-  const [userData, setUserData] = useState(null);  
+  const defaultState = {
+    backendUrl: import.meta.env.VITE_BACKEND_URL,
+    adultId: null,
+    isLoggedin: false,
+    userData: null
+  };
+  const [appState, setAppState] = useState(() => {
+    // Try loading everything from localStorage
+    const storedState = localStorage.getItem('appState');
+    return storedState
+      ? JSON.parse(storedState) : defaultState;
+  });
+
+  // Save to localStorage when `user` changes
+  useEffect(() => {
+    localStorage.setItem('appState', JSON.stringify(appState));
+  }, [appState]);
+
+  const setUserData = (userData) => setAppState((prev) => ({ ...prev, userData }));
+  const setAdultId = (adultId) => {console.log(' changing adultId --- ' + adultId), setAppState((prev) => ({ ...prev, adultId }))};
+  const setIsLoggedin = (isLoggedin) => setAppState((prev) => ({ ...prev, isLoggedin }));
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   // Function to get user data
   const getUserData = async () => {
@@ -20,21 +38,27 @@ export const AppContextProvider = (props) => {
         setUserData(data.userData);
       } else {
         toast.error(data.message);
-        
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
+  const logOut = () => {
+    // Set to default values on logout
+    localStorage.removeItem('appState'); // Optionally clear from localStorage
+    setAppState(defaultState);
+  };
   // Context value
   const value = {
-    backendUrl,
-    isLoggedin,
     setIsLoggedin,
-    userData,
     setUserData,
-    getUserData
+    setAdultId,
+    getUserData,
+    appState,
+    backendUrl,
+    setAppState,
+    logOut
   };
 
   return (
