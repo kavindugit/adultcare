@@ -270,9 +270,7 @@ const EmployeeManagement = () => {
             <MenuItem onClick={handleTaskAssignment}>
               <AssignmentIcon sx={{ mr: 1 }} /> Assign Task
             </MenuItem>
-            <MenuItem onClick={handleNotification}>
-              <NotificationsIcon sx={{ mr: 1 }} /> Send Notification
-            </MenuItem>
+            
           </Menu>
 
           {openPermissionDialog && (

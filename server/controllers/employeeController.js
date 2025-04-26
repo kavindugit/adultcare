@@ -214,8 +214,6 @@ export const registerCaregiver = async (req, res) => {
       address,
       nic,
       // Caregiver-specific
-      age,
-      identificationNumber,
       yearsOfExperience,
       preferredWorkHours,
       skills,

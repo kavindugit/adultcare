@@ -7,23 +7,56 @@ import {nanoid} from 'nanoid';
 
 
 export const register = async (req, res) => {
-    const { fullName ,nic, email,phoneNo , address ,  password  , gender , dob} = req.body;
+    const { fullName, nic, email, phoneNo, address, password, gender, dob } = req.body;
 
-    if(!fullName || !email || !password || !phoneNo ||  !address || !nic || !gender || !dob) {
-        return res.json({success: false , message: 'Please fill all the fields'});
+    if (!fullName || !email || !password || !phoneNo || !address || !nic || !gender || !dob) {
+        return res.json({ success: false, message: 'Please fill all the fields' });
     }
 
-    try{
-        const existingUser = await userModel.findOne({ $or: [{ nic }, { email }] });
+    try {
+        const existingUser = await userModel.findOne({ nic });
 
-        if(existingUser) {
-            return res.json({success: false, message: 'User already exists'});
+        if (existingUser) {
+            if (existingUser.role === 'adult') {
+                const adultData = await adultModel.findOne({ userId: existingUser.userId });
+
+                if (adultData && adultData.guardianId) {
+                    const guardian = await userModel.findOne({ userId: adultData.guardianId });
+
+                    if (guardian) {
+                        const mailOptions = {
+                            from: process.env.SENDER_EMAIL,
+                            to: guardian.email,
+                            subject: 'Adult Registration Attempt Notification – Elder Bliss',
+                            text: `Dear ${guardian.fullName},
+
+We noticed that the adult registered under your care (${existingUser.fullName}) has attempted to register on the Elder Bliss platform independently.
+
+If you wish to confirm and allow this registration, please log in to your profile and accept the registration request shown in your dashboard.
+
+If this was not expected, you can safely ignore this message.
+
+Thank you,  
+The Elder Bliss Team  
+www.elderbliss.com`
+                        };
+
+                        await transporter.sendMail(mailOptions);
+
+                        return res.json({ success: false, message: 'Adult already exists. Guardian has been notified.' });
+                    }
+                }
+            }
+
+            // Default case for any other existing user (not adult or no guardian found)
+            return res.json({ success: false, message: 'User already exists' });
         }
 
+        // Proceed to register a new user
         const hashedPassword = await bcrypt.hash(password, 10);
         const userId = nanoid(12);
         const user = await userModel.create({
-            userId : userId,
+            userId,
             fullName,
             nic,
             email,
@@ -36,43 +69,43 @@ export const register = async (req, res) => {
 
         await user.save();
 
-        const token = jwt.sign({id:userId}, process.env.JWT_SECRET, {expiresIn: '7d'});
+        const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-            maxAge : 7 * 24 * 60 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
-        // sending welcome email
+
+        // Welcome email to the new user
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: email,
             subject: 'Welcome to Elder Bliss – Caring for Your Loved Ones',
             text: `Hello ${fullName},
-        
-        Welcome to Elder Bliss! We are delighted to have you as part of our community dedicated to providing compassionate care and support for elderly individuals.
-        
-        At Elder Bliss, we ensure peace of mind for families by offering top-quality adult care services, including medical assistance, caregiver support, and essential well-being solutions. Whether it's health monitoring, caregiver visits, or personalized care plans, we are here for you.
-        
-        If you have any questions or need assistance, feel free to reach out. We look forward to serving you and making a meaningful impact in your life.
-        
-        Warm regards,  
-        The Elder Bliss Team  
-        www.elderbliss.com`
+
+Welcome to Elder Bliss! We are delighted to have you as part of our community dedicated to providing compassionate care and support for elderly individuals.
+
+At Elder Bliss, we ensure peace of mind for families by offering top-quality adult care services, including medical assistance, caregiver support, and essential well-being solutions. Whether it's health monitoring, caregiver visits, or personalized care plans, we are here for you.
+
+If you have any questions or need assistance, feel free to reach out. We look forward to serving you and making a meaningful impact in your life.
+
+Warm regards,  
+The Elder Bliss Team  
+www.elderbliss.com`
         };
 
         await transporter.sendMail(mailOptions);
 
-        return res.json({success: true, message: 'User registered successfully'});
- 
+        return res.json({ success: true, message: 'User registered successfully' });
 
-    }catch(error) {
+    } catch (error) {
         console.error('Error:', error);
-        return res.json({success: false, message: error.message});
+        return res.json({ success: false, message: error.message });
     }
+};
 
-}
 
 export const login = async(req , res)=>{
     const {email, password} = req.body;

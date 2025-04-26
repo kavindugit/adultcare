@@ -154,6 +154,7 @@ const AdminPanel = () => {
           >
             {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
           </Button>
+          
         </Box>
 
         {/* Content */}

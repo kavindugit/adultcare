@@ -1,5 +1,3 @@
-// services/smsService.js
-
 import twilio from 'twilio';
 
 // Load credentials from environment variables
@@ -16,7 +14,7 @@ const sendSMS = async (to, message) => {
     const response = await client.messages.create({
       body: message,
       from: twilioPhone,
-      to, // Make sure it's in E.164 format, e.g., +94771234567
+      to, 
     });
 
     console.log(' SMS sent successfully. SID:', response.sid);

@@ -1,6 +1,7 @@
 // Home.jsx
 
 import AboutUs from "../components/User/AboutUs";
+import ChatBotWidget from "../components/User/ChatBotWidget";
 import ContactUs from "../components/User/ContactUs";
 import Footer from "../components/User/Footer";
 import Header from "../components/User/Header";
@@ -23,7 +24,8 @@ const Home = () => {
       <ContactUs/>
       <Footer/>
       
-
+        
+      <ChatBotWidget/>
     </div>
   );
 };
