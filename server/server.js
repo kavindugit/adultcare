@@ -9,6 +9,7 @@ import logsRouter from './routes/logRoutes.js'; // Add this line to include logs
 import notificationRouter from './routes/notificationRoutes.js';
 import employeeRouter from './routes/employeeRoutes.js';
 import adultRouter from './routes/adultRoutes.js';
+import botRouter from './routes/chatbotRoutes.js';
 
 
 const app = express();
@@ -30,6 +31,7 @@ app.use('/api/logs', logsRouter); // Add this line to include logsRouter in the 
 app.use('/api/notifications', notificationRouter);
 app.use('/api/employee', employeeRouter);
 app.use('/api/adult', adultRouter);
+app.use('/api/chatbot', botRouter);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
  

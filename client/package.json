@@ -19,6 +19,7 @@
     "framer-motion": "^12.4.7",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.475.0",
+    "marked": "^15.0.8",
     "react": "^19.0.0",
     "react-csv": "^2.2.2",
     "react-dom": "^19.0.0",

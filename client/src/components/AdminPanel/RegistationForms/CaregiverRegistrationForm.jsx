@@ -47,10 +47,8 @@ const CaregiverRegistrationForm = () => {
     password: "",
     confirmPassword: "",
     phoneNumber: "",
-    age: "",
     gender: "",
     address: "",
-    identificationNumber: "",
     yearsOfExperience: "",
     preferredWorkHours: "",
     skills: [],
@@ -97,10 +95,7 @@ const CaregiverRegistrationForm = () => {
       toast.error("Passwords do not match");
       return false;
     }
-    if (isNaN(formData.age) || +formData.age < 18 || +formData.age > 100) {
-      toast.error("Age should be between 18 and 100");
-      return false;
-    }
+   
     if (!nicRegex.test(formData.identificationNumber)) {
       toast.error("Invalid NIC / ID / Passport Number");
       return false;
@@ -159,9 +154,7 @@ const CaregiverRegistrationForm = () => {
             <Grid item xs={6}>
               <TextField fullWidth name="phoneNumber" label="Phone Number" value={formData.phoneNumber} onChange={handleChange} required />
             </Grid>
-            <Grid item xs={6}>
-              <TextField fullWidth name="age" label="Age" type="number" value={formData.age} onChange={handleChange} required />
-            </Grid>
+           
             <Grid item xs={6}>
               <FormControl fullWidth required>
                 <InputLabel>Gender</InputLabel>
@@ -174,7 +167,7 @@ const CaregiverRegistrationForm = () => {
               </FormControl>
             </Grid>
             <Grid item xs={6}>
-              <TextField fullWidth name="nic" label="ID / NIC / Passport Number" value={formData.identificationNumber} onChange={handleChange} required />
+              <TextField fullWidth name="nic" label="NIC" value={formData.nic} onChange={handleChange} required />
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth name="dob" label="Date of Birth" type="date" value={formData.dob} onChange={handleChange} InputLabelProps={{ shrink: true }} required />
