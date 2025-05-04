@@ -15,7 +15,7 @@ const FULL_DAY_SLOTS = [
 ];
 
 
-
+f
 const weekdaysMap = {
   "Sunday": 0,
   "Monday": 1,
