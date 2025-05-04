@@ -119,6 +119,9 @@ const AdultRegistrationForm = () => {
 
   const validateForm = () => {
     const newErrors = {};
+    let isValid = true;
+  
+    // Basic required fields
     const requiredFields = [
       "fullName",
       "nic",
@@ -135,18 +138,48 @@ const AdultRegistrationForm = () => {
       "medications",
       "bloodGroup",
     ];
-
-    let isValid = true;
+  
     requiredFields.forEach((field) => {
       if (!formData[field]) {
         newErrors[field] = "This field is required";
         isValid = false;
       }
     });
-
+  
+    // ✅ NIC Validation (simple)
+    const nicRegex = /^[0-9]{9}[vVxX]$|^[0-9]{12}$/; // old and new NIC formats
+    if (formData.nic && !nicRegex.test(formData.nic)) {
+      newErrors.nic = "Invalid NIC format";
+      isValid = false;
+    }
+  
+    // ✅ DOB validation (must be in the past)
+    if (formData.dob) {
+      const selectedDate = new Date(formData.dob);
+      const today = new Date();
+      if (selectedDate >= today) {
+        newErrors.dob = "Date of Birth must be in the past";
+        isValid = false;
+      }
+    }
+  
+    // ✅ Phone Number validation (must start with country code +94)
+    const phoneRegex = /^\+94\d{9}$/; // +94 followed by 9 digits
+    if (formData.phoneNo && !phoneRegex.test(formData.phoneNo)) {
+      newErrors.phoneNo = "Phone number must start with +94 and have 9 digits after it";
+      isValid = false;
+    }
+  
+    // ✅ Gender must be selected
+    if (!["Male", "Female", "Other"].includes(formData.gender)) {
+      newErrors.gender = "Please select a valid gender";
+      isValid = false;
+    }
+  
     setErrors(newErrors);
     return isValid;
   };
+  
   
   const {userData} = useContext(AppContent);
   const guardianId = userData?.userId ;

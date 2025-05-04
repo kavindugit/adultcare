@@ -5,6 +5,7 @@ const nurseSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    ref: 'User'
   },
   licenseNumber: {
     type: String,

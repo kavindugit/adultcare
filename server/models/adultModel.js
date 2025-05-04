@@ -5,6 +5,7 @@ const adultSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    ref: 'User'
     
   },
   dietaryPreference: {
@@ -46,6 +47,7 @@ const adultSchema = new mongoose.Schema({
   guardianId: {
     type: String,
     required: true,
+    ref: 'User'
   
   },
 }, {

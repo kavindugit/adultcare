@@ -10,6 +10,10 @@ import notificationRouter from './routes/notificationRoutes.js';
 import employeeRouter from './routes/employeeRoutes.js';
 import adultRouter from './routes/adultRoutes.js';
 import botRouter from './routes/chatbotRoutes.js';
+import guardianRouter from './routes/guardianRoutes.js';
+import registrationRequestRouter from './routes/registrationRequesrRotes.js';
+import docSheduleRouter from './routes/doctorSheduleRoutes.js';
+
 
 
 const app = express();
@@ -32,6 +36,9 @@ app.use('/api/notifications', notificationRouter);
 app.use('/api/employee', employeeRouter);
 app.use('/api/adult', adultRouter);
 app.use('/api/chatbot', botRouter);
+app.use('/api/guardian', guardianRouter);
+app.use('/api/registration-request' , registrationRequestRouter);
+app.use('/api/shedule', docSheduleRouter);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
  
