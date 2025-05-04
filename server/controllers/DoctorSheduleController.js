@@ -13,7 +13,7 @@ const FULL_DAY_SLOTS = [
   "14:00–16:00",
   "16:00–18:00"
 ];
-k
+
 
 
 const weekdaysMap = {
