@@ -12,8 +12,12 @@ import SignUp from "./pages/Auth/SignUp"
 import AdultRegistrationForm from "./pages/Admin/adultRegistrationForm"
 
 import EmployeeApplication from "./pages/Admin/EmployeeApplication"
-import UserProfile from "./pages/UserManagement/userProfile"
+
 import AdminPanel from "./pages/Admin/AdminPanel"
+import AdultProfile from "./pages/User/AdutProfile"
+import UserProfile from "./pages/User/UserProfile"
+import GuardianProfile from "./pages/User/GuardianProfile"
+
 
 
 
@@ -34,6 +38,11 @@ const App = () => {
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
         <Route path = "/admin" element ={<AdminPanel/>}/>
+        <Route path = "/adultprofile" element={<AdultProfile/>}/>
+        <Route path = "/guard" element ={<GuardianProfile/>}/>
+        <Route path = "/adult" element={<AdultProfile/>}/>
+      
+      
 
 
       </Routes>

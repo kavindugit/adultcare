@@ -48,6 +48,7 @@ const doctorSchema = new mongoose.Schema({
       "12:00 - 16:00",
       "16:00 - 20:00",
       "08:00 - 17:00",
+      "Full Time",
       "Night Shift"
     ]
   },
