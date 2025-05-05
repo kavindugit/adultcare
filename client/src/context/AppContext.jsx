@@ -1,40 +1,49 @@
-import { createContext, useState } from "react"; 
-import axios from "axios";  // Import axios
-import { toast } from "react-toastify";  // Import toast
+import { createContext, useState, useEffect } from "react"; // ✅ added useEffect
+import axios from "axios";
+import { toast } from "react-toastify";
 
-export const AppContent = createContext(); 
+export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;  
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  // State for login status and user data
-  const [isLoggedin, setIsLoggedin] = useState(false); 
-  const [userData, setUserData] = useState(null);  
+  const [isLoggedin, setIsLoggedin] = useState(false);
+  const [userData, setUserData] = useState(null);
 
-  // Function to get user data
+  // ✅ Function to get logged-in user data
   const getUserData = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/api/user/data`, { withCredentials: true });
-      
+      const { data } = await axios.get(`http://localhost:4000/api/user/data`, {
+        withCredentials: true,
+      });
+
       if (data.success) {
         setUserData(data.userData);
+        setIsLoggedin(true); // ✅ Update login state
       } else {
         toast.error(data.message);
-        
+        setUserData(null);
+        setIsLoggedin(false);
       }
     } catch (error) {
+      setUserData(null);
+      setIsLoggedin(false);
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
-  // Context value
+  // ✅ useEffect to call getUserData when app loads
+  useEffect(() => {
+    getUserData();
+  }, []);
+
   const value = {
     backendUrl,
     isLoggedin,
     setIsLoggedin,
     userData,
     setUserData,
-    getUserData
+    getUserData,
   };
 
   return (

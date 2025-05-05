@@ -1,9 +1,14 @@
 import express from 'express';
-import { get } from 'mongoose';
+
 import userAuth from '../middleware/userAuth.js';
-import { getUserData } from '../controllers/userController.js';
+import { deleteUser, getAllEmployeeData, getAllUsersData, getUserData, getUsersByRole, updateUser } from '../controllers/userController.js';
 const userRouter = express.Router();
 
 userRouter.get('/data', userAuth , getUserData);
+userRouter.get('/all', getAllUsersData);
+userRouter.put('/update', updateUser);
+userRouter.delete('/delete', deleteUser);
+userRouter.get('/allemployees', getAllEmployeeData)
+userRouter.get('/by-role', getUsersByRole);
 
 export default userRouter;

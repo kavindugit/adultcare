@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Button,
   TextField,
   FormControl,
-  FormLabel,
+  InputLabel,
   MenuItem,
   Select,
-  InputLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
   Box,
   Typography,
   Container,
@@ -17,20 +19,19 @@ import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { AppContent } from "../../context/AppContext";
 
-// Elder Bliss Theme Colors
 const themeColors = {
-  primary: "#1A73E8", // Vibrant Blue (Primary)
-  secondary: "#0F4C81", // Dark Blue (Secondary)
-  background: "#E3F2FD", // Light Blue (Background)
-  formBackground: "#FFFFFF", // White (Form Background)
-  textPrimary: "#1A237E", // Dark Blue (Text)
-  textSecondary: "#546E7A", // Grayish Blue (Secondary Text)
-  error: "#D32F2F", // Red (Error)
-  borderColor: "#BBDEFB", // Light Blue (Border)
+  primary: "#1A73E8",
+  secondary: "#0F4C81",
+  background: "#E3F2FD",
+  formBackground: "#FFFFFF",
+  textPrimary: "#1A237E",
+  textSecondary: "#546E7A",
+  error: "#D32F2F",
+  borderColor: "#BBDEFB",
 };
 
-// Styled components for the form layout
 const PageContainer = styled(Container)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -68,11 +69,19 @@ const FormSection = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
+const SectionHeader = styled(Typography)(({ theme }) => ({
+  fontSize: "1.2rem",
+  fontWeight: "bold",
+  color: themeColors.textPrimary,
+  marginTop: theme.spacing(3),
+}));
+
 const SubmitButton = styled(Button)(({ theme }) => ({
   backgroundColor: themeColors.primary,
   color: "#FFFFFF",
   fontWeight: "bold",
   padding: theme.spacing(1.5),
+  marginTop: theme.spacing(3),
   "&:hover": {
     backgroundColor: themeColors.secondary,
   },
@@ -85,6 +94,8 @@ const AdultRegistrationForm = () => {
     fullName: "",
     nic: "",
     dob: "",
+    phoneNo: "",
+    gender: "",
     address: "",
     dietaryPreference: "",
     smokingStatus: "",
@@ -93,25 +104,10 @@ const AdultRegistrationForm = () => {
     preferredLanguage: "",
     chronicConditions: "",
     medications: "",
-    doctorName: "",
     bloodGroup: "",
   });
 
-  const [errors, setErrors] = useState({
-    fullName: "",
-    nic: "",
-    dob: "",
-    address: "",
-    dietaryPreference: "",
-    smokingStatus: "",
-    drinkingStatus: "",
-    homeType: "",
-    preferredLanguage: "",
-    chronicConditions: "",
-    medications: "",
-    doctorName: "",
-    bloodGroup: "",
-  });
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -124,119 +120,97 @@ const AdultRegistrationForm = () => {
   const validateForm = () => {
     const newErrors = {};
     let isValid = true;
-
-    if (!formData.fullName) {
-      newErrors.fullName = "Full Name is required";
+  
+    // Basic required fields
+    const requiredFields = [
+      "fullName",
+      "nic",
+      "dob",
+      "phoneNo",
+      "gender",
+      "address",
+      "dietaryPreference",
+      "smokingStatus",
+      "drinkingStatus",
+      "homeType",
+      "preferredLanguage",
+      "chronicConditions",
+      "medications",
+      "bloodGroup",
+    ];
+  
+    requiredFields.forEach((field) => {
+      if (!formData[field]) {
+        newErrors[field] = "This field is required";
+        isValid = false;
+      }
+    });
+  
+    // ✅ NIC Validation (simple)
+    const nicRegex = /^[0-9]{9}[vVxX]$|^[0-9]{12}$/; // old and new NIC formats
+    if (formData.nic && !nicRegex.test(formData.nic)) {
+      newErrors.nic = "Invalid NIC format";
       isValid = false;
     }
-
-    if (!formData.nic) {
-      newErrors.nic = "NIC is required";
+  
+    // ✅ DOB validation (must be in the past)
+    if (formData.dob) {
+      const selectedDate = new Date(formData.dob);
+      const today = new Date();
+      if (selectedDate >= today) {
+        newErrors.dob = "Date of Birth must be in the past";
+        isValid = false;
+      }
+    }
+  
+    // ✅ Phone Number validation (must start with country code +94)
+    const phoneRegex = /^\+94\d{9}$/; // +94 followed by 9 digits
+    if (formData.phoneNo && !phoneRegex.test(formData.phoneNo)) {
+      newErrors.phoneNo = "Phone number must start with +94 and have 9 digits after it";
       isValid = false;
     }
-
-    if (!formData.dob) {
-      newErrors.dob = "Date of Birth is required";
+  
+    // ✅ Gender must be selected
+    if (!["Male", "Female", "Other"].includes(formData.gender)) {
+      newErrors.gender = "Please select a valid gender";
       isValid = false;
     }
-
-    if (!formData.address) {
-      newErrors.address = "Address is required";
-      isValid = false;
-    }
-
-    if (!formData.dietaryPreference) {
-      newErrors.dietaryPreference = "Dietary Preference is required";
-      isValid = false;
-    }
-
-    if (!formData.smokingStatus) {
-      newErrors.smokingStatus = "Smoking Status is required";
-      isValid = false;
-    }
-
-    if (!formData.drinkingStatus) {
-      newErrors.drinkingStatus = "Drinking Status is required";
-      isValid = false;
-    }
-
-    if (!formData.homeType) {
-      newErrors.homeType = "Home Type is required";
-      isValid = false;
-    }
-
-    if (!formData.preferredLanguage) {
-      newErrors.preferredLanguage = "Preferred Language is required";
-      isValid = false;
-    }
-
-    if (!formData.chronicConditions) {
-      newErrors.chronicConditions = "Chronic Conditions are required";
-      isValid = false;
-    }
-
-    if (!formData.medications) {
-      newErrors.medications = "Medications are required";
-      isValid = false;
-    }
-
-    if (!formData.doctorName) {
-      newErrors.doctorName = "Doctor Name is required";
-      isValid = false;
-    }
-
-    if (!formData.bloodGroup) {
-      newErrors.bloodGroup = "Blood Group is required";
-      isValid = false;
-    }
-
+  
     setErrors(newErrors);
     return isValid;
   };
+  
+  
+  const {userData} = useContext(AppContent);
+  const guardianId = userData?.userId ;
 
   const OnSubmitHandler = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+  
     try {
-      e.preventDefault();
-
-      // Validate inputs
-      if (!validateForm()) return;
-
-      axios.defaults.withCredentials = true; // Ensure cookies are sent with requests
-      const { data } = await axios.post(
-        "http://localhost:4000/api/auth/register-adult",
-        formData
-      );
-
-      if (data.success) {
+      const payload = {
+        ...formData,
+        guardId: guardianId, // Make sure it's 'guardId', not 'guardianId'
+      };
+  
+      console.log("Submitting payload to backend:", payload);
+  
+      const { data } = await axios.post("http://localhost:4000/api/adult/register", payload);
+  
+      if (data.success) {  
         toast.success("Adult Registered Successfully");
-        setFormData({
-          fullName: "",
-          nic: "",
-          dob: "",
-          address: "",
-          dietaryPreference: "",
-          smokingStatus: "",
-          drinkingStatus: "",
-          homeType: "",
-          preferredLanguage: "",
-          chronicConditions: "",
-          medications: "",
-          doctorName: "",
-          bloodGroup: "",
-        });
-        navigate("/"); // Redirect to home after successful registration
+        navigate("/");
       } else {
-        toast.error(data.message);
+        toast.error(data.message || "Registration failed");
       }
     } catch (error) {
-      console.log(
-        "Error Registering: ",
-        error.response ? error.response.data : error.message
-      );
-      toast.error("An error occurred while registering the adult.");
+      console.error("Registration error:", error.response?.data || error.message);
+      const message = error.response?.data?.message || "An error occurred while registering the adult.";
+      toast.error(message);
     }
   };
-
+  
   return (
     <PageContainer maxWidth="md">
       <FormContainer elevation={3}>
@@ -249,217 +223,83 @@ const AdultRegistrationForm = () => {
         </Typography>
 
         <form onSubmit={OnSubmitHandler}>
+          <SectionHeader>Basic Information</SectionHeader>
           <FormSection>
-            <TextField
-              id="fullName"
-              label="Full Name"
-              variant="outlined"
-              name="fullName"
-              fullWidth
-              value={formData.fullName}
-              onChange={handleInputChange}
-              error={!!errors.fullName}
-              helperText={errors.fullName}
-              margin="normal"
-              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-            />
+            <TextField label="Full Name" name="fullName" fullWidth value={formData.fullName} onChange={handleInputChange} error={!!errors.fullName} helperText={errors.fullName} />
+            <TextField label="NIC" name="nic" fullWidth value={formData.nic} onChange={handleInputChange} error={!!errors.nic} helperText={errors.nic} />
+            <TextField label="Date of Birth" name="dob" type="date" fullWidth InputLabelProps={{ shrink: true }} value={formData.dob} onChange={handleInputChange} error={!!errors.dob} helperText={errors.dob} />
+            <TextField label="Phone Number" name="phoneNo" fullWidth value={formData.phoneNo} onChange={handleInputChange} error={!!errors.phoneNo} helperText={errors.phoneNo} />
+            <FormControl component="fieldset" error={!!errors.gender}>
+              <Typography variant="body1" sx={{ mt: 1 }}>Gender</Typography>
+              <RadioGroup row name="gender" value={formData.gender} onChange={handleInputChange}>
+                <FormControlLabel value="Male" control={<Radio />} label="Male" />
+                <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                <FormControlLabel value="Other" control={<Radio />} label="Other" />
+              </RadioGroup>
+              {errors.gender && <FormHelperText>{errors.gender}</FormHelperText>}
+            </FormControl>
+            <TextField label="Address" name="address" fullWidth multiline rows={2} value={formData.address} onChange={handleInputChange} error={!!errors.address} helperText={errors.address} />
+          </FormSection>
 
-            <TextField
-              id="nic"
-              label="NIC"
-              variant="outlined"
-              name="nic"
-              fullWidth
-              value={formData.nic}
-              onChange={handleInputChange}
-              error={!!errors.nic}
-              helperText={errors.nic}
-              margin="normal"
-              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-            />
-
-            <TextField
-              id="dob"
-              label="Date of Birth"
-              variant="outlined"
-              name="dob"
-              fullWidth
-              type="date"
-              value={formData.dob}
-              onChange={handleInputChange}
-              error={!!errors.dob}
-              helperText={errors.dob}
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-            />
-
-            <TextField
-              id="address"
-              label="Address"
-              variant="outlined"
-              name="address"
-              fullWidth
-              multiline
-              rows={3}
-              value={formData.address}
-              onChange={handleInputChange}
-              error={!!errors.address}
-              helperText={errors.address}
-              margin="normal"
-              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-            />
-
-            <FormControl fullWidth margin="normal">
+          <SectionHeader>Health & Lifestyle Information</SectionHeader>
+          <FormSection>
+            <FormControl fullWidth error={!!errors.dietaryPreference}>
               <InputLabel>Dietary Preference</InputLabel>
-              <Select
-                id="dietaryPreference"
-                name="dietaryPreference"
-                value={formData.dietaryPreference}
-                onChange={handleInputChange}
-                error={!!errors.dietaryPreference}
-                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-              >
+              <Select name="dietaryPreference" value={formData.dietaryPreference} onChange={handleInputChange}>
                 <MenuItem value="Vegetarian">Vegetarian</MenuItem>
                 <MenuItem value="Non-Vegetarian">Non-Vegetarian</MenuItem>
                 <MenuItem value="Vegan">Vegan</MenuItem>
                 <MenuItem value="Gluten-Free">Gluten-Free</MenuItem>
-                <MenuItem value="Dairy-Free">Dairy-Free</MenuItem>
               </Select>
-              {errors.dietaryPreference && (
-                <FormHelperText error>
-                  {errors.dietaryPreference}
-                </FormHelperText>
-              )}
+              <FormHelperText>{errors.dietaryPreference}</FormHelperText>
             </FormControl>
 
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth error={!!errors.smokingStatus}>
               <InputLabel>Smoking Status</InputLabel>
-              <Select
-                id="smokingStatus"
-                name="smokingStatus"
-                value={formData.smokingStatus}
-                onChange={handleInputChange}
-                error={!!errors.smokingStatus}
-                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-              >
+              <Select name="smokingStatus" value={formData.smokingStatus} onChange={handleInputChange}>
                 <MenuItem value="Non-smoker">Non-smoker</MenuItem>
                 <MenuItem value="Smoker">Smoker</MenuItem>
                 <MenuItem value="Occasional">Occasional</MenuItem>
               </Select>
-              {errors.smokingStatus && (
-                <FormHelperText error>
-                  {errors.smokingStatus}
-                </FormHelperText>
-              )}
+              <FormHelperText>{errors.smokingStatus}</FormHelperText>
             </FormControl>
 
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth error={!!errors.drinkingStatus}>
               <InputLabel>Drinking Status</InputLabel>
-              <Select
-                id="drinkingStatus"
-                name="drinkingStatus"
-                value={formData.drinkingStatus}
-                onChange={handleInputChange}
-                error={!!errors.drinkingStatus}
-                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-              >
+              <Select name="drinkingStatus" value={formData.drinkingStatus} onChange={handleInputChange}>
                 <MenuItem value="Non-drinker">Non-drinker</MenuItem>
                 <MenuItem value="Drinker">Drinker</MenuItem>
                 <MenuItem value="Occasional">Occasional</MenuItem>
               </Select>
-              {errors.drinkingStatus && (
-                <FormHelperText error>
-                  {errors.drinkingStatus}
-                </FormHelperText>
-              )}
+              <FormHelperText>{errors.drinkingStatus}</FormHelperText>
             </FormControl>
 
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth error={!!errors.homeType}>
               <InputLabel>Home Type</InputLabel>
-              <Select
-                id="homeType"
-                name="homeType"
-                value={formData.homeType}
-                onChange={handleInputChange}
-                error={!!errors.homeType}
-                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-              >
+              <Select name="homeType" value={formData.homeType} onChange={handleInputChange}>
                 <MenuItem value="Apartment">Apartment</MenuItem>
-                <MenuItem value="Home">Home</MenuItem>
+                <MenuItem value="House">House</MenuItem>
                 <MenuItem value="Assisted Living">Assisted Living</MenuItem>
               </Select>
-              {errors.homeType && (
-                <FormHelperText error>{errors.homeType}</FormHelperText>
-              )}
+              <FormHelperText>{errors.homeType}</FormHelperText>
             </FormControl>
 
-            <TextField
-              id="preferredLanguage"
-              label="Preferred Language"
-              variant="outlined"
-              name="preferredLanguage"
-              fullWidth
-              value={formData.preferredLanguage}
-              onChange={handleInputChange}
-              error={!!errors.preferredLanguage}
-              helperText={errors.preferredLanguage}
-              margin="normal"
-              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-            />
+            <FormControl fullWidth error={!!errors.preferredLanguage}>
+              <InputLabel>Preferred Language</InputLabel>
+              <Select name="preferredLanguage" value={formData.preferredLanguage} onChange={handleInputChange}>
+                <MenuItem value="English">English</MenuItem>
+                <MenuItem value="Sinhala">Sinhala</MenuItem>
+                <MenuItem value="Tamil">Tamil</MenuItem>
+              </Select>
+              <FormHelperText>{errors.preferredLanguage}</FormHelperText>
+            </FormControl>
 
-            <TextField
-              id="chronicConditions"
-              label="Chronic Conditions"
-              variant="outlined"
-              name="chronicConditions"
-              fullWidth
-              value={formData.chronicConditions}
-              onChange={handleInputChange}
-              error={!!errors.chronicConditions}
-              helperText={errors.chronicConditions}
-              margin="normal"
-              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-            />
+            <TextField label="Chronic Conditions" name="chronicConditions" fullWidth value={formData.chronicConditions} onChange={handleInputChange} error={!!errors.chronicConditions} helperText={errors.chronicConditions} />
+            <TextField label="Medications" name="medications" fullWidth value={formData.medications} onChange={handleInputChange} error={!!errors.medications} helperText={errors.medications} />
 
-            <TextField
-              id="medications"
-              label="Medications"
-              variant="outlined"
-              name="medications"
-              fullWidth
-              value={formData.medications}
-              onChange={handleInputChange}
-              error={!!errors.medications}
-              helperText={errors.medications}
-              margin="normal"
-              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-            />
-
-            <TextField
-              id="doctorName"
-              label="Doctor Name"
-              variant="outlined"
-              name="doctorName"
-              fullWidth
-              value={formData.doctorName}
-              onChange={handleInputChange}
-              error={!!errors.doctorName}
-              helperText={errors.doctorName}
-              margin="normal"
-              sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-            />
-
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth error={!!errors.bloodGroup}>
               <InputLabel>Blood Group</InputLabel>
-              <Select
-                id="bloodGroup"
-                name="bloodGroup"
-                value={formData.bloodGroup}
-                onChange={handleInputChange}
-                error={!!errors.bloodGroup}
-                sx={{ backgroundColor: "#F5F5F5", borderRadius: "8px" }}
-              >
+              <Select name="bloodGroup" value={formData.bloodGroup} onChange={handleInputChange}>
                 <MenuItem value="A+">A+</MenuItem>
                 <MenuItem value="A-">A-</MenuItem>
                 <MenuItem value="B+">B+</MenuItem>
@@ -469,9 +309,7 @@ const AdultRegistrationForm = () => {
                 <MenuItem value="AB+">AB+</MenuItem>
                 <MenuItem value="AB-">AB-</MenuItem>
               </Select>
-              {errors.bloodGroup && (
-                <FormHelperText error>{errors.bloodGroup}</FormHelperText>
-              )}
+              <FormHelperText>{errors.bloodGroup}</FormHelperText>
             </FormControl>
           </FormSection>
 

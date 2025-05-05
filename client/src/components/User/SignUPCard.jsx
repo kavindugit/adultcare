@@ -32,7 +32,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
 export default function SignUPCard() {
   const navigate = useNavigate();
 
-  // State for form inputs
   const [formData, setFormData] = useState({
     fullName: '',
     nic: '',
@@ -45,27 +44,60 @@ export default function SignUPCard() {
     gender: '',
   });
 
-  // Handle input changes
+  const [errors, setErrors] = useState({});
+
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [id]: value,
     }));
+    setErrors((prev) => ({ ...prev, [id]: '' }));
   };
 
-  // Handle form submission
-  const OnSubmitHandler = async (e) => {
-    e.preventDefault();
+  // ✅ Validation logic
+  const validateForm = () => {
+    const newErrors = {};
 
-    // Validate passwords match
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
+    if (!formData.fullName) newErrors.fullName = 'Full name is required';
+    if (!formData.nic) newErrors.nic = 'NIC is required';
+
+    // Email format validation
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Invalid email format';
     }
 
+    if (!formData.address) newErrors.address = 'Address is required';
+
+    // Phone number validation (e.g., starts with +94 and at least 10 digits after that)
+    if (!formData.phone) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!/^\+\d{10,15}$/.test(formData.phone)) {
+      newErrors.phone = 'Phone must start with country code, e.g., +94771234567';
+    }
+
+    if (!formData.dob) newErrors.dob = 'Date of birth is required';
+    if (!formData.gender) newErrors.gender = 'Gender is required';
+
+    if (!formData.password) newErrors.password = 'Password is required';
+    if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const OnSubmitHandler = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
     try {
-      // Make the request
       axios.defaults.withCredentials = true;
       const { data } = await axios.post('http://localhost:4000/api/auth/register', {
         fullName: formData.fullName,
@@ -76,14 +108,11 @@ export default function SignUPCard() {
         password: formData.password,
         dob: formData.dob,
         gender: formData.gender,
-
       });
-
-      console.log('Response Data:', data);
 
       if (data.success) {
         toast.success('Registration successful');
-        navigate('/'); // Redirect to home after successful registration
+        navigate('/');
       } else {
         toast.error(data.message);
       }
@@ -105,9 +134,9 @@ export default function SignUPCard() {
           { label: 'NIC', id: 'nic', placeholder: '123456789V' },
           { label: 'Email', id: 'email', placeholder: 'your@email.com', type: 'email' },
           { label: 'Address', id: 'address', placeholder: '123 Street, City, Country' },
-          { label: 'Phone Number', id: 'phone', placeholder: '0771234567' },
-          { label: 'Date of Birth', id: 'dob', placeholder: 'YYYY-MM-DD', type: 'date' },
-          { label: 'Gender', id: 'gender', placeholder: 'Male/Female', type: 'text' },
+          { label: 'Phone Number', id: 'phone', placeholder: '+94771234567' },
+          { label: 'Date of Birth', id: 'dob', type: 'date' },
+          { label: 'Gender', id: 'gender', placeholder: 'Male/Female' },
           { label: 'Password', id: 'password', placeholder: '••••••', type: 'password' },
           { label: 'Confirm Password', id: 'confirmPassword', placeholder: '••••••', type: 'password' },
         ].map(({ label, id, placeholder, type = 'text' }, index) => (
@@ -126,6 +155,8 @@ export default function SignUPCard() {
                 size="small"
                 value={formData[id]}
                 onChange={handleInputChange}
+                error={!!errors[id]}
+                helperText={errors[id]}
                 sx={{
                   backgroundColor: '#025B8A',
                   color: '#FFFFFF',

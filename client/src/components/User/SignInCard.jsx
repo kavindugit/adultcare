@@ -95,7 +95,7 @@ export default function SignInCard() {
 
       // Make the request
       axios.defaults.withCredentials = true; // Ensure cookies are sent with requests
-      const { data } = await axios.post(`${backendUrl}/api/auth/login`, {
+      const { data } = await axios.post(`http://localhost:4000/api/auth/login`, {
         email,
         password,
       });
