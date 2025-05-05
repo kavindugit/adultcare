@@ -1,0 +1,12 @@
+{
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": { "jsx": true },
+    "requireConfigFile": false
+  },
+  "plugins": ["react", "react-hooks"],
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "settings": { "react": { "version": "detect" } }
+}
