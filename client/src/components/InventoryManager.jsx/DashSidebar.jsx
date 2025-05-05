@@ -22,7 +22,7 @@ export default function DashSidebar() {
       <div
         className={`hidden md:flex fixed inset-y-0 left-0 transform ${isOpen ? 'translate-x-0 w-64' : 'w-20'} md:relative transition-all duration-300 ease-in-out bg-gradient-to-r from-blue-500 via-blue-700 to-indigo-800 shadow-lg h-screen p-4 z-40 flex flex-col`}
       >
-        {/* Collapse Button */}
+        {/* Collapse But*/}
         <button
           className="absolute top-4 right-4 text-white focus:outline-none"
           onClick={() => setIsOpen(!isOpen)}
