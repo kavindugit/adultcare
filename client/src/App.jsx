@@ -17,6 +17,9 @@ import AdminPanel from "./pages/Admin/AdminPanel"
 import AdultProfile from "./pages/User/AdutProfile"
 import UserProfile from "./pages/User/UserProfile"
 import GuardianProfile from "./pages/User/GuardianProfile"
+import NurseProfile from "./pages/User/NurseProfile"
+import CaregiverProfile from "./pages/User/CaregiverProfile"
+
 
 
 
@@ -38,9 +41,12 @@ const App = () => {
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
         <Route path = "/admin" element ={<AdminPanel/>}/>
+        
         <Route path = "/adultprofile" element={<AdultProfile/>}/>
         <Route path = "/guard" element ={<GuardianProfile/>}/>
         <Route path = "/adult" element={<AdultProfile/>}/>
+        <Route path = "/nurse" element={<NurseProfile/>}/>
+        <Route path="/caregiver" element={<CaregiverProfile/>}/>
       
       
 

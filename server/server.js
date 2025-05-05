@@ -13,6 +13,8 @@ import botRouter from './routes/chatbotRoutes.js';
 import guardianRouter from './routes/guardianRoutes.js';
 import registrationRequestRouter from './routes/registrationRequesrRotes.js';
 import docSheduleRouter from './routes/doctorSheduleRoutes.js';
+import nurseRouter from './routes/nurseRoutes.js';
+import caregiverRouter from './routes/caregiverRoutes.js';
 
 
 
@@ -39,6 +41,8 @@ app.use('/api/chatbot', botRouter);
 app.use('/api/guardian', guardianRouter);
 app.use('/api/registration-request' , registrationRequestRouter);
 app.use('/api/shedule', docSheduleRouter);
+app.use('/api/nurse', nurseRouter);
+app.use('/api/caregiver', caregiverRouter)
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
  
