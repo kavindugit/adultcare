@@ -48,13 +48,7 @@ app.use('/api/stock', stockRoute); // Add this line to include logsRouter in the
 app.use('/api/supplier', supplierRoute); // Add this line to include logsRouter in the app
 app.use('/api/restoke', restokeRoute);
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
 
-app.use(cors({origin :allowedOrigins, credentials: true}));
-
-// API endpoints
 
 // app.get('/', (req, res) => res.send('Api Working fine');
 app.use('/api/auth', authRouter);
