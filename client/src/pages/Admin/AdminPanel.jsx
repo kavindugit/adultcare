@@ -17,6 +17,7 @@ import WorkIcon from "@mui/icons-material/Work";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import SecurityIcon from "@mui/icons-material/Security";
 import NotificationsIcon from "@mui/icons-material/Notifications"; // ✅ Add this
+import AddToQueueIcon from '@mui/icons-material/AddToQueue';
 
 // Components for each section
 import Dashboard from "../../components/AdminPanel/Dashboard";
@@ -61,11 +62,13 @@ const AdminPanel = () => {
 
   const menuItems = [
     { id: "dashboard", text: "Dashboard", icon: <DashboardIcon /> },
+    { id: " newRequest", text: "New Request", icon: <AddToQueueIcon /> },
     { id: "users", text: "Users Management", icon: <PeopleIcon /> },
     { id: "employees", text: "Employees", icon: <WorkIcon /> },
     { id: "payments", text: "Payments", icon: <MonetizationOnIcon /> },
     { id: "notifications", text: "Notifications", icon: <NotificationsIcon /> },
     { id: "security", text: "Security Logs", icon: <SecurityIcon /> },
+    
   ];
 
   const renderContent = () => {

@@ -13,6 +13,8 @@ import botRouter from './routes/chatbotRoutes.js';
 import guardianRouter from './routes/guardianRoutes.js';
 import registrationRequestRouter from './routes/registrationRequesrRotes.js';
 import docSheduleRouter from './routes/doctorSheduleRoutes.js';
+import sessionRouter from './routes/sessionRoutes.js';
+import reservationRouter from './routes/reservationRoutes.js';
 
 
 
@@ -28,7 +30,7 @@ app.use(cors({origin :allowedOrigins, credentials: true}));
 
 // API endpoints
 
-app.get('/', (req, res) => res.send('Api Working fine'));
+// app.get('/', (req, res) => res.send('Api Working fine');
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/logs', logsRouter); // Add this line to include logsRouter in the app
@@ -38,7 +40,8 @@ app.use('/api/adult', adultRouter);
 app.use('/api/chatbot', botRouter);
 app.use('/api/guardian', guardianRouter);
 app.use('/api/registration-request' , registrationRequestRouter);
-app.use('/api/shedule', docSheduleRouter);
+app.use('/api/schedule', docSheduleRouter);
+app.use('/api/sessions', sessionRouter);
+app.use('/api/reservation', reservationRouter);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
- 
