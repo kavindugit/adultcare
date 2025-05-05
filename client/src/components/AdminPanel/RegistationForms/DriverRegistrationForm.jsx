@@ -79,11 +79,11 @@ const DriverRegistrationForm = () => {
       toast.error("Please select a gender");
       return false;
     }
-    if (!formData.monthlySalary || isNaN(formData.monthlySalary) || Number(formData.monthlySalary) <= 0) {
+    if (!formData.monthlySalary || isNaN(Number(formData.monthlySalary)) || Number(formData.monthlySalary) <= 0) {
       toast.error("Monthly salary must be a positive number");
       return false;
     }
-    if (!formData.otRate || isNaN(formData.otRate) || Number(formData.otRate) <= 0) {
+    if (!formData.otRate || isNaN(Number(formData.otRate)) || Number(formData.otRate) <= 0) {
       toast.error("OT rate must be a positive number");
       return false;
     }

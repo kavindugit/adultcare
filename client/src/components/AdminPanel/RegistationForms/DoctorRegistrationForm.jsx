@@ -93,11 +93,11 @@ const DoctorRegistrationForm = () => {
       toast.error("Date of Birth is required");
       return false;
     }
-    if (isNaN(formData.yearsOfExperience) || formData.yearsOfExperience < 0) {
+    if (isNaN(Number(formData.yearsOfExperience)) || Number(formData.yearsOfExperience) < 0) {
       toast.error("Years of experience must be a positive number");
       return false;
     }
-    if (isNaN(formData.consultationFee) || formData.consultationFee <= 0) {
+    if (isNaN(Number(formData.consultationFee)) || Number(formData.consultationFee) <= 0) {
       toast.error("Consultation fee must be a positive number");
       return false;
     }
