@@ -16,6 +16,10 @@ import AdminPanel from "./pages/Admin/AdminPanel"
 import AdultProfile from "./pages/User/AdutProfile"
 import UserProfile from "./pages/User/UserProfile"
 import GuardianProfile from "./pages/User/GuardianProfile"
+
+import NurseProfile from "./pages/User/NurseProfile"
+import CaregiverProfile from "./pages/User/CaregiverProfile"
+
 import AdminSessionTable from "./pages/Reservations/AdminSessionTable"
 import Services from "./components/User/Services"
 
@@ -24,6 +28,7 @@ import AddAppointment from "./pages/Reservations/AddAppointment"
 import Booking from "./pages/Reservations/Booking"
 import CreateSessionForm from "./pages/Reservations/CreateSessionForm"
 import RServices from "./pages/Reservations/RServices"
+
 
 
 
@@ -46,9 +51,12 @@ const App = () => {
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
         <Route path = "/admin" element ={<AdminPanel/>}/>
+        
         <Route path = "/adultprofile" element={<AdultProfile/>}/>
         <Route path = "/guard" element ={<GuardianProfile/>}/>
         <Route path = "/adult" element={<AdultProfile/>}/>
+        <Route path = "/nurse" element={<NurseProfile/>}/>
+        <Route path="/caregiver" element={<CaregiverProfile/>}/>
       
       
 
