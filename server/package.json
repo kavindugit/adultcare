@@ -25,9 +25,14 @@
     "nanoid": "^5.1.2",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
+    "qrcode": "^1.5.4"
+
     "twilio": "^5.5.1"
   },
   "devDependencies": {
     "mongodb": "^6.15.0"
+
   }
 }
+
+

@@ -1,0 +1,12 @@
+{
+    "editor.fontSize": 14,
+    "files.autoSave": "onWindowChange",
+    
+    "css.validate": false,
+    "scss.validate": false,
+    "less.validate": false,
+    "stylelint.validate": [],
+    "tailwindCSS.experimental.configFile": "./tailwind.config.js",
+    "tailwindCSS.emmetCompletions": true
+  }
+  
