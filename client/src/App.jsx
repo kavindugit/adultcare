@@ -10,11 +10,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import Gallery from "./pages/Gallery"
 import SignUp from "./pages/Auth/SignUp"
 
+import AdultRegistrationForm from "./pages/Admin/AdultRegistrationForm"
+import DoctorRegistrationForm from "./components/AdminPanel/RegistationForms/DoctorRegistrationForm"
 import EmployeeApplication from "./pages/Admin/EmployeeApplication"
-
+import UserProfile from "./pages/User/UserProfile"
+import Dashboard from "./pages/InventoryManagement/Dashboard"
 import AdminPanel from "./pages/Admin/AdminPanel"
 import AdultProfile from "./pages/User/AdutProfile"
-import UserProfile from "./pages/User/UserProfile"
+
 import GuardianProfile from "./pages/User/GuardianProfile"
 
 import NurseProfile from "./pages/User/NurseProfile"
@@ -23,11 +26,12 @@ import CaregiverProfile from "./pages/User/CaregiverProfile"
 import AdminSessionTable from "./pages/Reservations/AdminSessionTable"
 import Services from "./components/User/Services"
 
-import AdultRegistrationForm from "./pages/Admin/AdultRegistrationForm"
+
 import AddAppointment from "./pages/Reservations/AddAppointment"
 import Booking from "./pages/Reservations/Booking"
 import CreateSessionForm from "./pages/Reservations/CreateSessionForm"
 import RServices from "./pages/Reservations/RServices"
+
 
 
 
@@ -43,13 +47,17 @@ const App = () => {
         <Route path="/" element={<Home/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<SignUp/>} />
-    
         <Route path="/reset-password" element={<ResetPassword/>} />
         <Route path="/gallery" element={<Gallery/>} />
         <Route path="/adult-registration" element={<AdultRegistrationForm/>}/>
     
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
+
+        <Route path = "/inventory-dashboard" element={<Dashboard/>}/>
+
+      
+  
         <Route path = "/admin" element ={<AdminPanel/>}/>
         
         <Route path = "/adultprofile" element={<AdultProfile/>}/>
@@ -66,6 +74,7 @@ const App = () => {
         <Route path = "/admin-session-table" element ={<AdminSessionTable/>}/>
         <Route path = "/createForm" element ={<CreateSessionForm/>}/>
         <Route path = "/add-appointment" element ={<AddAppointment/>}/>
+
 
       </Routes>
     </div>

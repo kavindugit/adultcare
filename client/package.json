@@ -16,7 +16,6 @@
     "@mui/material": "^6.4.7",
     "@mui/x-date-pickers": "^7.28.0",
     "axios": "^1.7.9",
-    "date-fns": "^4.1.0",
     "framer-motion": "^12.4.7",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.475.0",
