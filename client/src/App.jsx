@@ -1,7 +1,6 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
+import React from "react"
+import {AppRouter, Route} from "react-router-dom"
 
 import Home from "./pages/Home"
 import Login from "./pages/Auth/Login"
@@ -12,21 +11,19 @@ import AdultRegistrationForm from "./pages/Admin/adultRegistrationForm"
 import DoctorRegistration from "./pages/Admin/DoctorRegistration"
 import EmployeeApplication from "./pages/Auth/EmployeeApplication"
 import UserProfile from "./pages/UserManagement/userProfile"
-import Parcels from "./Packages/Parcels";
-import UpdateParcel from "./Packages/UpdateParcel";
-import View  from "./Packages/viewpage";
-import AddParcel from "./Packages/AddParcel";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-//import CreatePackages from "./pages/CreatePackage"
+import Index from "./pages/Packages/Index";
 
+const queryClient = new QueryClient();
 
 const App = () => {
 
   return (
-    <>
+    <div>
       <ToastContainer/>
-      <Routes>
+      <AppRouter>
         <Route path="/" element={<Home/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<SignUp/>} />
@@ -37,19 +34,11 @@ const App = () => {
         <Route path="/doctor-registration" element={<DoctorRegistration/>}/>
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
-
-
-
-        <Route path='/AddParcel' element={<AddParcel/>}/>
-        <Route path='/parcels' element={<Parcels/>}/>
-        <Route path='/update/:id' element={<UpdateParcel/>}/>
-        <Route path='/viewpage' element={<View/>}/>
-
-        
-         </Routes>
-    </>
-  );
-};
+        <Route path= "/packages" element ={<Index/>}/>
+      </AppRouter>
+    </div>
+  )
+}
 
    
 export default App;

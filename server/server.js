@@ -29,6 +29,8 @@ app.use("/api/parcels",parcelRouter);
 
 
 
+
+
 app.listen(port, () => console.log(`Server is running on port ${port}`));
  
 
