@@ -10,6 +10,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import Gallery from "./pages/Gallery"
 import SignUp from "./pages/Auth/SignUp"
 
+import AdultRegistrationForm from "./pages/Admin/adultRegistrationForm"
+import DoctorRegistration from "./pages/Admin/DoctorRegistration"
+import EmployeeApplication from "./pages/Auth/EmployeeApplication"
+import UserProfile from "./pages/UserManagement/userProfile"
+import Dashboard from "./pages/InventoryManagement/Dashboard"
+
+
 import EmployeeApplication from "./pages/Admin/EmployeeApplication"
 
 import AdminPanel from "./pages/Admin/AdminPanel"
@@ -34,6 +41,7 @@ import RServices from "./pages/Reservations/RServices"
 
 
 
+
 const App = () => {
 
   return (
@@ -43,13 +51,17 @@ const App = () => {
         <Route path="/" element={<Home/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<SignUp/>} />
-    
         <Route path="/reset-password" element={<ResetPassword/>} />
         <Route path="/gallery" element={<Gallery/>} />
         <Route path="/adult-registration" element={<AdultRegistrationForm/>}/>
     
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
+
+        <Route path = "/inventory-dashboard" element={<Dashboard/>}/>
+
+      
+  
         <Route path = "/admin" element ={<AdminPanel/>}/>
         
         <Route path = "/adultprofile" element={<AdultProfile/>}/>
@@ -66,6 +78,7 @@ const App = () => {
         <Route path = "/admin-session-table" element ={<AdminSessionTable/>}/>
         <Route path = "/createForm" element ={<CreateSessionForm/>}/>
         <Route path = "/add-appointment" element ={<AddAppointment/>}/>
+
 
       </Routes>
     </div>
