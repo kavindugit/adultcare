@@ -4,7 +4,7 @@ import { assignDoctorSession, getDoctorAvailability } from "../controllers/Docto
 
 const docSheduleRouter = express.Router();
 
-docSheduleRouter.get("/fulltime/availability/:doctorId", getDoctorAvailability);
+docSheduleRouter.get("/fulltime/availability", getDoctorAvailability);
 docSheduleRouter.post("/fulltime/assign", assignDoctorSession);
 
 export default docSheduleRouter;

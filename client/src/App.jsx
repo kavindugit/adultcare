@@ -58,7 +58,6 @@ const App = () => {
         <Route path = "/admin-session-table" element ={<AdminSessionTable/>}/>
         <Route path = "/createForm" element ={<CreateSessionForm/>}/>
         <Route path = "/add-appointment" element ={<AddAppointment/>}/>
-        {/* <Route path="/upcomingBooking" element ={<UpcomingBooking/>}/> */}
 
       </Routes>
     </div>

@@ -28,51 +28,59 @@ const weekdaysMap = {
 
 const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
+
 export const getDoctorAvailability = async (req, res) => {
   try {
-    const { doctorId } = req.params;
+    const doctors = await DoctorModel.find({ availableWorkingHours: "Full Time" });
+   
 
-    // ✅ Lookup by userId instead of MongoDB _id
-    const doctor = await DoctorModel.findOne({ userId: doctorId });
-    if (!doctor || doctor.availableWorkingHours !== "Full Time") {
-      return res.status(400).json({ message: "Doctor not found or not Full-Time" });
-    }
-
-    const today = dayjs().startOf('week').add(1, 'day'); // Monday
-    const weekDates = Array.from({ length: 5 }, (_, i) => today.add(i, 'day'));
-
+    const today = dayjs().startOf("week").add(1, "day"); // Monday
+    const weekDates = Array.from({ length: 5 }, (_, i) => today.add(i, "day"));
     const startDate = weekDates[0].toDate();
-    const endDate = weekDates[4].endOf('day').toDate();
+    const endDate = weekDates[4].endOf("day").toDate();
 
-    const sessions = await FullTimeScheduleModel.find({
-      doctorId: doctor.userId, // now use Mongo ID to query schedule
-      date: { $gte: startDate, $lte: endDate }
-    });
+    const doctorAvailabilityList = [];
 
-    const availabilityMap = {};
+    for (const doctor of doctors) {
+      const user = await UserModel.findOne({ userId: doctor.userId });
+      const sessions = await FullTimeScheduleModel.find({
+        doctorId: doctor.userId,
+        date: { $gte: startDate, $lte: endDate },
+      });
 
-    for (let i = 0; i < 5; i++) {
-      const day = weekdays[i];
-      const currentDate = weekDates[i].format("YYYY-MM-DD");
+      const availabilityMap = {};
 
-      const bookedSlots = sessions
-        .filter(s => dayjs(s.date).format("YYYY-MM-DD") === currentDate)
-        .map(s => s.timeSlot);
+      for (let i = 0; i < 5; i++) {
+        const day = weekdays[i];
+        const currentDate = weekDates[i].format("YYYY-MM-DD");
 
-      const availableSlots = FULL_DAY_SLOTS.filter(slot => !bookedSlots.includes(slot));
+        const bookedSlots = sessions
+          .filter(s => dayjs(s.date).format("YYYY-MM-DD") === currentDate)
+          .map(s => s.timeSlot);
 
-      availabilityMap[day] = {
-        booked: bookedSlots,
-        available: availableSlots
-      };
+        const availableSlots = FULL_DAY_SLOTS.filter(slot => !bookedSlots.includes(slot));
+
+        availabilityMap[day] = {
+          booked: bookedSlots,
+          available: availableSlots,
+        };
+      }
+
+      doctorAvailabilityList.push({
+        doctorId: doctor.userId,
+        doctorName: user.fullName,
+        specialization: doctor.specialization,
+        availability: availabilityMap,
+      });
     }
 
-    res.json({ doctorId, availability: availabilityMap });
+    res.json(doctorAvailabilityList);
   } catch (err) {
     console.error("Availability Error:", err);
     res.status(500).json({ message: "Server error fetching availability" });
   }
 };
+
 
 export const assignDoctorSession = async (req, res) => {
     try {
