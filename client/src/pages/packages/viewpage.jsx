@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
+import { AppContent } from '../../context/AppContext';
 
 const Parcels = () => {
+  const { userData } = useContext(AppContent);
   const [apiData, setApiData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -27,9 +29,27 @@ const Parcels = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleSelect = (parcel) => {
-    alert(`You selected: ${parcel.name}`);
-    console.log("Selected Package:", parcel);
+  const handleSelect = async (parcel) => {
+    if (!userData?.userId) {
+      alert("User not logged in.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:4000/api/packages/request", {
+        guardianId: userData.userId,
+        packageId: parcel._id
+      });
+
+      if (response.status === 201) {
+        alert("Package request sent successfully!");
+      } else {
+        alert("Failed to send package request.");
+      }
+    } catch (error) {
+      console.error("Error sending package request:", error);
+      alert("An error occurred while sending the request.");
+    }
   };
 
   const filteredParcels = apiData.filter((parcel) =>
@@ -42,7 +62,6 @@ const Parcels = () => {
       <div className="max-w-7xl mx-auto p-6 bg-blue-100 rounded-lg shadow-xl">
         <h1 className="text-5xl font-bold text-blue-900 text-center mb-6">Packages</h1>
 
-        {/* Search Bar */}
         <div className="mb-6 flex justify-center">
           <input
             type="text"
@@ -53,7 +72,6 @@ const Parcels = () => {
           />
         </div>
 
-        {/* Parcels Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredParcels.length > 0 ? (
             filteredParcels.map((parcel) => (
@@ -61,7 +79,6 @@ const Parcels = () => {
                 key={parcel._id}
                 className="bg-white p-4 border border-blue-300 rounded-xl shadow-xl hover:shadow-blue-500/50 transition-transform duration-300 hover:-translate-y-1"
               >
-                {/* Image section */}
                 {parcel.image ? (
                   <img
                     src={`http://localhost:4000/uploads/${parcel.image}`}
@@ -89,20 +106,17 @@ const Parcels = () => {
                   LKR {parcel.price}
                 </p>
 
-                {/* Roles */}
                 <div className="text-xs text-gray-700 mb-2 space-y-1">
                   {parcel.roles?.caregivers && <p>👩‍⚕️ Caregivers: Included</p>}
                   {parcel.roles?.nurses && <p>🧑‍⚕️ Nurses: Included</p>}
                   {parcel.roles?.doctors && <p>👨‍⚕️ Doctors: Included</p>}
                 </div>
 
-                {/* Extra Services */}
                 <div className="text-xs text-gray-700 space-y-1">
                   {parcel.extraServices?.transport && <p>🚗 Transport: Included</p>}
                   {parcel.extraServices?.extraCaregiverAssignments && <p>🤝 Extra Caregiver: Included</p>}
                 </div>
 
-                {/* Select Button */}
                 <button
                   onClick={() => handleSelect(parcel)}
                   className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"

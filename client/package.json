@@ -17,6 +17,7 @@
     "@mui/x-date-pickers": "^7.28.0",
     "axios": "^1.7.9",
     "framer-motion": "^12.4.7",
+    "jspdf": "^3.0.1",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.475.0",
     "marked": "^15.0.8",

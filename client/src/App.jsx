@@ -31,6 +31,7 @@ import AddAppointment from "./pages/Reservations/AddAppointment"
 import Booking from "./pages/Reservations/Booking"
 import CreateSessionForm from "./pages/Reservations/CreateSessionForm"
 import RServices from "./pages/Reservations/RServices"
+import Parcels from "./pages/packages/viewpage"
 
 
 
@@ -74,6 +75,9 @@ const App = () => {
         <Route path = "/admin-session-table" element ={<AdminSessionTable/>}/>
         <Route path = "/createForm" element ={<CreateSessionForm/>}/>
         <Route path = "/add-appointment" element ={<AddAppointment/>}/>
+
+        <Route path = "/packages" element ={<Parcels/>}/>
+        
 
 
       </Routes>

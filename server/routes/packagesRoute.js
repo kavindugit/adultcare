@@ -5,9 +5,14 @@ import {
   getParcel,
   updateParcel,
   deleteParcel,
+  createPackageRequest,
+  getPendingPackageRequests,
 } from "../controllers/parcelController.js"; 
 
 const parcelRouter = express.Router();
+
+parcelRouter.post("/request", createPackageRequest);
+parcelRouter.get("/pending", getPendingPackageRequests);
 
 // Route to get all parcels
 parcelRouter.get("/all", getAllParcels);
@@ -23,5 +28,7 @@ parcelRouter.put("/:id", updateParcel);
 
 // Route to delete a parcel by id
 parcelRouter.delete("/:id", deleteParcel);
+
+
 
 export default parcelRouter;
