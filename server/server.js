@@ -46,7 +46,7 @@ app.use('/api/supplier', supplierRoute); // Add this line to include logsRouter 
 app.use('/api/restoke', restokeRoute);
 
 
-// API endpoints
+
 
 // app.get('/', (req, res) => res.send('Api Working fine');
 app.use('/api/auth', authRouter);
