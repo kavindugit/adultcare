@@ -22,9 +22,7 @@ import caregiverRouter from './routes/caregiverRoutes.js';
 
 import sessionRouter from './routes/sessionRoutes.js';
 import reservationRouter from './routes/reservationRoutes.js';
-
-
-
+import parcelRouter from './routes/packagesRoute.js';
 
 
 const app = express();
@@ -48,13 +46,8 @@ app.use('/api/stock', stockRoute); // Add this line to include logsRouter in the
 app.use('/api/supplier', supplierRoute); // Add this line to include logsRouter in the app
 app.use('/api/restoke', restokeRoute);
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
 
-app.use(cors({origin :allowedOrigins, credentials: true}));
 
-// API endpoints
 
 // app.get('/', (req, res) => res.send('Api Working fine');
 app.use('/api/auth', authRouter);
@@ -74,6 +67,7 @@ app.use('/api/caregiver', caregiverRouter)
 app.use('/api/schedule', docSheduleRouter);
 app.use('/api/sessions', sessionRouter);
 app.use('/api/reservation', reservationRouter);
+app.use('/api/packages', parcelRouter); // Add this line to include parcelRouter in the app')
 
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));

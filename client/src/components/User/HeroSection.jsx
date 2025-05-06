@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
+  const navigate = useNavigate(); // 🧭 create navigate function
+
   return (
     <section className="relative w-full h-screen flex items-center justify-center bg-gray-900">
       {/* Background Image */}
@@ -24,10 +27,12 @@ const HeroSection = () => {
 
         {/* Button Group */}
         <div className="mt-6 flex flex-wrap justify-center gap-4">
-          <button className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 px-6 rounded-full text-lg shadow-md transition duration-300">
-          Explore Care Packages
-          </button>   
-          
+          <button
+            onClick={() => navigate("/packages")}
+            className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 px-6 rounded-full text-lg shadow-md transition duration-300"
+          >
+            Explore Care Packages
+          </button>
         </div>
       </div>
     </section>
