@@ -16,16 +16,17 @@ import PeopleIcon from "@mui/icons-material/People";
 import WorkIcon from "@mui/icons-material/Work";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import SecurityIcon from "@mui/icons-material/Security";
-import NotificationsIcon from "@mui/icons-material/Notifications"; // ✅ Add this
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import AddToQueueIcon from '@mui/icons-material/AddToQueue';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
-// Components for each section
+// Components
 import Dashboard from "../../components/AdminPanel/Dashboard";
 import UsersManagement from "../../components/AdminPanel/UsersManagement";
 import EmployeeManagement from "../../components/AdminPanel/EmployeeManagement";
-
 import SecurityLogs from "../../components/AdminPanel/SecurityLogs";
 import NotificationManagement from "../../components/AdminPanel/NotificationManagement";
+import PackageSection from "../../components/AdminPanel/PackageSection";
 
 // Styled Components
 const Sidebar = styled(Box)(({ theme }) => ({
@@ -35,7 +36,7 @@ const Sidebar = styled(Box)(({ theme }) => ({
   height: "100vh",
   padding: theme.spacing(2),
   transition: "transform 0.3s ease-in-out",
-  position: "fixed", // Fixed position for smooth transitions
+  position: "fixed",
   left: 0,
   top: 0,
   zIndex: 1000,
@@ -45,7 +46,7 @@ const MainContent = styled(Box)(({ theme }) => ({
   flex: 1,
   backgroundColor: "#F5F5F5",
   padding: theme.spacing(4),
-  marginLeft: "250px", // Default margin for sidebar
+  marginLeft: "250px",
   transition: "margin-left 0.3s ease-in-out",
 }));
 
@@ -53,22 +54,21 @@ const AdminPanel = () => {
   const [activeSection, setActiveSection] = React.useState("dashboard");
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(true);
 
-  // Dummy admin data (replace with actual data from your backend)
   const admin = {
     name: "John Doe",
     role: "Super Admin",
-    image: "https://via.placeholder.com/150", // Replace with actual image URL
+    image: "https://via.placeholder.com/150",
   };
 
   const menuItems = [
     { id: "dashboard", text: "Dashboard", icon: <DashboardIcon /> },
-    { id: " newRequest", text: "New Request", icon: <AddToQueueIcon /> },
+    { id: "newRequest", text: "New Request", icon: <AddToQueueIcon /> },
     { id: "users", text: "Users Management", icon: <PeopleIcon /> },
     { id: "employees", text: "Employees", icon: <WorkIcon /> },
+    { id: "packages", text: "Packages", icon: <LocalShippingIcon /> }, // ✅ updated icon
     { id: "payments", text: "Payments", icon: <MonetizationOnIcon /> },
     { id: "notifications", text: "Notifications", icon: <NotificationsIcon /> },
     { id: "security", text: "Security Logs", icon: <SecurityIcon /> },
-    
   ];
 
   const renderContent = () => {
@@ -80,9 +80,11 @@ const AdminPanel = () => {
       case "employees":
         return <EmployeeManagement />;
       case "notifications":
-        return <NotificationManagement/>;
+        return <NotificationManagement />;
       case "security":
-        return<SecurityLogs/>;
+        return <SecurityLogs />;
+      case "packages":
+        return <PackageSection />; // ✅ load new tabbed packages section
       default:
         return <Typography variant="h4">Welcome to Admin Panel</Typography>;
     }
@@ -96,7 +98,7 @@ const AdminPanel = () => {
           transform: isSidebarVisible ? "translateX(0)" : "translateX(-100%)",
         }}
       >
-        {/* Admin Profile Section */}
+        {/* Admin Info */}
         <Box
           sx={{
             display: "flex",
@@ -121,16 +123,15 @@ const AdminPanel = () => {
 
         <Divider sx={{ backgroundColor: "#FFFFFF", mb: 2 }} />
 
-        {/* Sidebar Menu */}
+        {/* Sidebar Items */}
         <List>
           {menuItems.map((item) => (
             <ListItem
-              button
+              component="button"
               key={item.id}
               onClick={() => setActiveSection(item.id)}
               sx={{
-                backgroundColor:
-                  activeSection === item.id ? "#0F151D" : "transparent",
+                backgroundColor: activeSection === item.id ? "#0F151D" : "transparent",
                 borderRadius: 1,
                 mb: 1,
                 "&:hover": { backgroundColor: "#0F151D" },
@@ -143,24 +144,16 @@ const AdminPanel = () => {
         </List>
       </Sidebar>
 
-      {/* Main Content */}
-      <MainContent
-        sx={{
-          marginLeft: isSidebarVisible ? "250px" : "0",
-        }}
-      >
-        {/* Toggle Sidebar Button */}
+      {/* Main Panel */}
+      <MainContent sx={{ marginLeft: isSidebarVisible ? "250px" : "0" }}>
+        {/* Sidebar Toggle */}
         <Box sx={{ mb: 2 }}>
-          <Button
-            variant="contained"
-            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
-          >
+          <Button variant="contained" onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
             {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
           </Button>
-          
         </Box>
 
-        {/* Content */}
+        {/* Content Area */}
         <Box
           sx={{
             backgroundColor: "#FFFFFF",

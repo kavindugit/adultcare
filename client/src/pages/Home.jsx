@@ -1,5 +1,6 @@
 // Home.jsx
 
+import React from "react";
 import AboutUs from "../components/User/AboutUs";
 import ChatBotWidget from "../components/User/ChatBotWidget";
 import ContactUs from "../components/User/ContactUs";
