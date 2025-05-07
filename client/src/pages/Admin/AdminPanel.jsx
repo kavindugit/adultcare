@@ -17,8 +17,8 @@ import WorkIcon from "@mui/icons-material/Work";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import SecurityIcon from "@mui/icons-material/Security";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import AddToQueueIcon from '@mui/icons-material/AddToQueue';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import AddToQueueIcon from "@mui/icons-material/AddToQueue";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
 // Components
 import Dashboard from "../../components/AdminPanel/Dashboard";
@@ -26,7 +26,8 @@ import UsersManagement from "../../components/AdminPanel/UsersManagement";
 import EmployeeManagement from "../../components/AdminPanel/EmployeeManagement";
 import SecurityLogs from "../../components/AdminPanel/SecurityLogs";
 import NotificationManagement from "../../components/AdminPanel/NotificationManagement";
-import PackageSection from "../../components/AdminPanel/PackageSection";
+import PackageSection from  "../../components/AdminPanel/PackageSection";
+import AdminSessionTable from "../Reservations/AdminSessionTable"; // ✅ Import tabbed sessions component
 
 // Styled Components
 const Sidebar = styled(Box)(({ theme }) => ({
@@ -62,10 +63,10 @@ const AdminPanel = () => {
 
   const menuItems = [
     { id: "dashboard", text: "Dashboard", icon: <DashboardIcon /> },
-    { id: "newRequest", text: "New Request", icon: <AddToQueueIcon /> },
     { id: "users", text: "Users Management", icon: <PeopleIcon /> },
     { id: "employees", text: "Employees", icon: <WorkIcon /> },
-    { id: "packages", text: "Packages", icon: <LocalShippingIcon /> }, // ✅ updated icon
+    { id: "sessions", text: "Sessions", icon: <WorkIcon /> },
+    { id: "packages", text: "Packages", icon: <LocalShippingIcon /> },
     { id: "payments", text: "Payments", icon: <MonetizationOnIcon /> },
     { id: "notifications", text: "Notifications", icon: <NotificationsIcon /> },
     { id: "security", text: "Security Logs", icon: <SecurityIcon /> },
@@ -84,7 +85,9 @@ const AdminPanel = () => {
       case "security":
         return <SecurityLogs />;
       case "packages":
-        return <PackageSection />; // ✅ load new tabbed packages section
+        return <PackageSection />;
+      case "sessions":
+        return <AdminSessionTable />; // ✅ use tabbed sessions component
       default:
         return <Typography variant="h4">Welcome to Admin Panel</Typography>;
     }
@@ -146,14 +149,12 @@ const AdminPanel = () => {
 
       {/* Main Panel */}
       <MainContent sx={{ marginLeft: isSidebarVisible ? "250px" : "0" }}>
-        {/* Sidebar Toggle */}
         <Box sx={{ mb: 2 }}>
           <Button variant="contained" onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
             {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
           </Button>
         </Box>
 
-        {/* Content Area */}
         <Box
           sx={{
             backgroundColor: "#FFFFFF",

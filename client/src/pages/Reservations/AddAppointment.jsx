@@ -299,21 +299,7 @@ const AddAppointment = () => {
               />
             </div>
 
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <Clock size={18} className="text-blue-500" />
-                <span>Preferred Slot</span>
-              </label>
-              <input
-                type="text"
-                name="slot"
-                placeholder="e.g. 10:00 AM"
-                value={formData.slot}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200"
-                required
-              />
-            </div>
+          
           </div>
         </div>
 

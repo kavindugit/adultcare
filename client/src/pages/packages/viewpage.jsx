@@ -36,9 +36,12 @@ const ViewPage = () => {
     }
 
     try {
+      console.error(userData, parcel)
       const response = await axios.post("http://localhost:4000/api/packages/request", {
         guardianId: userData.userId,
-        packageId: parcel._id
+        packageId: parcel._id,
+        duration: parcel.duration,
+        packageType: parcel.name 
       });
 
       if (response.status === 201) {

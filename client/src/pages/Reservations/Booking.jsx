@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -12,6 +13,10 @@ import {
   CardContent,
   Chip,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import {
   Calendar,
@@ -72,6 +77,17 @@ const Booking = () => {
       minute: "2-digit",
     });
   };
+
+  const [openContactDialog, setOpenContactDialog] = useState(false);
+
+const handleContactOpen = () => {
+  setOpenContactDialog(true);
+};
+
+const handleContactClose = () => {
+  setOpenContactDialog(false);
+};
+
 
   return (
     <Box
@@ -152,8 +168,8 @@ const Booking = () => {
                   >
                     View and manage your upcoming care sessions. Schedule services that match your needs with our experienced professionals.
                   </Typography>
-                  
-                  <Button
+                  <Link to="/add-appointment">
+            <Button
                     variant="contained"
                     size="large"
                     sx={{
@@ -171,6 +187,8 @@ const Booking = () => {
                   >
                     Book New Service
                   </Button>
+</Link>
+        
                 </motion.div>
               </Box>
             </Grid>
@@ -257,18 +275,6 @@ const Booking = () => {
                     Available Services
                   </Typography>
                 </Box>
-                
-                <Button
-                  size="small"
-                  sx={{
-                    borderRadius: 2,
-                    fontWeight: 600,
-                    textTransform: "none",
-                    color: theme.palette.primary.main,
-                  }}
-                >
-                  View All
-                </Button>
               </Box>
 
               <CardContent sx={{ p: 0 }}>
@@ -342,23 +348,7 @@ const Booking = () => {
                           <Typography variant="body2" color="text.secondary">
                             {service.description}
                           </Typography>
-                          <Button
-                            size="small"
-                            sx={{
-                              mt: 1,
-                              pl: 0,
-                              minWidth: 0,
-                              color: service.color,
-                              textTransform: "none",
-                              fontWeight: 600,
-                              "&:hover": {
-                                backgroundColor: "transparent",
-                                textDecoration: "underline",
-                              },
-                            }}
-                          >
-                            Book Now
-                          </Button>
+                          
                         </Box>
                       </Box>
                     </Grid>
@@ -402,23 +392,43 @@ const Booking = () => {
                     </Typography>
                     
                     <Box display="flex" alignItems="center">
-                      <Button
-                        variant="contained"
-                        size="large"
-                        sx={{
-                          backgroundColor: "white",
-                          color: "#2563eb",
-                          fontWeight: 600,
-                          borderRadius: 2,
-                          '&:hover': {
-                            backgroundColor: "rgba(255,255,255,0.9)",
-                          },
-                          mr: 2,
-                        }}
-                      >
-                        Contact Us
-                      </Button>
-                      
+                    {/* Contact Us Button */}
+<Button
+  variant="contained"
+  size="large"
+  sx={{
+    backgroundColor: "white",
+    color: "#2563eb",
+    fontWeight: 600,
+    borderRadius: 2,
+    '&:hover': {
+      backgroundColor: "rgba(255,255,255,0.9)",
+    },
+    mr: 2,
+  }}
+  onClick={handleContactOpen}
+>
+  Contact Us
+</Button>
+
+{/* Dialog should NOT be inside the Button */}
+<Dialog open={openContactDialog} onClose={handleContactClose}>
+  <DialogTitle>Contact Us</DialogTitle>
+  <DialogContent dividers>
+    <Typography variant="body1">
+      📞 Call us at: <strong>(555) 123-4567</strong><br />
+      🕒 We’re available 24/7 for your care needs.
+    </Typography>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleContactClose} color="primary">
+      Close
+    </Button>
+  </DialogActions>
+</Dialog>
+
+
+                      <Link to="/services">
                       <Button
                         variant="outlined"
                         size="large"
@@ -435,6 +445,7 @@ const Booking = () => {
                       >
                         Learn More
                       </Button>
+                      </Link>
                     </Box>
                   </Grid>
                   
