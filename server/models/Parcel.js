@@ -4,7 +4,7 @@ const parcelSchema = new mongoose.Schema({
   id: {
     type: String,
     required: true,
-    unique: true, // Ensure the ID is unique
+    unique: true,
   },
   name: {
     type: String,
@@ -22,31 +22,35 @@ const parcelSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  imageUrl: {
+    type: String,
+    default: "",
+  },
   roles: {
     caregivers: {
       type: Boolean,
-      default: true, 
+      default: true,
     },
     nurses: {
       type: Boolean,
-      default: true, 
+      default: true,
     },
     doctors: {
       type: Boolean,
-      default: true, 
+      default: true,
     },
   },
   extraServices: {
     transport: {
       type: Boolean,
-      default: false, 
+      default: false,
     },
     extraCaregiverAssignments: {
       type: Boolean,
-      default: false, 
+      default: false,
     },
   },
-}, { timestamps: true }); // Timestamps will create createdAt and updatedAt fields automatically
+}, { timestamps: true });
 
 const Parcel = mongoose.model("Parcel", parcelSchema);
 

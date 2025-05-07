@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AppContent } from '../../context/AppContext';
 
-const Parcels = () => {
+const ViewPage = () => {
   const { userData } = useContext(AppContent);
   const [apiData, setApiData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,9 +79,9 @@ const Parcels = () => {
                 key={parcel._id}
                 className="bg-white p-4 border border-blue-300 rounded-xl shadow-xl hover:shadow-blue-500/50 transition-transform duration-300 hover:-translate-y-1"
               >
-                {parcel.image ? (
+                {parcel.imageUrl ? (
                   <img
-                    src={`http://localhost:4000/uploads/${parcel.image}`}
+                    src={parcel.imageUrl}
                     alt={parcel.name}
                     className="w-full h-40 object-cover rounded-lg mb-4"
                   />
@@ -141,4 +141,4 @@ const Parcels = () => {
   );
 };
 
-export default Parcels;
+export default ViewPage;

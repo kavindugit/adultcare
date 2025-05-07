@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
 
 const ParcelsAdmin = () => {
   const [apiData, setApiData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate(); // ✅ Initialize navigate
 
   useEffect(() => {
     fetchData();
@@ -47,8 +49,7 @@ const ParcelsAdmin = () => {
   };
 
   const handleUpdate = (id) => {
-    window.alert(`Navigate to Update Form for Package ID: ${id}`);
-    // You can later replace this with modal or page redirection
+    navigate(`/update/${id}`); // ✅ Navigate to update page with package ID
   };
 
   const filteredParcels = apiData.filter((parcel) =>
@@ -66,12 +67,7 @@ const ParcelsAdmin = () => {
       doc.text(`Description: ${parcel.description}`, 14, y + 20);
       doc.text(`Duration: ${parcel.duration} days`, 14, y + 30);
       doc.text(`Price: LKR ${parcel.price}`, 14, y + 40);
-      doc.text(`Caregivers: ${parcel.roles.caregivers ? 'Included' : 'Not Included'}`, 14, y + 50);
-      doc.text(`Nurses: ${parcel.roles.nurses ? 'Included' : 'Not Included'}`, 14, y + 60);
-      doc.text(`Doctors: ${parcel.roles.doctors ? 'Included' : 'Not Included'}`, 14, y + 70);
-      doc.text(`Transport: ${parcel.extraServices.transport ? 'Included' : 'Not Included'}`, 14, y + 80);
-      doc.text(`Extra Caregiver Assignments: ${parcel.extraServices.extraCaregiverAssignments ? 'Included' : 'Not Included'}`, 14, y + 90);
-      y += 100;
+      y += 50;
     });
     doc.save('parcels-report.pdf');
   };
@@ -80,7 +76,6 @@ const ParcelsAdmin = () => {
     <div className="bg-white rounded-lg shadow-md p-6">
       <h1 className="text-2xl font-bold text-blue-700 text-center mb-6">All Care Packages</h1>
 
-      {/* Search */}
       <div className="mb-4">
         <input
           type="text"
@@ -91,7 +86,6 @@ const ParcelsAdmin = () => {
         />
       </div>
 
-      {/* PDF Button */}
       <div className="text-right mb-6">
         <button
           onClick={generatePDF}
@@ -101,7 +95,6 @@ const ParcelsAdmin = () => {
         </button>
       </div>
 
-      {/* Packages Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredParcels.length > 0 ? (
           filteredParcels.map((parcel) => (
@@ -110,14 +103,6 @@ const ParcelsAdmin = () => {
               <p className="text-sm text-gray-600 mt-1">{parcel.description}</p>
               <p className="text-sm text-gray-600 mt-1">Duration: {parcel.duration} days</p>
               <p className="text-lg font-bold text-blue-700 mt-1">LKR {parcel.price}</p>
-
-              <div className="text-sm text-gray-600 mt-2 space-y-1">
-                {parcel.roles.caregivers && <p>✔ Caregivers Included</p>}
-                {parcel.roles.nurses && <p>✔ Nurses Included</p>}
-                {parcel.roles.doctors && <p>✔ Doctors Included</p>}
-                {parcel.extraServices.transport && <p>🚗 Transport Included</p>}
-                {parcel.extraServices.extraCaregiverAssignments && <p>👥 Extra Caregiver Assignments</p>}
-              </div>
 
               <div className="flex justify-between mt-4">
                 <button

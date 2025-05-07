@@ -8,6 +8,7 @@ const AddParcel = () => {
     description: '',
     duration: '',
     price: '',
+    imageUrl: '', // Added image URL
     roles: {
       caregivers: true,
       nurses: true,
@@ -81,6 +82,7 @@ const AddParcel = () => {
           description: '',
           duration: '',
           price: '',
+          imageUrl: '',
           roles: {
             caregivers: true,
             nurses: true,
@@ -113,7 +115,6 @@ const AddParcel = () => {
       <h1 className="text-2xl font-bold text-blue-700 text-center mb-6">Add a New Package</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-        {/* Package ID */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <label htmlFor="id" className="text-sm font-medium text-blue-700 w-40">Package ID</label>
           <input
@@ -126,7 +127,6 @@ const AddParcel = () => {
           />
         </div>
 
-        {/* Name */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <label htmlFor="name" className="text-sm font-medium text-blue-700 w-40">Package Name</label>
           <input
@@ -140,7 +140,6 @@ const AddParcel = () => {
           {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
         </div>
 
-        {/* Description */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <label htmlFor="description" className="text-sm font-medium text-blue-700 w-40">Description</label>
           <input
@@ -154,7 +153,6 @@ const AddParcel = () => {
           {errors.description && <span className="text-red-500 text-sm">{errors.description}</span>}
         </div>
 
-        {/* Duration */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <label htmlFor="duration" className="text-sm font-medium text-blue-700 w-40">Duration (days)</label>
           <input
@@ -168,7 +166,6 @@ const AddParcel = () => {
           {errors.duration && <span className="text-red-500 text-sm">{errors.duration}</span>}
         </div>
 
-        {/* Price */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <label htmlFor="price" className="text-sm font-medium text-blue-700 w-40">Price (LKR)</label>
           <input
@@ -182,11 +179,22 @@ const AddParcel = () => {
           {errors.price && <span className="text-red-500 text-sm">{errors.price}</span>}
         </div>
 
-        {/* Roles */}
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <label htmlFor="imageUrl" className="text-sm font-medium text-blue-700 w-40">Image URL</label>
+          <input
+            type="text"
+            name="imageUrl"
+            id="imageUrl"
+            value={formData.imageUrl}
+            onChange={handleChange}
+            className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
         <div>
           <p className="text-sm font-medium text-blue-700 mb-1">Roles (Included)</p>
           <div className="flex gap-6 flex-wrap">
-            {["caregivers", "nurses", "doctors"].map((role) => (
+            {['caregivers', 'nurses', 'doctors'].map((role) => (
               <label key={role} className="text-sm text-gray-600">
                 <input
                   type="checkbox"
@@ -201,11 +209,10 @@ const AddParcel = () => {
           </div>
         </div>
 
-        {/* Extra Services */}
         <div>
           <p className="text-sm font-medium text-blue-700 mb-1">Extra Services</p>
           <div className="flex gap-6 flex-wrap">
-            {["transport", "extraCaregiverAssignments"].map((service) => (
+            {['transport', 'extraCaregiverAssignments'].map((service) => (
               <label key={service} className="text-sm text-gray-600">
                 <input
                   type="checkbox"
@@ -214,19 +221,18 @@ const AddParcel = () => {
                   onChange={handleChange}
                   className="mr-2"
                 />
-                {service === "transport" ? "Transport" : "Extra Caregiver Assignments"}
+                {service === 'transport' ? 'Transport' : 'Extra Caregiver Assignments'}
               </label>
             ))}
           </div>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
           disabled={loading}
         >
-          {loading ? "Adding..." : "Add Package"}
+          {loading ? 'Adding...' : 'Add Package'}
         </button>
       </form>
     </div>
