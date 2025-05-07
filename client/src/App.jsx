@@ -32,6 +32,8 @@ import Booking from "./pages/Reservations/Booking"
 import CreateSessionForm from "./pages/Reservations/CreateSessionForm"
 import RServices from "./pages/Reservations/RServices"
 import Parcels from "./pages/packages/viewpage"
+import UpdateParcel from "./pages/packages/UpdateParcel";
+
 
 
 
@@ -77,6 +79,8 @@ const App = () => {
         <Route path = "/add-appointment" element ={<AddAppointment/>}/>
 
         <Route path = "/packages" element ={<Parcels/>}/>
+        <Route path="/update/:id" element={<UpdateParcel />} />
+
         
 
 
