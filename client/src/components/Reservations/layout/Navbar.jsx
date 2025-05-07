@@ -36,7 +36,7 @@ const Navbar = () => {
 
   const navLinks = userData?.isAdmin ?[
     { path: "/", label: "Home", icon: <Home size={18} /> },
-    { path: "/services", label: "Services", icon: <CalendarClock size={18} /> },
+    { path: "/rservices", label: "Services", icon: <CalendarClock size={18} /> },
     { path: "/admin-session-table", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
   ]:[
     { path: "/", label: "Home", icon: <Home size={18} /> },

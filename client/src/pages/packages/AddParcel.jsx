@@ -142,17 +142,22 @@ const AddParcel = () => {
 
         {/* Description */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-          <label htmlFor="description" className="text-sm font-medium text-blue-700 w-40">Description</label>
-          <input
-            type="text"
-            name="description"
-            id="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.description && <span className="text-red-500 text-sm">{errors.description}</span>}
-        </div>
+  <label htmlFor="description" className="text-sm font-medium text-blue-700 w-40">
+    Description
+  </label>
+  <textarea
+    name="description"
+    id="description"
+    value={formData.description}
+    onChange={handleChange}
+    rows={4}
+    className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 resize-y"
+  />
+  {errors.description && (
+    <span className="text-red-500 text-sm">{errors.description}</span>
+  )}
+</div>
+
 
         {/* Duration */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">

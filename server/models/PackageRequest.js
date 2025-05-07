@@ -13,6 +13,14 @@ const PackageRequestSchema = new mongoose.Schema({
     type: String,
     enum: ["pending", "approved", "rejected"],
     default: "pending",
+  },
+  duration: {
+    type: Number,
+    required: true,
+  },
+  packageType: {
+    type: String,
+    required: true,
   }
 }, { timestamps: true });
 

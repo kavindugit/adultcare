@@ -39,7 +39,7 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 
 // API endpoints
-app.get('/', (req, res) => res.send('API Working fine'));
+
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/stock', stockRoute); // Add this line to include logsRouter in the app

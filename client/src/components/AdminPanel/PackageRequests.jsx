@@ -16,6 +16,7 @@ const PackageRequests = () => {
       const response = await axios.get("http://localhost:4000/api/packages/pending");
       if (response.status === 200) {
         setRequests(response.data.data);
+        console.error(response.data.data)
       } else {
         setError("Failed to fetch package requests.");
       }
