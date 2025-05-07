@@ -362,14 +362,12 @@ const CaregiverProfile = () => {
             <Tab label="Reviews" id="tab-2" />
           </Tabs>
         </Box>
-      </Container>
 
         {/* Tab Content */}
         <Box sx={{ pb: 4 }}>
-        </Box>
           {/* Tab 1: Profile */}
           {activeTab === 0 && (
-            <Grid container spacing={3}></Grid>
+            <Grid container spacing={3}>
               {/* Personal Information */}
               <Grid item xs={12} md={4}>
                 <Paper elevation={2} sx={{ borderRadius: 2, height: '100%' }}>
@@ -482,6 +480,223 @@ const CaregiverProfile = () => {
                       Professional information unavailable
                     </Typography>
                     <Typography variant="body1">
+                      Complete your profile to showcase your professional information.
+                    </Typography>
+                  </Paper>
+                )}
+              </Grid>
+            </Grid>
+          )}
+          
+          {/* Tab 2: Skills & Experience */}
+          {activeTab === 1 && (
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Paper elevation={2} sx={{ borderRadius: 2 }}>
+                  <Box sx={{ 
+                    p: 2, 
+                    bgcolor: '#1976d2', 
+                    color: 'white',
+                    borderTopLeftRadius: 8,
+                    borderTopRightRadius: 8
+                  }}>
+                    <Typography variant="h6" fontWeight="medium">
+                      Key Skills
+                    </Typography>
+                  </Box>
+                  <CardContent sx={{ p: 3 }}>
+                    {['Elder Care', 'Medication Management', 'First Aid', 'Cooking', 'Mobility Assistance', 'Dementia Care'].map((skill) => (
+                      <Box key={skill} sx={{ mb: 2 }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
+                          <Typography variant="body1">{skill}</Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            {getSkillLevel(skill)}/5
+                          </Typography>
+                        </Box>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={getSkillLevel(skill) * 20} 
+                          sx={{ 
+                            height: 8, 
+                            borderRadius: 5,
+                            backgroundColor: '#e3f2fd',
+                            '& .MuiLinearProgress-bar': {
+                              backgroundColor: '#1976d2',
+                            }
+                          }} 
+                        />
+                      </Box>
+                    ))}
+                  </CardContent>
+                </Paper>
+              </Grid>
+              
+              <Grid item xs={12} md={6}>
+                <Paper elevation={2} sx={{ borderRadius: 2 }}>
+                  <Box sx={{ 
+                    p: 2, 
+                    bgcolor: '#1976d2', 
+                    color: 'white',
+                    borderTopLeftRadius: 8,
+                    borderTopRightRadius: 8
+                  }}>
+                    <Typography variant="h6" fontWeight="medium">
+                      Work Experience
+                    </Typography>
+                  </Box>
+                  <CardContent sx={{ p: 3 }}>
+                    <Box sx={{ mb: 3 }}>
+                      <Typography variant="h6">Senior Caregiver</Typography>
+                      <Typography variant="body2" color="textSecondary" gutterBottom>
+                        Golden Years Care Center • 2019 - Present
+                      </Typography>
+                      <Typography variant="body1">
+                        Provided dedicated care to seniors with various needs including those with dementia, 
+                        mobility issues, and chronic conditions. Assisted with medication management, 
+                        personal care, and daily activities.
+                      </Typography>
+                    </Box>
+                    
+                    <Divider sx={{ my: 3 }} />
+                    
+                    <Box>
+                      <Typography variant="h6">Home Health Aide</Typography>
+                      <Typography variant="body2" color="textSecondary" gutterBottom>
+                        Comfort Home Care • 2016 - 2019
+                      </Typography>
+                      <Typography variant="body1">
+                        Delivered in-home care services to elderly clients, focusing on maintaining
+                        their independence and quality of life. Responsibilities included meal preparation,
+                        light housekeeping, and companionship.
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Paper>
+              </Grid>
+            </Grid>
+          )}
+          
+          {/* Tab 3: Reviews */}
+          {activeTab === 2 && (
+            <Box>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <Paper 
+                    elevation={2} 
+                    sx={{ 
+                      p: 3, 
+                      borderRadius: 2, 
+                      mb: 3, 
+                      display: 'flex',
+                      flexDirection: { xs: 'column', md: 'row' },
+                      alignItems: { xs: 'center', md: 'flex-start' },
+                      justifyContent: 'space-between'
+                    }}
+                  >
+                    <Box sx={{ textAlign: { xs: 'center', md: 'left' }, mb: { xs: 2, md: 0 } }}>
+                      <Typography variant="h4" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+                        {averageRating}
+                        <Typography component="span" variant="h6" sx={{ ml: 1, color: 'text.secondary' }}>
+                          out of 5
+                        </Typography>
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', md: 'flex-start' }, mt: 1 }}>
+                        <Rating 
+                          value={parseFloat(averageRating)} 
+                          precision={0.5} 
+                          readOnly 
+                          sx={{ color: '#1976d2' }}
+                        />
+                        <Typography variant="body1" sx={{ ml: 1 }}>
+                          ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+                        </Typography>
+                      </Box>
+                    </Box>
+                    
+                    <Button
+                      variant="contained"
+                      startIcon={<AddCommentIcon />}
+                      onClick={handleReviewDialogOpen}
+                      sx={{ 
+                        bgcolor: '#1976d2',
+                        '&:hover': {
+                          bgcolor: '#0d47a1',
+                        }
+                      }}
+                    >
+                      Write a Review
+                    </Button>
+                  </Paper>
+                </Grid>
+                
+                {reviews.length > 0 ? (
+                  reviews.map((review, index) => (
+                    <Grid item xs={12} key={review._id || index}>
+                      <Paper 
+                        elevation={2} 
+                        sx={{ 
+                          p: 3, 
+                          borderRadius: 2, 
+                          mb: 2
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                          <Box>
+                            <Typography variant="h6">{review.reviewerName}</Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              {new Date(review.date).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+                          <Rating value={review.rating} readOnly sx={{ color: '#1976d2' }} />
+                        </Box>
+                        
+                        <Box sx={{ display: 'flex', mt: 2 }}>
+                          <FormatQuoteIcon sx={{ fontSize: 40, color: '#e3f2fd', mr: 2, transform: 'scaleX(-1)' }} />
+                          <Typography variant="body1">
+                            {review.comment}
+                          </Typography>
+                        </Box>
+                      </Paper>
+                    </Grid>
+                  ))
+                ) : (
+                  <Grid item xs={12}>
+                    <Paper 
+                      elevation={2} 
+                      sx={{ 
+                        p: 4, 
+                        borderRadius: 2, 
+                        textAlign: 'center',
+                        bgcolor: '#f5f5f5'
+                      }}
+                    >
+                      <Typography variant="h6" color="textSecondary" gutterBottom>
+                        No Reviews Yet
+                      </Typography>
+                      <Typography variant="body1" sx={{ mb: 3 }}>
+                        Be the first to leave a review for this caregiver.
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddCommentIcon />}
+                        onClick={handleReviewDialogOpen}
+                        sx={{ 
+                          bgcolor: '#1976d2',
+                          '&:hover': {
+                            bgcolor: '#0d47a1',
+                          }
+                        }}
+                      >
+                        Write a Review
+                      </Button>
+                    </Paper>
+                  </Grid>
+                )}
+              </Grid>
+            </Box>
+          )}
+        </Box>
+      </Container>
 
       {/* Review Dialog */}
       <Dialog open={openReviewDialog} onClose={handleReviewDialogClose} fullWidth maxWidth="sm">
