@@ -28,6 +28,7 @@ import SecurityLogs from "../../components/AdminPanel/SecurityLogs";
 import NotificationManagement from "../../components/AdminPanel/NotificationManagement";
 import PackageSection from  "../../components/AdminPanel/PackageSection";
 import AdminSessionTable from "../Reservations/AdminSessionTable"; // ✅ Import tabbed sessions component
+import Scheduling from "../../components/AdminPanel/Scheduling";
 
 // Styled Components
 const Sidebar = styled(Box)(({ theme }) => ({
@@ -67,6 +68,7 @@ const AdminPanel = () => {
     { id: "employees", text: "Employees", icon: <WorkIcon /> },
     { id: "sessions", text: "Sessions", icon: <WorkIcon /> },
     { id: "packages", text: "Packages", icon: <LocalShippingIcon /> },
+    { id: "sheduling", text: "Scheduling" , icon: <PeopleIcon />},
     { id: "payments", text: "Payments", icon: <MonetizationOnIcon /> },
     { id: "notifications", text: "Notifications", icon: <NotificationsIcon /> },
     { id: "security", text: "Security Logs", icon: <SecurityIcon /> },
@@ -86,6 +88,8 @@ const AdminPanel = () => {
         return <SecurityLogs />;
       case "packages":
         return <PackageSection />;
+      case "sheduling":
+        return<Scheduling />;
       case "sessions":
         return <AdminSessionTable />; // ✅ use tabbed sessions component
       default:

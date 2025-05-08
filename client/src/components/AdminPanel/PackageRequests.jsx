@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Typography, CircularProgress, Paper, Stack } from "@mui/material";
+import { Box, Typography, CircularProgress, Paper, Stack, Button, Grid } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const PackageRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPendingRequests();
@@ -13,10 +15,10 @@ const PackageRequests = () => {
 
   const fetchPendingRequests = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/packages/pending");
+      const response = await axios.get("http://localhost:4000/api/package-requests/pending");
       if (response.status === 200) {
         setRequests(response.data.data);
-        console.error(response.data.data)
+        console.log(response.data.data);
       } else {
         setError("Failed to fetch package requests.");
       }
@@ -28,11 +30,13 @@ const PackageRequests = () => {
     }
   };
 
+  const handleManageSchedule = (requestId) => {
+    navigate(`/schedule-manager/${requestId}`);
+  };
+
   return (
     <Box>
-      <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", color: "#002855" }}>
-        Pending Package Requests
-      </Typography>
+     
 
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
@@ -47,19 +51,46 @@ const PackageRequests = () => {
       ) : (
         <Stack spacing={2} sx={{ mt: 2 }}>
           {requests.map((req) => (
-            <Paper key={req._id} elevation={3} sx={{ p: 2, backgroundColor: "#f0f8ff" }}>
-              <Typography variant="body1">
-                <strong>Guardian ID:</strong> {req.guardianId}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Package ID:</strong> {req.packageId}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Status:</strong> {req.status}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Requested on: {new Date(req.createdAt).toLocaleString()}
-              </Typography>
+            <Paper key={req.requestId} elevation={3} sx={{ p: 3, backgroundColor: "#f0f8ff" }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <Typography variant="body1">
+                    <strong>Request ID:</strong> {req.requestId}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Guardian ID:</strong> {req.guardianId}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Adult ID:</strong> {req.adultId}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Package ID:</strong> {req.packageId}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                  <Typography variant="body1">
+                    <strong>Status:</strong> {req.status}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Start Date:</strong>{" "}
+                    {req.startDate ? new Date(req.startDate).toLocaleDateString() : "Not Scheduled"}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Requested on: {new Date(req.createdAt).toLocaleString()}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} md={2} sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleManageSchedule(req.requestId)}
+                  >
+                    Manage Schedule
+                  </Button>
+                </Grid>
+              </Grid>
             </Paper>
           ))}
         </Stack>
