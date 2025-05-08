@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography, Divider } from "@mui/material";
 import ParcelsAdmin from "../../pages/packages/ParcelsAdmin";   // View Packages
 import AddParcel from "../../pages/packages/AddParcel";         // Add Package
-import PackageRequests from "./PackageRequests"; // ✅ New: Pending Requests
+
 
 const TabPanel = ({ children, value, index }) => (
   <div hidden={value !== index} role="tabpanel">
@@ -33,7 +33,7 @@ const PackageSection = () => {
       >
         <Tab label="View Packages" />
         <Tab label="Add Package" />
-        <Tab label="Package Requests" />
+       
       </Tabs>
 
       <Divider />
@@ -44,9 +44,7 @@ const PackageSection = () => {
       <TabPanel value={tabIndex} index={1}>
         <AddParcel />
       </TabPanel>
-      <TabPanel value={tabIndex} index={2}>
-        <PackageRequests />
-      </TabPanel>
+    
     </Box>
   );
 };

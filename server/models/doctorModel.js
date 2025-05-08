@@ -1,72 +1,64 @@
 import mongoose from "mongoose";
 
 const doctorSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true,
-    unique: true,
+  userId: { 
+    type: String, 
+    required: true, 
+    unique: true 
   },
-  medicalLicenseNumber: {
-    type: String,
-    required: true,
-    unique: true,
+  medicalLicenseNumber: { 
+    type: String, 
+    required: true, 
+    unique: true 
   },
-  licenseExpireDate: {
-    type: Date,
-    required: true,
+  licenseExpireDate: { 
+    type: Date, 
+    required: true 
   },
-  nationalMedicalRegistrationNumber: {
-    type: String,
-    required: true,
-    unique: true,
+  nationalMedicalRegistrationNumber: { 
+    type: String, 
+    required: true, 
+    unique: true 
   },
-  specialization: {
-    type: String,
-    required: true,
+  specialization: { 
+    type: String, 
+    required: true 
   },
-  subspecialities: {
-    type: [String],
-    default: [],
+  subspecialities: { 
+    type: String,  // Changed to String for comma-separated values
+    default: "" 
   },
-  yearsOfExperience: {
-    type: Number,
-    required: true,
+  yearsOfExperience: { 
+    type: Number, 
+    required: true 
   },
-  languagesSpoken: {
-    type: [String],
-    default: [],
+  languagesSpoken: { 
+    type: String,  // Changed to String for comma-separated values
+    default: "" 
   },
-  availableDate: {
-    type: [String],
-    required: true,
+  availableDate: { 
+    type: [String], 
+    required: true 
   },
-  availableWorkingHours: {
-    type: String,
-    required: true,
-    enum: [
-      "08:00 - 12:00",
-      "12:00 - 16:00",
-      "16:00 - 20:00",
-      "08:00 - 17:00",
-      "Full Time",
-      "Night Shift"
-    ]
+  availableWorkingHours: {  // Changed from availableTimeSlots to match frontend
+    type: [String], 
+    required: true 
   },
-  consultationFee: {
-    type: Number,
-    required: true,
+  consultationFee: { 
+    type: Number, 
+    required: true 
   },
-  currentHospital: {
-    type: String,
-    required: true,
+  currentHospital: { 
+    type: String, 
+    required: true 
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  createdAt: { 
+    type: Date, 
+    default: Date.now 
   },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
+  updatedAt: { 
+    type: Date, 
+    default: Date.now 
   },
 });
 
