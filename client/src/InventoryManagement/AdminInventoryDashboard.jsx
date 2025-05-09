@@ -57,26 +57,7 @@ const AdminInventoryDashboard = () => {
         </Typography>
       </Box>
       {/* Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: '#e3eafc', px: 3, py: 2, display: 'flex', justifyContent: 'center' }}>
-        <Button
-          variant="contained"
-          sx={{
-            background: '#2563eb',
-            color: '#fff',
-            fontWeight: 600,
-            fontSize: '1rem',
-            borderRadius: 3,
-            boxShadow: 2,
-            px: 4,
-            py: 1.5,
-            textTransform: 'none',
-            '&:hover': { background: '#1746a0' },
-          }}
-          onClick={() => navigate('/inventory-dashboard?tab=stock')}
-        >
-          Manage Inventory
-        </Button>
-      </Box>
+      
       {/* Overview Content */}
       <Box sx={{ p: 3 }}>
         <Typography variant="h6" fontWeight={700} mb={2} color="#2563eb">
