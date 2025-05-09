@@ -7,6 +7,12 @@ const caregiverScheduleSchema = new mongoose.Schema({
     ref: "Caregiver",
     required: true,
   },
+  adultId: {
+    type: String,
+    ref: "Adult",
+    required: true,
+  },
+
   date: {
     type: Date,
     required: true,

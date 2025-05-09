@@ -390,3 +390,33 @@ export const registerDriver = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const getEmployeeDetails = async (req, res) => {
+  try {
+    const { employeeType, employeeId } = req.params;
+
+    let employeeModel;
+    if (employeeType === "Doctor") {
+      employeeModel = Doctor;
+    } else if (employeeType === "Nurse") {
+      employeeModel = Nurse;
+    } else if (employeeType === "Caregiver") {
+      employeeModel = Caregiver;
+    } else if (employeeType === "Driver") {
+      employeeModel = Driver;
+    } else {
+      return res.status(400).json({ success: false, message: "Invalid employee type" });
+    }
+
+    const employee = await employeeModel.findOne({ userId: employeeId });
+    if (!employee) {
+      console.log(`Employee not found: ${employeeType} with userId ${employeeId}`);
+      return res.status(404).json({ success: false, message: "Employee not found" });
+    }
+
+    res.status(200).json({ success: true, employee });
+  } catch (error) {
+    console.error(`Error fetching employee details for ${employeeType}/${employeeId}:`, error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};

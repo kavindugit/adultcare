@@ -15,29 +15,87 @@ const PackageRequests = () => {
 
   const fetchPendingRequests = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/package-requests/pending");
+      const response = await axios.get("http://localhost:4000/api/package-requests/pending", {
+        withCredentials: true,
+      });
       if (response.status === 200) {
-        setRequests(response.data.data);
-        console.log(response.data.data);
+        const data = response.data.data;
+        console.log("Pending Requests:", data);
+
+        const initialRequests = data.map(req => ({
+          ...req,
+          packageName: "Loading...",
+          guardianName: "Loading...",
+          adultName: "Loading...",
+        }));
+        setRequests(initialRequests);
+
+        const enrichedRequests = await Promise.all(
+          data.map(async (req) => {
+            let packageName = "Unknown Package";
+            let guardianName = "Unknown Guardian";
+            let adultName = "Unknown Adult";
+
+            try {
+              const packageResponse = await axios.get(`http://localhost:4000/api/packages/${req.packageId}`, {
+                withCredentials: true,
+              });
+              packageName = packageResponse.data.data?.name || "Unknown Package";
+              console.log(`Package (${req.packageId}):`, packageResponse.data);
+            } catch (err) {
+              console.error(`Error fetching package ${req.packageId}:`, err);
+            }
+
+            try {
+              const guardianResponse = await axios.get(`http://localhost:4000/api/user/${req.guardianId}`, {
+                withCredentials: true,
+              });
+              guardianName = guardianResponse.data.user?.name || "Unknown Guardian";
+              console.log(`Guardian (${req.guardianId}):`, guardianResponse.data);
+            } catch (err) {
+              console.error(`Error fetching guardian ${req.guardianId}:`, err);
+            }
+
+            try {
+              const adultResponse = await axios.get(`http://localhost:4000/api/user/${req.adultId}`, {
+                withCredentials: true,
+              });
+              adultName = adultResponse.data.user?.name || "Unknown Adult";
+              console.log(`Adult (${req.adultId}):`, adultResponse.data);
+            } catch (err) {
+              console.error(`Error fetching adult ${req.adultId}:`, err);
+            }
+
+            return {
+              ...req,
+              packageName,
+              guardianName,
+              adultName,
+            };
+          })
+        );
+
+        setRequests(enrichedRequests);
+        setError(null);
       } else {
-        setError("Failed to fetch package requests.");
+        throw new Error("An error occurred while fetching data");
       }
     } catch (err) {
       console.error("Error fetching requests:", err);
-      setError("An error occurred while fetching data.");
+      setError("An error occurred while fetching data");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleManageSchedule = (requestId) => {
-    navigate(`/schedule-manager/${requestId}`);
+  const handleManageSchedule = (requestId, packageId, adultId, guardianId) => {
+    navigate(`/schedule-manager/${requestId}`, {
+      state: { packageId, adultId, guardianId },
+    });
   };
 
   return (
     <Box>
-     
-
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <CircularProgress />
@@ -58,13 +116,13 @@ const PackageRequests = () => {
                     <strong>Request ID:</strong> {req.requestId}
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Guardian ID:</strong> {req.guardianId}
+                    <strong>Guardian:</strong> {req.guardianName}
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Adult ID:</strong> {req.adultId}
+                    <strong>Adult:</strong> {req.adultName}
                   </Typography>
                   <Typography variant="body1">
-                    <strong>Package ID:</strong> {req.packageId}
+                    <strong>Package:</strong> {req.packageName}
                   </Typography>
                 </Grid>
 
@@ -85,7 +143,7 @@ const PackageRequests = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleManageSchedule(req.requestId)}
+                    onClick={() => handleManageSchedule(req.requestId, req.packageId, req.adultId, req.guardianId)}
                   >
                     Manage Schedule
                   </Button>
