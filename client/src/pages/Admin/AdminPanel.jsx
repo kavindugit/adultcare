@@ -19,6 +19,7 @@ import SecurityIcon from "@mui/icons-material/Security";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AddToQueueIcon from '@mui/icons-material/AddToQueue';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 // Components
 import Dashboard from "../../components/AdminPanel/Dashboard";
@@ -27,6 +28,8 @@ import EmployeeManagement from "../../components/AdminPanel/EmployeeManagement";
 import SecurityLogs from "../../components/AdminPanel/SecurityLogs";
 import NotificationManagement from "../../components/AdminPanel/NotificationManagement";
 import PackageSection from "../../components/AdminPanel/PackageSection";
+import InventoryDashboard from "../InventoryManagement/Dashboard";
+import AdminInventoryDashboard from '../../InventoryManagement/AdminInventoryDashboard';
 
 // Styled Components
 const Sidebar = styled(Box)(({ theme }) => ({
@@ -65,7 +68,8 @@ const AdminPanel = () => {
     { id: "newRequest", text: "New Request", icon: <AddToQueueIcon /> },
     { id: "users", text: "Users Management", icon: <PeopleIcon /> },
     { id: "employees", text: "Employees", icon: <WorkIcon /> },
-    { id: "packages", text: "Packages", icon: <LocalShippingIcon /> }, // ✅ updated icon
+    { id: "packages", text: "Packages", icon: <LocalShippingIcon /> },
+    { id: "inventory", text: "Inventory", icon: <InventoryIcon /> },
     { id: "payments", text: "Payments", icon: <MonetizationOnIcon /> },
     { id: "notifications", text: "Notifications", icon: <NotificationsIcon /> },
     { id: "security", text: "Security Logs", icon: <SecurityIcon /> },
@@ -84,7 +88,9 @@ const AdminPanel = () => {
       case "security":
         return <SecurityLogs />;
       case "packages":
-        return <PackageSection />; // ✅ load new tabbed packages section
+        return <PackageSection />;
+      case "inventory":
+        return <AdminInventoryDashboard />;
       default:
         return <Typography variant="h4">Welcome to Admin Panel</Typography>;
     }
@@ -148,7 +154,16 @@ const AdminPanel = () => {
       <MainContent sx={{ marginLeft: isSidebarVisible ? "250px" : "0" }}>
         {/* Sidebar Toggle */}
         <Box sx={{ mb: 2 }}>
-          <Button variant="contained" onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
+          <Button 
+            variant="contained" 
+            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+            sx={{
+              background: '#183a6d',
+              color: '#fff',
+              fontWeight: 600,
+              '&:hover': { background: '#102347' },
+            }}
+          >
             {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
           </Button>
         </Box>

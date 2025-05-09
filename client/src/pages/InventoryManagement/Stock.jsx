@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FiPlus, FiSearch } from 'react-icons/fi';
 
 export default function Stock() {
   const [stock, setStock] = useState([]);
@@ -45,6 +46,17 @@ export default function Stock() {
     if (name === 'quantity' || name === 'restockThereshold') {
       if (value < 1) {
         toast.error('Quantity and Restock Threshold must be at least 1.', {
+          position: 'bottom-center',
+          autoClose: 3000,
+        });
+        return;
+      }
+    }
+
+    // Add validation for price to prevent negative values
+    if (name === 'price') {
+      if (value < 0) {
+        toast.error('Price cannot be negative.', {
           position: 'bottom-center',
           autoClose: 3000,
         });
@@ -157,6 +169,31 @@ export default function Stock() {
     setFilteredStock(filtered);
   };
 
+  // Add CSV export function
+  const exportStockToCSV = () => {
+    const headers = ['Medication Name', 'Quantity', 'Price', 'Restock Threshold'];
+    const rows = stock.map(item => [
+      item.medicineName,
+      item.quantity,
+      item.price,
+      item.restockThereshold
+    ]);
+    let csvContent = '';
+    csvContent += headers.join(',') + '\n';
+    rows.forEach(row => {
+      csvContent += row.join(',') + '\n';
+    });
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'stock_report.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="p-8 min-h-screen bg-white relative">
       {/* Header */}
@@ -169,28 +206,36 @@ export default function Stock() {
       <div className="max-w-5xl mx-auto mb-10 flex flex-col sm:flex-row justify-between items-center gap-6">
         <button
           onClick={handleAddClick}
-          className="group px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-xl hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 text-lg transform hover:scale-105"
+          className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#183a6d] to-[#2563eb] text-white rounded-xl shadow-lg hover:from-[#2563eb] hover:to-[#183a6d] transition-all duration-300 text-lg font-semibold"
         >
-          <span className="group-hover:rotate-90 transition-transform duration-300">➕</span> Add Medication
+          <FiPlus className="w-6 h-6" /> Add Medication
         </button>
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          <div className="relative flex-1 sm:w-80">
-            <input
-              type="text"
-              placeholder="Search by medication name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-3 pl-10 rounded-xl bg-blue-50 border border-blue-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-300/50 outline-none shadow-xl transition-all duration-300 text-blue-900 placeholder-blue-500"
-            />
-            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 animate-bounce-subtle">🔍</span>
-          </div>
+        <div className="relative flex-1 sm:w-80">
+          <input
+            type="text"
+            placeholder="Search by medication name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full p-3 pl-10 pr-20 rounded-xl bg-[#e3f0ff] border border-blue-300 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb] outline-none shadow-lg transition-all duration-300 text-blue-900 placeholder-blue-500"
+          />
+          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#2563eb] w-5 h-5" />
           <button
             onClick={handleSearch}
-            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-[#183a6d] to-[#2563eb] text-white px-4 py-1 rounded-lg shadow hover:from-[#2563eb] hover:to-[#183a6d] transition-all duration-200 text-sm font-semibold"
           >
             Search
           </button>
         </div>
+      </div>
+
+      {/* Single Export Button */}
+      <div className="flex justify-end max-w-5xl mx-auto mb-4">
+        <button
+          onClick={exportStockToCSV}
+          className="bg-[#b7e4c7] hover:bg-[#7ed6a7] text-green-800 font-semibold px-6 py-2 text-sm rounded-full shadow-sm border border-green-200 transition-all duration-200"
+        >
+          Export All
+        </button>
       </div>
 
       {/* Stock Table */}
@@ -224,28 +269,19 @@ export default function Stock() {
                     {item.quantity < item.restockThereshold ? 'Low' : 'High'}
                   </span>
                 </td>
-                <td className="px-4 py-3 space-x-3">
+                <td className="px-4 py-3 space-x-2">
                   <button
                     onClick={() => handleEdit(item._id)}
-                    className="text-blue-300 hover:text-blue-100 transition-all duration-300 transform hover:scale-110"
+                    className="bg-[#a7c7e7] hover:bg-[#7ea6d6] text-blue-900 font-semibold px-3 py-1 text-xs rounded-full shadow-sm border border-blue-200 transition-all duration-200"
                   >
-                    🖌️
+                    Edit
                   </button>
                   <button
                     onClick={() => handleDelete(item._id)}
-                    className="text-red-400 hover:text-red-300 transition-all duration-300 transform hover:scale-110"
+                    className="bg-[#f7c6c7] hover:bg-[#f49ca0] text-red-700 font-semibold px-3 py-1 text-xs rounded-full shadow-sm border border-red-200 transition-all duration-200"
                   >
-                    🗑️
+                    Delete
                   </button>
-
-
-                  <button
-                   onClick={() => alert("clicked")}
-                    className="text-green-500 hover:text-green-400 transition-all duration-300 transform hover:scale-110"
-                  >
-                    📤
-                  </button> 
-
                 </td>
               </tr>
             ))}
@@ -291,6 +327,8 @@ export default function Stock() {
                   name="price"
                   value={formData.price}
                   onChange={handleChange}
+                  min="0"
+                  step="0.01"
                   required
                   className="w-full p-3 rounded-lg border border-blue-400 focus:ring-2 focus:ring-blue-400 focus:border-blue-300 bg-blue-50 text-blue-900 placeholder-blue-400 shadow-md"
                 />

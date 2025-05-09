@@ -23,6 +23,7 @@ import caregiverRouter from './routes/caregiverRoutes.js';
 import sessionRouter from './routes/sessionRoutes.js';
 import reservationRouter from './routes/reservationRoutes.js';
 import parcelRouter from './routes/packagesRoute.js';
+import prescriptionRouter from './routes/prescriptionRoutes.js';
 
 
 const app = express();
@@ -68,6 +69,7 @@ app.use('/api/schedule', docSheduleRouter);
 app.use('/api/sessions', sessionRouter);
 app.use('/api/reservation', reservationRouter);
 app.use('/api/packages', parcelRouter); // Add this line to include parcelRouter in the app')
+app.use('/api/prescriptions', prescriptionRouter);
 
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
