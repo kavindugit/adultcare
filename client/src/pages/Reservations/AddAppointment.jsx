@@ -5,13 +5,11 @@ import { toast } from "react-toastify";
 import { AppContent } from "../../context/AppContext";
 import {
   Calendar,
-  Clock,
   UserIcon,
   Mail,
   FileText,
   BookOpen,
   User,
-  AlarmClock,
 } from "lucide-react";
 
 const AddAppointment = () => {
@@ -22,18 +20,15 @@ const AddAppointment = () => {
   const [selectedSpecialization, setSelectedSpecialization] = useState("");
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [selectedDoctorId, setSelectedDoctorId] = useState("");
-  const [availableSlots, setAvailableSlots] = useState([]);
   const [formData, setFormData] = useState({
     userId: "",
     name: "",
     age: "",
     email: "",
     date: "",
-    slot: "",
     note: "",
     sessionType: "",
-    doctorName: "", // Added property to fix select field
-    timeSlot: "", // Added property to fix select field
+    doctorName: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [users, setUsers] = useState([]);
@@ -49,9 +44,9 @@ const AddAppointment = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { name, age, email, date, slot, sessionType } = formData;
+    const { name, age, email, date, sessionType } = formData;
 
-    if (!name || !age || !email || !date || !slot || !sessionType) {
+    if (!name || !age || !email || !date || !sessionType) {
       toast.error("Please fill in all required fields.");
       return;
     }
@@ -77,7 +72,6 @@ const AddAppointment = () => {
           patientEmail: formData.email,
           date: formData.date,
           serviceName: formData.sessionType,
-          startTime: formData.slot,
         }
       );
       toast.success("Booking successful!");
@@ -96,84 +90,41 @@ const AddAppointment = () => {
       setUsers(users.data);
     } catch (error) {}
   };
+
   const getUserName = (userId) => {
     const user = users.find((user) => user.userId === userId);
     return user ? user.fullName : "Unknown User";
   };
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/sessions")
+    fetch("http://localhost:4000/api/schedule/fulltime/availability")
       .then((res) => res.json())
       .then((response) => {
         setData(response);
 
         // Extract unique specializations
-        const uniqueSpecs = [...new Set(response.map((d) => d.sessionType))];
+        const uniqueSpecs = [...new Set(response.map((d) => d.specialization))];
         setSpecializations(uniqueSpecs);
       });
   }, []);
 
-  useEffect(() => {
-    fetchAllDoctors();
-  }, []);
-
-  const fetchAllDoctors = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/api/schedule/allDoctors");
-      if (response.status === 200) {
-        const requestData = await Promise.all(
-          response.data.data.map(async (req) => {
-            const doctorDetails = await fetchDoctorDetails(req.userId);
-            return { ...req, fullname: doctorDetails?.fullName };
-          })
-        );
-        setFilteredDoctors(requestData);
-      }
-    } catch (err) {
-      console.error("Error fetching requests:", err);
-    }
-  };
-
-  const fetchDoctorDetails = async (id) => {
-    try {
-      const response = await axios.get(`http://localhost:4000/api/user/${id}`);
-      if (response.status === 200) {
-        return response.data.data;
-      }
-      return { fullName: "N/A" };
-    } catch (err) {
-      console.error("Error fetching package details:", err);
-      return { fullName: "N/A" };
-    }
-  };
-
   const handleSpecializationChange = (e) => {
     const selected = e.target.value;
     setSelectedSpecialization(selected);
-    setAvailableSlots([]); // reset
+
+    const doctors = data.filter((d) => d.specialization === selected);
+    setFilteredDoctors(doctors);
+    setSelectedDoctorId(""); // reset
   };
 
   const handleDoctorChange = (e) => {
     const id = e.target.value;
     setSelectedDoctorId(id);
-
-    const doctor = filteredDoctors.find((doc) => doc.doctorId === id);
-    if (doctor) {
-      const slots = [];
-
-      Object.entries(doctor.availability).forEach(([day, info]) => {
-        info.available.forEach((slot) => {
-          slots.push(`${day} - ${slot}`);
-        });
-      });
-
-      setAvailableSlots(slots);
-    }
   };
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-8 bg-white shadow-lg rounded-xl border border-gray-100">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray  text-gray-800">
         Book This Session
       </h2>
 
@@ -191,12 +142,14 @@ const AddAppointment = () => {
                   name="userId"
                   value={formData.userId}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 bg-white"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent riflett transition duration-200 bg-white"
                   required
                 >
                   <option value="">-- Patient's Name --</option>
                   {users.map((user) => (
-                    <option value={user.userId}>{user.fullName}</option>
+                    <option key={user.userId} value={user.userId}>
+                      {user.fullName}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -286,29 +239,8 @@ const AddAppointment = () => {
               >
                 <option value="">-- Select Doctor's Name --</option>
                 {filteredDoctors.map((doc, idx) => (
-                  <option key={idx} value={doc.fullname}>
-                    {doc.fullname}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <AlarmClock size={18} className="text-blue-500" />
-                <span>Time Slots</span>
-              </label>
-              <select
-                name="timeSlot"
-                value={formData.timeSlot}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 bg-white"
-                required
-              >
-                <option value="">-- Select Time Slots --</option>
-                {availableSlots.map((slot, idx) => (
-                  <option key={idx} value={slot}>
-                    {slot}
+                  <option key={idx} value={doc.doctorId}>
+                    {doc.doctorName || doc.doctorId}
                   </option>
                 ))}
               </select>
@@ -328,8 +260,6 @@ const AddAppointment = () => {
                 required
               />
             </div>
-
-          
           </div>
         </div>
 
