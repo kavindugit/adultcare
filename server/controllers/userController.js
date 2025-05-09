@@ -1,6 +1,6 @@
 import userModel from '../models/userModel.js';
 
-// Get a single user's data
+// Get a single user's data by userId
 export const getUserData = async (req, res) => {
   try {
     const user = await userModel.findOne({ userId: req.userId });
@@ -66,7 +66,7 @@ export const getAllUsersData = async (req, res) => {
 // Update user data
 export const updateUser = async (req, res) => {
   try {
-    const { userId, updates } = req.body; // Use req.body instead of req.query
+    const { userId, updates } = req.body;
 
     if (!userId || !updates) {
       return res.json({ success: false, message: "Invalid request parameters" });
@@ -78,7 +78,6 @@ export const updateUser = async (req, res) => {
       return res.json({ success: false, message: "User not found" });
     }
     
-    // Update user fields
     if (updates.name) user.fullName = updates.name;
     if (updates.email) user.email = updates.email;
     if (updates.role) user.role = updates.role;
@@ -104,9 +103,8 @@ export const updateUser = async (req, res) => {
 // Delete user
 export const deleteUser = async (req, res) => {
   try {
-    const { userId } = req.body; // Use req.query for GET requests
+    const { userId } = req.body;
 
-    // Find and delete the user by userId
     const user = await userModel.findOneAndDelete({ userId });
 
     if (!user) {
@@ -126,10 +124,9 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-
+// Get all employee data
 export const getAllEmployeeData = async (req, res) => {
   try {
-    // Fetch only employees (Doctor, Nurse, Caregiver, Admin)
     const employees = await userModel.find({
       role: { $in: ["Doctor", "Nurse", "Caregiver", "Admin"] },
     });
@@ -162,7 +159,6 @@ export const getAllEmployeeData = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 
 // Get users by role/category
 export const getUsersByRole = async (req, res) => {
@@ -197,6 +193,43 @@ export const getUsersByRole = async (req, res) => {
     return res.status(200).json({ success: true, users: userData });
   } catch (error) {
     console.error("Error fetching users by role:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get user data by userId (new controller)
+export const getUserByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required" });
+    }
+
+    const user = await userModel.findOne({ userId });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const userData = {
+      userId: user.userId,
+      name: user.fullName,
+      nic: user.nic,
+      dob: user.dob,
+      role: user.role,
+      address: user.address,
+      phoneNo: user.phone,
+      gender: user.gender,
+      email: user.email,
+      status: user.status,
+      isVerified: user.isVerified,
+      isAdmin: user.isAdmin,
+    };
+
+    return res.status(200).json({ success: true, user: userData });
+  } catch (error) {
+    console.error("Error fetching user by userId:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };

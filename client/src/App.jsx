@@ -33,13 +33,8 @@ import CreateSessionForm from "./pages/Reservations/CreateSessionForm"
 import RServices from "./pages/Reservations/RServices"
 import Parcels from "./pages/packages/viewpage"
 import UpdateParcel from "./pages/packages/UpdateParcel";
-
-
-
-
-
-
-
+import ReportHome from "./pages/MedicationReports/ReportHome"
+import SchedulingPackage from "./pages/Admin/SchedulingPackage"
 
 const App = () => {
 
@@ -79,7 +74,11 @@ const App = () => {
         <Route path = "/add-appointment" element ={<AddAppointment/>}/>
         <Route path = "/packages" element ={<Parcels/>}/>
         <Route path="/update/:id" element={<UpdateParcel />} />
+        <Route path="/schedule-manager/:requestId" element={<SchedulingPackage />} />
 
+
+        <Route path="/report-module" element={<ReportHome />} />
+          
         
 
 

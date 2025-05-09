@@ -1,6 +1,6 @@
 
 import Parcel from "../models/Parcel.js";
-import PackageRequest from "../models/packageRequest.js";
+
 
 // Create a new parcel/package
 export const addParcel = async (req, res) => {

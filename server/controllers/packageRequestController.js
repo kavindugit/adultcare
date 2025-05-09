@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import PackageRequest from "../models/packageRequest.js";
+import PackageRequest from "../models/PackageRequest.js";
 import User from "../models/userModel.js";
 import Adult from "../models/adultModel.js";
 

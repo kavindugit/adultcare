@@ -1,13 +1,13 @@
 import DoctorSchedule from "../models/DoctorSchedule.js";
 import NurseSchedule from "../models/NurseSchedule.js";
 import CaregiverSchedule from "../models/CaregiverSchedule.js";
-import User from "../models/userModel.js";
+
+import PackageRequest from "../models/PackageRequest.js";
 import dayjs from "dayjs";
 
-// Create schedule for an employee (Doctor, Nurse, or Caregiver)
 export const createSchedule = async (req, res) => {
   try {
-    const { employeeType, employeeId, date, timeSlot, status = "Available" } = req.body;
+    const { employeeType, employeeId, adultId, date, timeSlots = [], status = "Available" } = req.body;
 
     let scheduleModel;
     if (employeeType === "Doctor") scheduleModel = DoctorSchedule;
@@ -15,35 +15,69 @@ export const createSchedule = async (req, res) => {
     else if (employeeType === "Caregiver") scheduleModel = CaregiverSchedule;
     else return res.status(400).json({ success: false, message: "Invalid employee type" });
 
-    // Prevent overlapping schedules
-    const existingSchedule = await scheduleModel.findOne({
-      [`${employeeType.toLowerCase()}Id`]: employeeId,
-      date,
-      timeSlot
-    });
-
-    if (existingSchedule) {
-      return res.status(400).json({ success: false, message: "Schedule already exists for this time slot" });
+    if (!Array.isArray(timeSlots) || timeSlots.length === 0 || !timeSlots.every(slot => typeof slot === "string" && slot.trim() !== "")) {
+      return res.status(400).json({ success: false, message: "timeSlots must be a non-empty array of non-empty strings" });
     }
 
-    const schedule = await scheduleModel.create({
-      [`${employeeType.toLowerCase()}Id`]: employeeId,
-      date,
-      timeSlot,
-      status,
-    });
+    const request = await PackageRequest.findOne({ adultId });
+    if (!request) return res.status(400).json({ success: false, message: "Invalid adultId" });
 
-    res.status(201).json({ success: true, message: "Schedule created successfully", schedule });
+    const parsedDate = dayjs(date).isValid() ? dayjs(date).toDate() : null;
+    if (!parsedDate) return res.status(400).json({ success: false, message: "Invalid date format. Use YYYY-MM-DD (e.g., 2025-05-15)" });
+
+    const overlappingSchedules = await Promise.all(
+      timeSlots.map(async (timeSlot) => {
+        const existingSchedule = await scheduleModel.findOne({
+          [`${employeeType.toLowerCase()}Id`]: employeeId,
+          date: parsedDate,
+          timeSlot,
+        });
+        return existingSchedule ? timeSlot : null;
+      })
+    );
+    const overlappingSlots = overlappingSchedules.filter(slot => slot !== null);
+    if (overlappingSlots.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Schedule already exists for time slot(s): ${overlappingSlots.join(", ")}`,
+      });
+    }
+
+    const schedules = await Promise.all(
+      timeSlots.map(timeSlot =>
+        scheduleModel.create({
+          [`${employeeType.toLowerCase()}Id`]: employeeId,
+          adultId,
+          date: parsedDate,
+          timeSlot,
+          status: ["Available", "Booked", "Completed", "Cancelled"].includes(status) ? status : "Available",
+          bookedBy: status === "Booked" ? adultId : null,
+        })
+      )
+    );
+
+    const scheduleIds = schedules.map(schedule => schedule._id);
+    res.status(201).json({
+      success: true,
+      message: "Schedules created successfully",
+      scheduleIds,
+    });
   } catch (error) {
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map(err => err.message).join(", ");
+      return res.status(400).json({ success: false, message: `Validation error: ${messages}` });
+    }
+    if (error.code === 11000) {
+      return res.status(400).json({ success: false, message: "Schedule already exists for one or more time slots (duplicate key error)" });
+    }
     res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
 
-// Get Schedule (Available + Booked Slots) for any duration
 export const getSchedule = async (req, res) => {
   try {
     const { employeeType, employeeId } = req.params;
-    const { weeks = 5 } = req.query; // Default to 5 weeks if not specified
+    const { weeks = 5 } = req.query;
     const today = dayjs().startOf('day');
     const endDate = today.add(parseInt(weeks), 'week');
 
@@ -64,7 +98,6 @@ export const getSchedule = async (req, res) => {
   }
 };
 
-// Update Schedule
 export const updateSchedule = async (req, res) => {
   try {
     const { employeeType, scheduleId, date, timeSlot, status } = req.body;
@@ -83,7 +116,6 @@ export const updateSchedule = async (req, res) => {
   }
 };
 
-// Delete Schedule
 export const deleteSchedule = async (req, res) => {
   try {
     const { employeeType, scheduleId } = req.body;

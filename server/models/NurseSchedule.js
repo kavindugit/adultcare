@@ -7,6 +7,11 @@ const nurseScheduleSchema = new mongoose.Schema({
     ref: "Nurse",
     required: true,
   },
+  adultId:{
+    type: String,
+    ref: "Adult",
+    required: true,
+  },
   date: {
     type: Date,
     required: true,
