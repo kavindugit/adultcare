@@ -124,7 +124,23 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-// Get all employee data
+
+// Get a specific parcel by id
+export const getUserById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await userModel.findOne({ userId: id });
+    if (!user) {
+      return res.status(404).json({ message: "User Not Found" });
+    }
+    res.status(200).json({ message: "User Found", data: user });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Error Fetching user" });
+  }
+};
+
+
 export const getAllEmployeeData = async (req, res) => {
   try {
     const employees = await userModel.find({
