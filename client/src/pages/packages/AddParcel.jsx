@@ -54,14 +54,33 @@ const AddParcel = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = 'Package name is required.';
-    if (!formData.description) newErrors.description = 'Description is required.';
-    if (!formData.duration || Number(formData.duration) <= 0)
+  
+    if (!formData.id) {
+      newErrors.id = 'Package ID is required.';
+    } else if (!/^[a-zA-Z0-9]+$/.test(formData.id)) {
+      newErrors.id = 'Package ID can only contain letters and numbers.';
+    }
+  
+    if (!formData.name || formData.name.length < 3) {
+      newErrors.name = 'Package name must be at least 3 characters.';
+    }
+    if (!formData.description || formData.description.length < 10) {
+      newErrors.description = 'Description must be at least 10 characters.';
+    }
+    if (!formData.duration || Number(formData.duration) <= 0) {
       newErrors.duration = 'Duration must be a positive number.';
-    if (!formData.price || Number(formData.price) <= 0)
+    }
+    if (!formData.price || Number(formData.price) <= 0) {
       newErrors.price = 'Price must be a positive number.';
+    }
+    if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/.test(formData.imageUrl)) {
+      newErrors.imageUrl = 'Image URL must be a valid URL (jpg, jpeg, png, gif, webp).';
+    }
+
+  
     return newErrors;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,17 +134,22 @@ const AddParcel = () => {
       <h1 className="text-2xl font-bold text-blue-700 text-center mb-6">Add a New Package</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-          <label htmlFor="id" className="text-sm font-medium text-blue-700 w-40">Package ID</label>
-          <input
-            type="text"
-            name="id"
-            id="id"
-            value={formData.id}
-            onChange={handleChange}
-            className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+ 
+  <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+    <label htmlFor="id" className="text-sm font-medium text-blue-700 w-40">Package ID</label>
+    <input
+      type="text"
+      name="id"
+      id="id"
+      value={formData.id}
+      onChange={handleChange}
+      className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
+    />
+    {errors.id && (
+      <span className="text-red-500 text-sm">{errors.id}</span>
+    )}
+  </div>
+
 
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <label htmlFor="name" className="text-sm font-medium text-blue-700 w-40">Package Name</label>
@@ -184,17 +208,22 @@ const AddParcel = () => {
           {errors.price && <span className="text-red-500 text-sm">{errors.price}</span>}
         </div>
 
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-          <label htmlFor="imageUrl" className="text-sm font-medium text-blue-700 w-40">Image URL</label>
-          <input
-            type="text"
+        
+       <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+           <label htmlFor="imageUrl" className="text-sm font-medium text-blue-700 w-40">Image URL</label>
+           <input
+           type="text"
             name="imageUrl"
-            id="imageUrl"
-            value={formData.imageUrl}
-            onChange={handleChange}
-            className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
-          />
+           id="imageUrl"
+           value={formData.imageUrl}
+           onChange={handleChange}
+           className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
+         />
+        {errors.imageUrl && (
+        <span className="text-red-500 text-sm">{errors.imageUrl}</span>
+          )}
         </div>
+
 
         <div>
           <p className="text-sm font-medium text-blue-700 mb-1">Roles (Included)</p>
