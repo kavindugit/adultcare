@@ -102,24 +102,54 @@ const AddAppointment = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/schedule/fulltime/availability")
+    fetch("http://localhost:4000/api/sessions")
       .then((res) => res.json())
       .then((response) => {
         setData(response);
 
         // Extract unique specializations
-        const uniqueSpecs = [...new Set(response.map((d) => d.specialization))];
+        const uniqueSpecs = [...new Set(response.map((d) => d.sessionType))];
         setSpecializations(uniqueSpecs);
       });
   }, []);
 
+  useEffect(() => {
+    fetchAllDoctors();
+  }, []);
+
+  const fetchAllDoctors = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/api/schedule/allDoctors");
+      if (response.status === 200) {
+        const requestData = await Promise.all(
+          response.data.data.map(async (req) => {
+            const doctorDetails = await fetchDoctorDetails(req.userId);
+            return { ...req, fullname: doctorDetails?.fullName };
+          })
+        );
+        setFilteredDoctors(requestData);
+      }
+    } catch (err) {
+      console.error("Error fetching requests:", err);
+    }
+  };
+
+  const fetchDoctorDetails = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/user/${id}`);
+      if (response.status === 200) {
+        return response.data.data;
+      }
+      return { fullName: "N/A" };
+    } catch (err) {
+      console.error("Error fetching package details:", err);
+      return { fullName: "N/A" };
+    }
+  };
+
   const handleSpecializationChange = (e) => {
     const selected = e.target.value;
     setSelectedSpecialization(selected);
-
-    const doctors = data.filter((d) => d.specialization === selected);
-    setFilteredDoctors(doctors);
-    setSelectedDoctorId(""); // reset
     setAvailableSlots([]); // reset
   };
 
@@ -256,8 +286,8 @@ const AddAppointment = () => {
               >
                 <option value="">-- Select Doctor's Name --</option>
                 {filteredDoctors.map((doc, idx) => (
-                  <option key={idx} value={doc.doctorId}>
-                    {doc.doctorName || doc.doctorId}
+                  <option key={idx} value={doc.fullname}>
+                    {doc.fullname}
                   </option>
                 ))}
               </select>

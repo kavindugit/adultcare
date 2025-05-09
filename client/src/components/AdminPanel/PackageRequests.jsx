@@ -15,8 +15,13 @@ const PackageRequests = () => {
     try {
       const response = await axios.get("http://localhost:4000/api/packages/pending");
       if (response.status === 200) {
-        setRequests(response.data.data);
-        console.error(response.data.data)
+        const requestData = await Promise.all(
+          response.data.data.map(async (req) => {
+            const packageDetails = await fetchPackageDetails(req.packageId);
+            return { ...req, duration: packageDetails?.duration, packageType: packageDetails?.name };
+          })
+        );
+        setRequests(requestData);
       } else {
         setError("Failed to fetch package requests.");
       }
@@ -25,6 +30,19 @@ const PackageRequests = () => {
       setError("An error occurred while fetching data.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPackageDetails = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/packages/${id}`);
+      if (response.status === 200) {
+        return response.data.data;
+      }
+      return { duration: "N/A", type: "N/A" };
+    } catch (err) {
+      console.error("Error fetching package details:", err);
+      return { duration: "N/A", type: "N/A" };
     }
   };
 
@@ -59,6 +77,12 @@ const PackageRequests = () => {
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Requested on: {new Date(req.createdAt).toLocaleString()}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Duration: {req.duration ? req.duration : "Loading..."}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Package Type: {req.packageType ? req.packageType : "Loading..."}
               </Typography>
             </Paper>
           ))}

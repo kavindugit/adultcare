@@ -81,6 +81,18 @@ export const getDoctorAvailability = async (req, res) => {
   }
 };
 
+export const getAllDoctors = async (req, res) => {
+  try {
+    const allDoctors = await DoctorModel.find();
+    if (allDoctors.length === 0) {
+      return res.status(404).json({ message: "No Dcotor's Found" });
+    }
+    res.status(200).json({ message: "Doctor's Found", data: allDoctors });
+  } catch (error) {
+    console.error("Error fetching doctors:", error);
+    res.status(500).json({ message: "Error Fetching Docotor's" });
+  }
+};
 
 export const assignDoctorSession = async (req, res) => {
     try {
