@@ -2,7 +2,7 @@ import express from 'express';
 
 import userAuth from '../middleware/userAuth.js';
 
-import { deleteUser, getAllEmployeeData, getAllUsersData, getUserById, getUserData, getUsersByRole, updateUser } from '../controllers/userController.js';
+import { deleteUser, getAllEmployeeData, getAllUsersData, getUserById,  getUserData, getUsersByRole, updateUser } from '../controllers/userController.js';
 
 
 const userRouter = express.Router();
@@ -16,7 +16,7 @@ userRouter.get('/by-role', getUsersByRole);
 
 userRouter.get('/:id', getUserById);
 
-userRouter.get('/:userId', getUserByUserId);
+
 
 
 export default userRouter;
