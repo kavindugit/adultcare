@@ -40,7 +40,6 @@ const Booking = () => {
   const [sessions, setSessions] = useState([]);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  console.log("Dddd", userData);
   const fetchSessions = async () => {
     try {
       const res = await axios.get(
