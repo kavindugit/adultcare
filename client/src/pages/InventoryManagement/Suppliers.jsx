@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';  // Import ToastContainer and toast from react-toastify
 import 'react-toastify/dist/ReactToastify.css';  // Import the toast styles
+import { MdPhone, MdEmail } from 'react-icons/md';
+import { FiSearch, FiPlus } from 'react-icons/fi';
 
 const Suppliers = () => {
   const [suppliers, setSuppliers] = useState([]);
@@ -171,9 +173,9 @@ const Suppliers = () => {
       <div className="max-w-5xl mx-auto mb-10 flex flex-col sm:flex-row justify-between items-center gap-6">
         <button
           onClick={() => handleOpen()}
-          className="group px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-xl hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 text-lg transform hover:scale-105"
+          className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#183a6d] to-[#2563eb] text-white rounded-xl shadow-lg hover:from-[#2563eb] hover:to-[#183a6d] transition-all duration-300 text-lg font-semibold"
         >
-          <span className="group-hover:rotate-90 transition-transform duration-300">➕</span> Add Supplier
+          <FiPlus className="w-6 h-6" /> Add Supplier
         </button>
         <div className="relative w-full sm:w-80">
           <input
@@ -181,9 +183,15 @@ const Suppliers = () => {
             placeholder="Search suppliers..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full p-3 pl-10 rounded-xl bg-blue-100 border border-blue-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none shadow-xl transition-all duration-300 text-blue-900 placeholder-blue-500"
+            className="w-full p-3 pl-10 pr-20 rounded-xl bg-[#e3f0ff] border border-blue-300 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb] outline-none shadow-lg transition-all duration-300 text-blue-900 placeholder-blue-500"
           />
-          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 animate-bounce-subtle">🔍</span>
+          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#2563eb] w-5 h-5" />
+          <button
+            onClick={() => {}}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-[#183a6d] to-[#2563eb] text-white px-4 py-1 rounded-lg shadow hover:from-[#2563eb] hover:to-[#183a6d] transition-all duration-200 text-sm font-semibold"
+          >
+            Search
+          </button>
         </div>
       </div>
 
@@ -192,40 +200,50 @@ const Suppliers = () => {
         {filteredSuppliers.map(supplier => (
           <div
             key={supplier._id}
-            className="bg-blue-200 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 p-4 border border-blue-400 hover:bg-blue-300/90 transform hover:-translate-y-1"
+            className="bg-[#e3f0ff] rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-[#b6d0e2] hover:bg-[#d0e6fa] transform hover:-translate-y-1 flex flex-col gap-4"
           >
-            <div className="flex justify-between items-start">
-              <h3 className="text-lg font-semibold text-blue-800 truncate">{supplier.name}</h3>
+            {/* Header: Name and Actions */}
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xl font-extrabold text-blue-900 truncate">{supplier.name}</span>
               <div className="flex gap-2">
                 <button
                   onClick={() => handleOpen(supplier)}
-                  className="text-blue-600 hover:text-blue-800 transition-all duration-300 transform hover:scale-110"
+                  className="bg-[#a7c7e7] hover:bg-[#7ea6d6] text-blue-900 font-semibold px-3 py-1 text-xs rounded-full shadow-sm border border-blue-200 transition-all duration-200"
+                  title="Edit"
                 >
-                  🖌️
+                  Edit
                 </button>
                 <button
                   onClick={() => handleDelete(supplier._id)}
-                  className="text-red-600 hover:text-red-800 transition-all duration-300 transform hover:scale-110"
+                  className="bg-[#f7c6c7] hover:bg-[#f49ca0] text-red-700 font-semibold px-3 py-1 text-xs rounded-full shadow-sm border border-red-200 transition-all duration-200"
+                  title="Delete"
                 >
-                  🗑️
+                  Delete
                 </button>
               </div>
             </div>
-            <div className="mt-2 text-blue-600 text-sm space-y-2">
-              <p className="flex items-center gap-2">
-                <span className="text-blue-500">📱</span> {supplier.contact}
-              </p>
-              <p className="flex items-center gap-2 truncate">
-                <span className="text-blue-500">📧</span> {supplier.email}
-              </p>
+            <div className="border-b border-[#b6d0e2] mb-2"></div>
+            {/* Contact & Email Section */}
+            <div className="flex flex-col gap-2 text-blue-800 text-sm">
+              <div className="flex items-center gap-2">
+                <MdPhone className="text-blue-500 text-lg" />
+                <span className="font-semibold">Phone:</span>
+                <span className="font-medium">{supplier.contact}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MdEmail className="text-blue-500 text-lg" />
+                <span className="font-semibold">Email:</span>
+                <span className="font-medium truncate">{supplier.email}</span>
+              </div>
             </div>
-            <div className="mt-3">
-              <p className="text-blue-800 text-sm font-medium">Supplies:</p>
-              <div className="mt-1 flex flex-wrap gap-2">
+            {/* Supplies Section */}
+            <div className="mt-2">
+              <div className="text-blue-900 text-sm font-semibold mb-1">Supplies:</div>
+              <div className="flex flex-wrap gap-2">
                 {supplier.medicineSupplied.map(med => (
                   <span
                     key={med._id}
-                    className="px-2 py-1 bg-blue-500 text-white rounded-full text-xs hover:bg-blue-600 transition-colors duration-300"
+                    className="px-3 py-1 bg-[#b7e4c7] text-green-900 rounded-full text-xs font-semibold shadow-sm border border-green-200 hover:bg-[#7ed6a7] transition-colors duration-200"
                   >
                     {med.medicineName}
                   </span>

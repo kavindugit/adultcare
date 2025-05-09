@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaThumbsUp } from 'react-icons/fa'; // Import thumbs-up icon
+import { FiPlus } from 'react-icons/fi';
 
 export default function Restoke() {
   const [restokes, setRestokes] = useState([]);
@@ -103,9 +104,9 @@ export default function Restoke() {
       <div className="max-w-5xl mx-auto mb-10 flex flex-col sm:flex-row justify-between items-center gap-6">
         <button
           onClick={handleAddClick}
-          className="group px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-xl hover:from-blue-600 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2 text-lg transform hover:scale-105"
+          className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#183a6d] to-[#2563eb] text-white rounded-xl shadow-lg hover:from-[#2563eb] hover:to-[#183a6d] transition-all duration-300 text-lg font-semibold"
         >
-          <span className="group-hover:rotate-90 transition-transform duration-300">➕</span> Add Medication
+          <FiPlus className="w-6 h-6" /> Add Medication
         </button>
         
       </div>
@@ -184,6 +185,7 @@ export default function Restoke() {
                 <input
                   type="number"
                   name="quantity"
+                  min="1"
                   value={formData.quantity}
                   onChange={handleChange}
                   required
@@ -196,7 +198,7 @@ export default function Restoke() {
                   name="Notes"
                   value={formData.Notes}
                   onChange={handleChange}
-                  rows="3"
+                  rows={3}
                   className="w-full mt-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>

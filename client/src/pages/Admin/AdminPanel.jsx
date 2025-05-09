@@ -17,8 +17,14 @@ import WorkIcon from "@mui/icons-material/Work";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import SecurityIcon from "@mui/icons-material/Security";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+
+import AddToQueueIcon from '@mui/icons-material/AddToQueue';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import InventoryIcon from '@mui/icons-material/Inventory';
+
 import AddToQueueIcon from "@mui/icons-material/AddToQueue";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+
 
 // Components
 import Dashboard from "../../components/AdminPanel/Dashboard";
@@ -26,9 +32,15 @@ import UsersManagement from "../../components/AdminPanel/UsersManagement";
 import EmployeeManagement from "../../components/AdminPanel/EmployeeManagement";
 import SecurityLogs from "../../components/AdminPanel/SecurityLogs";
 import NotificationManagement from "../../components/AdminPanel/NotificationManagement";
+
+import PackageSection from "../../components/AdminPanel/PackageSection";
+import InventoryDashboard from "../InventoryManagement/Dashboard";
+import AdminInventoryDashboard from '../../InventoryManagement/AdminInventoryDashboard';
+
 import PackageSection from  "../../components/AdminPanel/PackageSection";
 import AdminSessionTable from "../Reservations/AdminSessionTable"; // ✅ Import tabbed sessions component
 import Scheduling from "../../components/AdminPanel/Scheduling";
+
 
 // Styled Components
 const Sidebar = styled(Box)(({ theme }) => ({
@@ -66,9 +78,14 @@ const AdminPanel = () => {
     { id: "dashboard", text: "Dashboard", icon: <DashboardIcon /> },
     { id: "users", text: "Users Management", icon: <PeopleIcon /> },
     { id: "employees", text: "Employees", icon: <WorkIcon /> },
+
+    { id: "packages", text: "Packages", icon: <LocalShippingIcon /> },
+    { id: "inventory", text: "Inventory", icon: <InventoryIcon /> },
+
     { id: "sessions", text: "Sessions", icon: <WorkIcon /> },
     { id: "packages", text: "Packages", icon: <LocalShippingIcon /> },
     { id: "sheduling", text: "Scheduling" , icon: <PeopleIcon />},
+
     { id: "payments", text: "Payments", icon: <MonetizationOnIcon /> },
     { id: "notifications", text: "Notifications", icon: <NotificationsIcon /> },
     { id: "security", text: "Security Logs", icon: <SecurityIcon /> },
@@ -88,6 +105,8 @@ const AdminPanel = () => {
         return <SecurityLogs />;
       case "packages":
         return <PackageSection />;
+      case "inventory":
+        return <AdminInventoryDashboard />;
       case "sheduling":
         return<Scheduling />;
       case "sessions":
@@ -154,7 +173,16 @@ const AdminPanel = () => {
       {/* Main Panel */}
       <MainContent sx={{ marginLeft: isSidebarVisible ? "250px" : "0" }}>
         <Box sx={{ mb: 2 }}>
-          <Button variant="contained" onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
+          <Button 
+            variant="contained" 
+            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+            sx={{
+              background: '#183a6d',
+              color: '#fff',
+              fontWeight: 600,
+              '&:hover': { background: '#102347' },
+            }}
+          >
             {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
           </Button>
         </Box>
