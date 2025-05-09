@@ -40,7 +40,6 @@ const Booking = () => {
   const [sessions, setSessions] = useState([]);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  console.log("Dddd", userData);
   const fetchSessions = async () => {
     try {
       const res = await axios.get(
@@ -59,23 +58,11 @@ const Booking = () => {
   }, [userData?.userId]);
 
   // Function to format date/time
+   // Format date nicely
   const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  const formatTime = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const options = { weekday: 'short', month: 'short', day: 'numeric' };
+    // @ts-ignore
+    return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
   const [openContactDialog, setOpenContactDialog] = useState(false);
@@ -573,14 +560,14 @@ const handleContactClose = () => {
                       <Box display="flex" alignItems="center" mb={1}>
                         <Calendar size={16} style={{ color: "#64748b", marginRight: 8 }} />
                         <Typography variant="body2" color="text.secondary">
-                          {formatDate(session.startTime)}
+                          {formatDate(session.date)}
                         </Typography>
                       </Box>
 
                       <Box display="flex" alignItems="center" mb={1}>
                         <Clock size={16} style={{ color: "#64748b", marginRight: 8 }} />
                         <Typography variant="body2" color="text.secondary">
-                          {formatTime(session.startTime)}
+                        {session.sessionTime} • {session.sessionDuration}
                         </Typography>
                       </Box>
 
