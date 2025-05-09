@@ -35,6 +35,8 @@ import Parcels from "./pages/packages/viewpage"
 import UpdateParcel from "./pages/packages/UpdateParcel";
 import ReportHome from "./pages/MedicationReports/ReportHome"
 import SchedulingPackage from "./pages/Admin/SchedulingPackage"
+import DoctorProfile from "./pages/User/DoctorProfile"
+import RoleBasedProfile from "./pages/User/RoleBasedProfile"
 
 const App = () => {
 
@@ -48,21 +50,18 @@ const App = () => {
         <Route path="/reset-password" element={<ResetPassword/>} />
         <Route path="/gallery" element={<Gallery/>} />
         <Route path="/adult-registration" element={<AdultRegistrationForm/>}/>
-    
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
-
         <Route path = "/inventory-dashboard" element={<Dashboard/>}/>
-
-      
-  
         <Route path = "/admin" element ={<AdminPanel/>}/>
         
-        <Route path = "/adultprofile" element={<AdultProfile/>}/>
+        <Route path = "/doctor" element = {<DoctorProfile/>}/>
         <Route path = "/guard" element ={<GuardianProfile/>}/>
         <Route path = "/adult" element={<AdultProfile/>}/>
         <Route path = "/nurse" element={<NurseProfile/>}/>
         <Route path="/caregiver" element={<CaregiverProfile/>}/>
+
+        <Route path="/profile" element={<RoleBasedProfile/>}/>
       
       
 

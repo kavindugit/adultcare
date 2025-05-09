@@ -2,8 +2,8 @@
 import express from "express";
 import { createAppointment } from "../controllers/appointmentController.js";
 
-const router = express.Router();
+const appoinmentRouter= express.Router();
 
-router.post("/", createAppointment);
+appoinmentRouter.post("/confirm/:id", createAppointment);
 
-export default router;
+export default appoinmentRouter;

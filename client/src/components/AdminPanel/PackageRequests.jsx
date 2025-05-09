@@ -50,7 +50,7 @@ const PackageRequests = () => {
               const guardianResponse = await axios.get(`http://localhost:4000/api/user/${req.guardianId}`, {
                 withCredentials: true,
               });
-              guardianName = guardianResponse.data.user?.name || "Unknown Guardian";
+              guardianName = guardianResponse.data.data?.fullName || "Unknown Guardian";
               console.log(`Guardian (${req.guardianId}):`, guardianResponse.data);
             } catch (err) {
               console.error(`Error fetching guardian ${req.guardianId}:`, err);
@@ -60,7 +60,7 @@ const PackageRequests = () => {
               const adultResponse = await axios.get(`http://localhost:4000/api/user/${req.adultId}`, {
                 withCredentials: true,
               });
-              adultName = adultResponse.data.user?.name || "Unknown Adult";
+              adultName = adultResponse.data.data?.fullName || "Unknown Adult";
               console.log(`Adult (${req.adultId}):`, adultResponse.data);
             } catch (err) {
               console.error(`Error fetching adult ${req.adultId}:`, err);

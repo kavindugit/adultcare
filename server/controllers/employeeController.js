@@ -420,3 +420,98 @@ export const getEmployeeDetails = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
+
+export const getAllSpecializations = async (req, res) => {
+  try {
+    // Use distinct to get unique specializations
+    const specializations = await Doctor.distinct("specialization");
+
+    // Filter out null, undefined, or empty strings
+    const filteredSpecializations = specializations.filter(
+      (spec) => spec && spec.trim() !== ""
+    );
+
+    res.status(200).json(filteredSpecializations);
+  } catch (error) {
+    console.error("Error fetching specializations:", error);
+    res.status(500).json({ message: "Failed to fetch specializations" });
+  }
+};
+
+// Controller to get all doctors by specialization
+export const getDoctorsBySpecialization = async (req, res) => {
+  try {
+    const { specialization } = req.params;
+
+    // Find doctors with the specified specialization
+    const doctors = await Doctor.find(
+      { specialization },
+      {
+        userId: 1,
+        specialization: 1,
+        medicalLicenseNumber: 1,
+        yearsOfExperience: 1,
+        currentHospital: 1,
+        consultationFee: 1,
+        availableDate: 1,
+        availableWorkingHours: 1,
+        _id: 0,
+      }
+    );
+
+    if (doctors.length === 0) {
+      return res
+        .status(404)
+        .json({ message: `No doctors found for specialization: ${specialization}` });
+    }
+
+    res.status(200).json(doctors);
+  } catch (error) {
+    console.error(`Error fetching doctors for specialization ${req.params.specialization}:`, error);
+    res.status(500).json({ message: "Failed to fetch doctors" });
+  }
+};
+
+
+export const getDoctorProfile = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required" });
+    }
+
+    const doctorProfile = await DoctorModel.findOne({ userId });
+
+    if (!doctorProfile) {
+      return res.status(404).json({ success: false, message: "Doctor profile not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        userId: doctorProfile.userId,
+        medicalLicenseNumber: doctorProfile.medicalLicenseNumber,
+        licenseExpireDate: doctorProfile.licenseExpireDate,
+        nationalMedicalRegistrationNumber: doctorProfile.nationalMedicalRegistrationNumber,
+        specialization: doctorProfile.specialization,
+        subspecialities: doctorProfile.subspecialities
+          ? doctorProfile.subspecialities.split(",").map(s => s.trim())
+          : [],
+        yearsOfExperience: doctorProfile.yearsOfExperience,
+        languagesSpoken: doctorProfile.languagesSpoken
+          ? doctorProfile.languagesSpoken.split(",").map(l => l.trim())
+          : [],
+        availableDate: doctorProfile.availableDate,
+        availableWorkingHours: doctorProfile.availableWorkingHours,
+        consultationFee: doctorProfile.consultationFee,
+        currentHospital: doctorProfile.currentHospital,
+        createdAt: doctorProfile.createdAt,
+        updatedAt: doctorProfile.updatedAt
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching doctor profile:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};

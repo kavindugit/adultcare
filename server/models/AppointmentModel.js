@@ -20,10 +20,7 @@ const AppointmentSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  slot: {
-    type: String,
-    required: true,
-  },
+
   sessionType: {
     type: String,
     required: true,

@@ -5,18 +5,19 @@ import AboutUs from "../components/User/AboutUs";
 import ChatBotWidget from "../components/User/ChatBotWidget";
 import ContactUs from "../components/User/ContactUs";
 import Footer from "../components/User/Footer";
-import Header from "../components/User/Header";
+
 import HeroSection from "../components/User/HeroSection";
 import Services from "../components/User/Services";
 import Testimonials from "../components/User/Testimonials";
 import WhyChooseUs from "../components/User/WhyChooseUs";
+import Navbar from "../components/Reservations/layout/Navbar";
 
 
 const Home = () => {
   return (
     <div>
   
-      <Header />
+      <Navbar />
       <HeroSection/>
       <AboutUs/>
       <Services/>
