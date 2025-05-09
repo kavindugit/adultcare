@@ -1,11 +1,15 @@
-// server/controllers/appointmentController.js
-import Appointment from "../models/appointmentModel.js";
+import Appointment from "../models/AppointmentModel.js";
 
 export const createAppointment = async (req, res) => {
   try {
-    const { name, age, email, date, slot, sessionType, note } = req.body;
+    const { patientName, age, patientEmail, date, serviceName, note, doctorName } = req.body;
 
-    if (!name || !age || !email || !date || !slot || !sessionType) {
+    // Map frontend fields to model fields
+    const name = patientName;
+    const email = patientEmail;
+    const sessionType = serviceName;
+
+    if (!name || !age || !email || !date || !sessionType) {
       return res.status(400).json({ error: "All required fields must be filled." });
     }
 
@@ -14,9 +18,9 @@ export const createAppointment = async (req, res) => {
       age,
       email,
       date,
-      slot,
       sessionType,
       note,
+      // doctorName is sent but will be ignored by Mongoose since it's not in the schema
     });
 
     await appointment.save();

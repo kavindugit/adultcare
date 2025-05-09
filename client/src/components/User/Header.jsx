@@ -77,12 +77,6 @@ const handleBookings=()=>navigate("/booking");
                 className="w-10 h-10 rounded-full border-2 border-white"
               />
              
-             <button
-                onClick={handleBookings}
-                className="bg-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-700"
-              >
-                Bookings
-              </button>
               
               
               <button

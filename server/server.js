@@ -29,6 +29,7 @@ import prescriptionRouter from './routes/prescriptionRoutes.js';
 import shedulerouter from './routes/sheduleRoutes.js';
 import packageRequestRouter from './routes/packageRequestRouter.js';
 import healthReportRouter from './routes/healthReports.js';
+import appoinmentRouter from './routes/appointmentRoutes.js';
 
 
 
@@ -78,7 +79,7 @@ app.use('/api/packages', parcelRouter); // Add this line to include parcelRouter
 
 app.use('/api/prescriptions', prescriptionRouter);
 
-
+app.use('/api/appoinments', appoinmentRouter)
 app.use('/api/schedule', shedulerouter);
 app.use('/api/package-requests', packageRequestRouter);
 app.use('/api/healthreport', healthReportRouter);
