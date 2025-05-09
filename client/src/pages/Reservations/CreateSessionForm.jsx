@@ -110,7 +110,7 @@ const CreateSessionForm = () => {
         sessionDuration: "",
       });
 
-      navigate("/services");
+      navigate("/rservices");
     } catch (err) {
       console.error(err);
       setError("Failed to create session.");
