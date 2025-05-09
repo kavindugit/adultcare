@@ -70,14 +70,10 @@ const AdminPanel = () => {
     { id: "dashboard", text: "Dashboard", icon: <DashboardIcon /> },
     { id: "users", text: "Users Management", icon: <PeopleIcon /> },
     { id: "employees", text: "Employees", icon: <WorkIcon /> },
-
     { id: "packages", text: "Packages", icon: <LocalShippingIcon /> },
     { id: "inventory", text: "Inventory", icon: <InventoryIcon /> },
-
     { id: "sessions", text: "Sessions", icon: <WorkIcon /> },
-    { id: "packages", text: "Packages", icon: <LocalShippingIcon /> },
     { id: "sheduling", text: "Scheduling" , icon: <PeopleIcon />},
-
     { id: "payments", text: "Payments", icon: <MonetizationOnIcon /> },
     { id: "notifications", text: "Notifications", icon: <NotificationsIcon /> },
     { id: "security", text: "Security Logs", icon: <SecurityIcon /> },
