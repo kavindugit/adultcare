@@ -8,6 +8,7 @@ const AddParcel = () => {
     description: '',
     duration: '',
     price: '',
+    imageUrl: '', // Added image URL
     roles: {
       caregivers: true,
       nurses: true,
@@ -53,14 +54,33 @@ const AddParcel = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = 'Package name is required.';
-    if (!formData.description) newErrors.description = 'Description is required.';
-    if (!formData.duration || Number(formData.duration) <= 0)
+  
+    if (!formData.id) {
+      newErrors.id = 'Package ID is required.';
+    } else if (!/^[a-zA-Z0-9]+$/.test(formData.id)) {
+      newErrors.id = 'Package ID can only contain letters and numbers.';
+    }
+  
+    if (!formData.name || formData.name.length < 3) {
+      newErrors.name = 'Package name must be at least 3 characters.';
+    }
+    if (!formData.description || formData.description.length < 10) {
+      newErrors.description = 'Description must be at least 10 characters.';
+    }
+    if (!formData.duration || Number(formData.duration) <= 0) {
       newErrors.duration = 'Duration must be a positive number.';
-    if (!formData.price || Number(formData.price) <= 0)
+    }
+    if (!formData.price || Number(formData.price) <= 0) {
       newErrors.price = 'Price must be a positive number.';
+    }
+    if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/.test(formData.imageUrl)) {
+      newErrors.imageUrl = 'Image URL must be a valid URL (jpg, jpeg, png, gif, webp).';
+    }
+
+  
     return newErrors;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,6 +101,7 @@ const AddParcel = () => {
           description: '',
           duration: '',
           price: '',
+          imageUrl: '',
           roles: {
             caregivers: true,
             nurses: true,
@@ -113,20 +134,23 @@ const AddParcel = () => {
       <h1 className="text-2xl font-bold text-blue-700 text-center mb-6">Add a New Package</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-        {/* Package ID */}
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-          <label htmlFor="id" className="text-sm font-medium text-blue-700 w-40">Package ID</label>
-          <input
-            type="text"
-            name="id"
-            id="id"
-            value={formData.id}
-            onChange={handleChange}
-            className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+ 
+  <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+    <label htmlFor="id" className="text-sm font-medium text-blue-700 w-40">Package ID</label>
+    <input
+      type="text"
+      name="id"
+      id="id"
+      value={formData.id}
+      onChange={handleChange}
+      className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
+    />
+    {errors.id && (
+      <span className="text-red-500 text-sm">{errors.id}</span>
+    )}
+  </div>
 
-        {/* Name */}
+
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <label htmlFor="name" className="text-sm font-medium text-blue-700 w-40">Package Name</label>
           <input
@@ -140,21 +164,24 @@ const AddParcel = () => {
           {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
         </div>
 
-        {/* Description */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-          <label htmlFor="description" className="text-sm font-medium text-blue-700 w-40">Description</label>
-          <input
-            type="text"
-            name="description"
-            id="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.description && <span className="text-red-500 text-sm">{errors.description}</span>}
-        </div>
+  <label htmlFor="description" className="text-sm font-medium text-blue-700 w-40">
+    Description
+  </label>
+  <textarea
+    name="description"
+    id="description"
+    value={formData.description}
+    onChange={handleChange}
+    rows={4}
+    className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 resize-y"
+  />
+  {errors.description && (
+    <span className="text-red-500 text-sm">{errors.description}</span>
+  )}
+</div>
 
-        {/* Duration */}
+
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <label htmlFor="duration" className="text-sm font-medium text-blue-700 w-40">Duration (days)</label>
           <input
@@ -168,7 +195,6 @@ const AddParcel = () => {
           {errors.duration && <span className="text-red-500 text-sm">{errors.duration}</span>}
         </div>
 
-        {/* Price */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <label htmlFor="price" className="text-sm font-medium text-blue-700 w-40">Price (LKR)</label>
           <input
@@ -182,11 +208,27 @@ const AddParcel = () => {
           {errors.price && <span className="text-red-500 text-sm">{errors.price}</span>}
         </div>
 
-        {/* Roles */}
+        
+       <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+           <label htmlFor="imageUrl" className="text-sm font-medium text-blue-700 w-40">Image URL</label>
+           <input
+           type="text"
+            name="imageUrl"
+           id="imageUrl"
+           value={formData.imageUrl}
+           onChange={handleChange}
+           className="w-full md:w-2/3 px-4 py-2 border border-blue-400 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
+         />
+        {errors.imageUrl && (
+        <span className="text-red-500 text-sm">{errors.imageUrl}</span>
+          )}
+        </div>
+
+
         <div>
           <p className="text-sm font-medium text-blue-700 mb-1">Roles (Included)</p>
           <div className="flex gap-6 flex-wrap">
-            {["caregivers", "nurses", "doctors"].map((role) => (
+            {['caregivers', 'nurses', 'doctors'].map((role) => (
               <label key={role} className="text-sm text-gray-600">
                 <input
                   type="checkbox"
@@ -201,11 +243,10 @@ const AddParcel = () => {
           </div>
         </div>
 
-        {/* Extra Services */}
         <div>
           <p className="text-sm font-medium text-blue-700 mb-1">Extra Services</p>
           <div className="flex gap-6 flex-wrap">
-            {["transport", "extraCaregiverAssignments"].map((service) => (
+            {['transport', 'extraCaregiverAssignments'].map((service) => (
               <label key={service} className="text-sm text-gray-600">
                 <input
                   type="checkbox"
@@ -214,19 +255,18 @@ const AddParcel = () => {
                   onChange={handleChange}
                   className="mr-2"
                 />
-                {service === "transport" ? "Transport" : "Extra Caregiver Assignments"}
+                {service === 'transport' ? 'Transport' : 'Extra Caregiver Assignments'}
               </label>
             ))}
           </div>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
           disabled={loading}
         >
-          {loading ? "Adding..." : "Add Package"}
+          {loading ? 'Adding...' : 'Add Package'}
         </button>
       </form>
     </div>

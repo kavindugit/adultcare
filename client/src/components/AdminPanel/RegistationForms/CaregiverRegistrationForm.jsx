@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -15,7 +15,10 @@ import {
   MenuItem,
   OutlinedInput,
   Checkbox,
-  ListItemText
+  ListItemText,
+  FormGroup,
+  FormControlLabel,
+  FormLabel
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -31,12 +34,36 @@ const skillsList = [
   "Toileting",
 ];
 
-const workHourOptions = [
-  "08:00 - 17:00",
-  "17:00 - 00:00",
-  "00:00 - 08:00",
-  "Live-in",
-  "Rotational",
+const workingDaysList = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday"
+];
+
+const shiftOptions = [
+  "Day Shift (8:00 AM - 8:00 PM)",
+  "Night Shift (8:00 PM - 8:00 AM)",
+  "Full-Time (24-hour availability)",
+  "Part-Time (Custom time slots)"
+];
+
+const timeSlotOptions = [
+  "8:00 AM - 10:00 AM",
+  "10:00 AM - 12:00 PM",
+  "12:00 PM - 2:00 PM",
+  "2:00 PM - 4:00 PM",
+  "4:00 PM - 6:00 PM",
+  "6:00 PM - 8:00 PM",
+  "8:00 PM - 10:00 PM",
+  "10:00 PM - 12:00 AM",
+  "12:00 AM - 2:00 AM",
+  "2:00 AM - 4:00 AM",
+  "4:00 AM - 6:00 AM",
+  "6:00 AM - 8:00 AM"
 ];
 
 const CaregiverRegistrationForm = () => {
@@ -51,12 +78,33 @@ const CaregiverRegistrationForm = () => {
     address: "",
     yearsOfExperience: "",
     preferredWorkHours: "",
+    preferredWorkingDays: [],
+    preferredShift: "",
+    isPartTime: false,
+    preferredTimeSlots: [],
     skills: [],
     languagesSpoken: "",
     salary: "",
     dob: "",
     nic: ""
   });
+
+  const [showTimeSlots, setShowTimeSlots] = useState(false);
+
+  useEffect(() => {
+    // Check if the selected shift is Part-Time
+    const isPartTime = formData.preferredShift === "Part-Time (Custom time slots)";
+    
+    // Show time slots only when Part-Time is selected
+    setShowTimeSlots(isPartTime);
+    
+    // Update form with part-time status and clear time slots if not Part-Time
+    setFormData(prev => ({
+      ...prev, 
+      isPartTime: isPartTime,
+      preferredTimeSlots: isPartTime ? prev.preferredTimeSlots : []
+    }));
+  }, [formData.preferredShift]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,6 +116,20 @@ const CaregiverRegistrationForm = () => {
       target: { value },
     } = e;
     setFormData({ ...formData, skills: typeof value === "string" ? value.split(",") : value });
+  };
+
+  const handleWorkingDaysChange = (e) => {
+    const {
+      target: { value },
+    } = e;
+    setFormData({ ...formData, preferredWorkingDays: typeof value === "string" ? value.split(",") : value });
+  };
+
+  const handleTimeSlotsChange = (e) => {
+    const {
+      target: { value },
+    } = e;
+    setFormData({ ...formData, preferredTimeSlots: typeof value === "string" ? value.split(",") : value });
   };
 
   const validateForm = () => {
@@ -96,7 +158,7 @@ const CaregiverRegistrationForm = () => {
       return false;
     }
    
-    if (!nicRegex.test(formData.identificationNumber)) {
+    if (!nicRegex.test(formData.nic)) {
       toast.error("Invalid NIC / ID / Passport Number");
       return false;
     }
@@ -110,6 +172,18 @@ const CaregiverRegistrationForm = () => {
     }
     if (formData.skills.length === 0) {
       toast.error("Please select at least one skill");
+      return false;
+    }
+    if (formData.preferredWorkingDays.length === 0) {
+      toast.error("Please select at least one working day");
+      return false;
+    }
+    if (!formData.preferredShift) {
+      toast.error("Please select a preferred shift");
+      return false;
+    }
+    if (formData.preferredShift === "Part-Time (Custom time slots)" && formData.preferredTimeSlots.length === 0) {
+      toast.error("Please select at least one time slot for part-time work");
       return false;
     }
     return true;
@@ -178,17 +252,71 @@ const CaregiverRegistrationForm = () => {
             <Grid item xs={6}>
               <TextField fullWidth name="yearsOfExperience" label="Years of Experience" type="number" value={formData.yearsOfExperience} onChange={handleChange} required />
             </Grid>
-            <Grid item xs={6}>
+            
+            {/* Preferred Working Days */}
+            <Grid item xs={12}>
               <FormControl fullWidth required>
-                <InputLabel>Preferred Work Hours</InputLabel>
-                <Select name="preferredWorkHours" value={formData.preferredWorkHours} onChange={handleChange} label="Preferred Work Hours">
-                  <MenuItem value="">Select Work Hours</MenuItem>
-                  {workHourOptions.map((option) => (
+                <InputLabel>Preferred Working Days</InputLabel>
+                <Select
+                  multiple
+                  name="preferredWorkingDays"
+                  value={formData.preferredWorkingDays}
+                  onChange={handleWorkingDaysChange}
+                  input={<OutlinedInput label="Preferred Working Days" />}
+                  renderValue={(selected) => selected.join(", ")}
+                >
+                  {workingDaysList.map((day) => (
+                    <MenuItem key={day} value={day}>
+                      <Checkbox checked={formData.preferredWorkingDays.indexOf(day) > -1} />
+                      <ListItemText primary={day} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            
+            {/* Preferred Shift */}
+            <Grid item xs={12}>
+              <FormControl fullWidth required>
+                <InputLabel>Preferred Shift</InputLabel>
+                <Select 
+                  name="preferredShift" 
+                  value={formData.preferredShift} 
+                  onChange={handleChange} 
+                  label="Preferred Shift"
+                >
+                  <MenuItem value="">Select Shift</MenuItem>
+                  {shiftOptions.map((option) => (
                     <MenuItem key={option} value={option}>{option}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Grid>
+            
+            {/* Time Slots - Only shown if Part-Time is selected */}
+            {showTimeSlots && (
+              <Grid item xs={12}>
+                <FormControl fullWidth required>
+                  <InputLabel>Preferred Time Slots</InputLabel>
+                  <Select
+                    multiple
+                    name="preferredTimeSlots"
+                    value={formData.preferredTimeSlots}
+                    onChange={handleTimeSlotsChange}
+                    input={<OutlinedInput label="Preferred Time Slots" />}
+                    renderValue={(selected) => selected.join(", ")}
+                  >
+                    {timeSlotOptions.map((slot) => (
+                      <MenuItem key={slot} value={slot}>
+                        <Checkbox checked={formData.preferredTimeSlots.indexOf(slot) > -1} />
+                        <ListItemText primary={slot} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
+            
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Relevant Skills</InputLabel>

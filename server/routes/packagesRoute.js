@@ -4,16 +4,10 @@ import {
   getAllParcels,
   getParcel,
   updateParcel,
-  deleteParcel,
-  createPackageRequest,
-  getPendingPackageRequests,
+  deleteParcel
 } from "../controllers/parcelController.js"; 
 
 const parcelRouter = express.Router();
-
-parcelRouter.post("/request", createPackageRequest);
-parcelRouter.get("/pending", getPendingPackageRequests);
-
 // Route to get all parcels
 parcelRouter.get("/all", getAllParcels);
 

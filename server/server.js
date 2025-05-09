@@ -23,7 +23,13 @@ import caregiverRouter from './routes/caregiverRoutes.js';
 import sessionRouter from './routes/sessionRoutes.js';
 import reservationRouter from './routes/reservationRoutes.js';
 import parcelRouter from './routes/packagesRoute.js';
+
 import prescriptionRouter from './routes/prescriptionRoutes.js';
+
+import shedulerouter from './routes/sheduleRoutes.js';
+import packageRequestRouter from './routes/packageRequestRouter.js';
+import healthReportRouter from './routes/healthReports.js';
+
 
 
 const app = express();
@@ -40,7 +46,7 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 
 // API endpoints
-app.get('/', (req, res) => res.send('API Working fine'));
+
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/stock', stockRoute); // Add this line to include logsRouter in the app
@@ -69,7 +75,13 @@ app.use('/api/schedule', docSheduleRouter);
 app.use('/api/sessions', sessionRouter);
 app.use('/api/reservation', reservationRouter);
 app.use('/api/packages', parcelRouter); // Add this line to include parcelRouter in the app')
+
 app.use('/api/prescriptions', prescriptionRouter);
+
+
+app.use('/api/schedule', shedulerouter);
+app.use('/api/package-requests', packageRequestRouter);
+app.use('/api/healthreport', healthReportRouter);
 
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));

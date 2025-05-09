@@ -1,7 +1,16 @@
 import mongoose from "mongoose";
 
 const PackageRequestSchema = new mongoose.Schema({
+  requestId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   guardianId: {
+    type: String,
+    required: true,
+  },
+  adultId: {
     type: String,
     required: true,
   },
@@ -11,9 +20,23 @@ const PackageRequestSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "approved", "rejected"],
+    enum: ["pending", "approved", "rejected", "scheduled"],
     default: "pending",
-  }
+  },
+  startDate: {
+    type: Date,
+    default: null,
+  },
+  assignedEmployees: {
+    type: [
+      {
+        employeeType: { type: String, required: true }, // Doctor, Nurse, Caregiver
+        employeeId: { type: String, required: true },
+        scheduleId: { type: String, required: true }, // Associated schedule ID
+      },
+    ],
+    default: [],
+  },
 }, { timestamps: true });
 
 const PackageRequest = mongoose.model("PackageRequest", PackageRequestSchema);

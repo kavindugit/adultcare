@@ -22,8 +22,33 @@ const nurseSchema = new mongoose.Schema({
   },
   availableShifts: {
     type: String,
-    enum: ["Morning", "Evening", "Night", "Rotational"],
+    enum: [
+      "Day Shift (8:00 AM - 8:00 PM)",
+      "Night Shift (8:00 PM - 8:00 AM)",
+      "Full-Time (24-hour)",
+      "Part-Time"
+    ],
     required: true,
+  },
+  preferredWorkingDays: {
+    type: [String],
+    enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    required: true,
+    validate: {
+      validator: function(array) {
+        return array && array.length > 0;
+      },
+      message: "At least one preferred working day is required"
+    }
+  },
+  preferredTimeSlots: {
+    type: [String],
+    default: [],
+    // Required only when part-time is selected - validation will be handled in controller
+  },
+  isPartTime: {
+    type: Boolean,
+    default: false
   },
   certifications: {
     type: [String],

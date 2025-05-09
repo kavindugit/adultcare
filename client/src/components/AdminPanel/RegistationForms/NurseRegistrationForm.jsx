@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -12,7 +12,15 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Select
+  Select,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+  FormLabel,
+  Chip,
+  OutlinedInput,
+  ListItemText,
+  Collapse
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -34,11 +42,83 @@ const NurseRegistrationForm = () => {
     availableShifts: "",
     certifications: "",
     salary: "",
-    dob: ""
+    dob: "",
+    preferredWorkingDays: [],
+    preferredTimeSlots: [],
+    isPartTime: false
   });
 
+  const [showTimeSlots, setShowTimeSlots] = useState(false);
+
+  const weekdays = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ];
+
+  const shiftOptions = [
+    "Day Shift (8:00 AM - 8:00 PM)",
+    "Night Shift (8:00 PM - 8:00 AM)",
+    "Full-Time (24-hour)"
+  ];
+
+  const timeSlots = [
+    "8:00 AM - 10:00 AM",
+    "10:00 AM - 12:00 PM",
+    "12:00 PM - 2:00 PM",
+    "2:00 PM - 4:00 PM",
+    "4:00 PM - 6:00 PM",
+    "6:00 PM - 8:00 PM",
+    "8:00 PM - 10:00 PM",
+    "10:00 PM - 12:00 AM",
+    "12:00 AM - 2:00 AM",
+    "2:00 AM - 4:00 AM",
+    "4:00 AM - 6:00 AM",
+    "6:00 AM - 8:00 AM"
+  ];
+
+  useEffect(() => {
+    // Show time slots only for part-time nurses
+    setShowTimeSlots(formData.isPartTime);
+    
+    // Clear time slots when switching to full shifts
+    if (!formData.isPartTime) {
+      setFormData(prev => ({ ...prev, preferredTimeSlots: [] }));
+    }
+  }, [formData.isPartTime]);
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleMultiSelectChange = (event, fieldName) => {
+    const {
+      target: { value },
+    } = event;
+    
+    // On autofill we get a stringified value.
+    const selectedValues = typeof value === 'string' ? value.split(',') : value;
+    
+    setFormData({
+      ...formData,
+      [fieldName]: selectedValues,
+    });
+  };
+
+  const handleShiftChange = (e) => {
+    const { value } = e.target;
+    const isPartTimeShift = value === "Part-Time";
+    
+    setFormData({ 
+      ...formData, 
+      availableShifts: value,
+      isPartTime: isPartTimeShift
+    });
   };
 
   const validateForm = () => {
@@ -73,7 +153,19 @@ const NurseRegistrationForm = () => {
       return false;
     }
     if (!formData.salary || isNaN(formData.salary) || Number(formData.salary) <= 0) {
-      toast.error("Salary must be a positive number");
+      toast.error("Hourly salary must be a positive number");
+      return false;
+    }
+    if (formData.preferredWorkingDays.length === 0) {
+      toast.error("Please select at least one preferred working day");
+      return false;
+    }
+    if (!formData.availableShifts) {
+      toast.error("Please select preferred working shift");
+      return false;
+    }
+    if (formData.isPartTime && formData.preferredTimeSlots.length === 0) {
+      toast.error("Please select at least one preferred time slot for part-time");
       return false;
     }
     return true;
@@ -84,9 +176,6 @@ const NurseRegistrationForm = () => {
     if (!validateForm()) return;
   
     try {
-      // Log original input for debugging
-      console.log("Certifications raw input:", formData.certifications);
-  
       // Prepare payload
       const certificationsArray = typeof formData.certifications === "string"
         ? formData.certifications.split(",").map(c => c.trim()).filter(c => c !== "")
@@ -97,7 +186,7 @@ const NurseRegistrationForm = () => {
         certifications: certificationsArray
       };
   
-      console.log("Final Payload:", payload); // Make sure certifications are included
+      console.log("Final Payload:", payload);
   
       await axios.post("http://localhost:4000/api/employee/register-nurse", payload);
       toast.success("Nurse registered successfully");
@@ -107,10 +196,9 @@ const NurseRegistrationForm = () => {
       toast.error("Registration failed. Please try again.");
     }
   };
-  
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="md">
       <ToastContainer />
       <Paper elevation={4} sx={{ p: 4, mt: 5 }}>
         <Typography variant="h5" gutterBottom>
@@ -118,25 +206,31 @@ const NurseRegistrationForm = () => {
         </Typography>
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={2}>
+            {/* Personal Information */}
             <Grid item xs={12}>
+              <Typography variant="h6" color="primary" gutterBottom>
+                Personal Information
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
               <TextField fullWidth name="fullName" label="Full Name" value={formData.fullName} onChange={handleChange} required />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField fullWidth name="email" label="Email" type="email" value={formData.email} onChange={handleChange} required />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <TextField fullWidth name="password" label="Password" type="password" value={formData.password} onChange={handleChange} required />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <TextField fullWidth name="confirmPassword" label="Confirm Password" type="password" value={formData.confirmPassword} onChange={handleChange} required />
             </Grid>
-            <Grid item xs={6}>
-              <TextField fullWidth name="phoneNumber" label="Phone Number" value={formData.phoneNumber} onChange={handleChange} required />
+            <Grid item xs={12} md={6}>
+              <TextField fullWidth name="phoneNumber" label="Phone Number" value={formData.phoneNumber} onChange={handleChange} required helperText="Include country code (e.g., +94)" />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <TextField fullWidth name="licenseNumber" label="Nursing License Number" value={formData.licenseNumber} onChange={handleChange} required />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth required>
                 <InputLabel>Gender</InputLabel>
                 <Select name="gender" value={formData.gender} onChange={handleChange} label="Gender">
@@ -147,7 +241,7 @@ const NurseRegistrationForm = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField fullWidth name="dob" label="Date of Birth" type="date" value={formData.dob} onChange={handleChange} InputLabelProps={{ shrink: true }} required />
             </Grid>
             <Grid item xs={12}>
@@ -156,32 +250,115 @@ const NurseRegistrationForm = () => {
             <Grid item xs={12}>
               <TextField fullWidth name="nic" label="NIC" value={formData.nic} onChange={handleChange} required />
             </Grid>
-            <Grid item xs={6}>
+
+            {/* Professional Information */}
+            <Grid item xs={12} sx={{ mt: 2 }}>
+              <Typography variant="h6" color="primary" gutterBottom>
+                Professional Information
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
               <TextField fullWidth name="yearsOfExperience" label="Years of Experience" type="number" value={formData.yearsOfExperience} onChange={handleChange} required />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <TextField fullWidth name="specialization" label="Specialization" value={formData.specialization} onChange={handleChange} required />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Available Shifts</InputLabel>
-                <Select name="availableShifts" value={formData.availableShifts} onChange={handleChange} label="Available Shifts">
-                  <MenuItem value="">Select Shift</MenuItem>
-                  <MenuItem value="Morning">Morning</MenuItem>
-                  <MenuItem value="Evening">Evening</MenuItem>
-                  <MenuItem value="Night">Night</MenuItem>
-                  <MenuItem value="Rotational">Rotational</MenuItem>
-                </Select>
-              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth name="certifications" label="Certifications (comma-separated)" value={formData.certifications} onChange={handleChange} multiline minRows={1} required />
             </Grid>
-            <Grid item xs={12}>
-              <TextField fullWidth name="salary" label="Salary (Monthly LKR)" type="number" value={formData.salary} onChange={handleChange} required />
+            <Grid item xs={12} md={6}>
+              <TextField fullWidth name="salary" label="Hourly Salary (LKR)" type="number" value={formData.salary} onChange={handleChange} required />
             </Grid>
+
+            {/* Availability Information */}
+            <Grid item xs={12} sx={{ mt: 2 }}>
+              <Typography variant="h6" color="primary" gutterBottom>
+                Availability Information
+              </Typography>
+            </Grid>
+            
+            {/* Preferred Working Days */}
             <Grid item xs={12}>
-              <Button fullWidth type="submit" variant="contained" color="primary">
+              <FormControl fullWidth required>
+                <InputLabel id="preferred-days-label">Preferred Working Days</InputLabel>
+                <Select
+                  labelId="preferred-days-label"
+                  id="preferred-days"
+                  multiple
+                  value={formData.preferredWorkingDays}
+                  onChange={(e) => handleMultiSelectChange(e, "preferredWorkingDays")}
+                  input={<OutlinedInput label="Preferred Working Days" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {weekdays.map((day) => (
+                    <MenuItem key={day} value={day}>
+                      <Checkbox checked={formData.preferredWorkingDays.indexOf(day) > -1} />
+                      <ListItemText primary={day} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            
+            {/* Working Shifts */}
+            <Grid item xs={12}>
+              <FormControl fullWidth required>
+                <InputLabel>Preferred Working Shifts</InputLabel>
+                <Select 
+                  name="availableShifts" 
+                  value={formData.availableShifts} 
+                  onChange={handleShiftChange} 
+                  label="Preferred Working Shifts"
+                >
+                  <MenuItem value="">Select Shift</MenuItem>
+                  <MenuItem value="Day Shift (8:00 AM - 8:00 PM)">Day Shift (8:00 AM - 8:00 PM)</MenuItem>
+                  <MenuItem value="Night Shift (8:00 PM - 8:00 AM)">Night Shift (8:00 PM - 8:00 AM)</MenuItem>
+                  <MenuItem value="Full-Time (24-hour)">Full-Time (24-hour availability)</MenuItem>
+                  <MenuItem value="Part-Time">Part-Time (Select time slots)</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            
+            {/* Time Slots (only for part-time) */}
+            <Grid item xs={12}>
+              <Collapse in={showTimeSlots}>
+                <FormControl fullWidth required={formData.isPartTime}>
+                  <InputLabel id="time-slots-label">Preferred Time Slots</InputLabel>
+                  <Select
+                    labelId="time-slots-label"
+                    id="time-slots"
+                    multiple
+                    value={formData.preferredTimeSlots}
+                    onChange={(e) => handleMultiSelectChange(e, "preferredTimeSlots")}
+                    input={<OutlinedInput label="Preferred Time Slots" />}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} />
+                        ))}
+                      </Box>
+                    )}
+                  >
+                    {timeSlots.map((slot) => (
+                      <MenuItem key={slot} value={slot}>
+                        <Checkbox checked={formData.preferredTimeSlots.indexOf(slot) > -1} />
+                        <ListItemText primary={slot} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Collapse>
+            </Grid>
+            
+            {/* Submit Button */}
+            <Grid item xs={12} sx={{ mt: 2 }}>
+              <Button fullWidth type="submit" variant="contained" color="primary" size="large">
                 Register
               </Button>
             </Grid>
