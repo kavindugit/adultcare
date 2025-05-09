@@ -97,16 +97,24 @@ const EmployeeSchedules = () => {
     }
   };
 
-  // Generate a 5-week schedule structure with 7 columns and 5 rows
+  // Generate a 5-week schedule structure with 7 columns and 24-hour rows
   const generateScheduleStructure = () => {
     const details = employeeDetails || {};
     const weeks = [];
+    // Define 24-hour time slots in 2-hour intervals
     const timeSlots = [
+      "0:00-2:00",
+      "2:00-4:00",
+      "4:00-6:00",
+      "6:00-8:00",
       "8:00-10:00",
       "10:00-12:00",
       "12:00-14:00",
       "14:00-16:00",
       "16:00-18:00",
+      "18:00-20:00",
+      "20:00-22:00",
+      "22:00-0:00",
     ];
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -114,35 +122,53 @@ const EmployeeSchedules = () => {
     let workingTimeSlots = [];
     if (employeeType === "Doctor") {
       workingDays = details.availableDate || [];
-      // Normalize workingTimeSlots to match timeSlots format (e.g., "8:00-10:00")
+      // Normalize workingTimeSlots to match timeSlots format
       workingTimeSlots = (details.availableWorkingHours || []).map(slot => {
         const [start, end] = slot.split(" - ").map(time => {
           const [hour, minute] = time.split(":");
-          return `${parseInt(hour, 10)}:${minute}`; // Remove leading zero (e.g., "08:00" -> "8:00")
+          const normalizedHour = parseInt(hour, 10);
+          const adjustedHour = normalizedHour === 24 ? 0 : normalizedHour;
+          return `${adjustedHour}:${minute}`;
         });
         return `${start}-${end}`;
       });
-    } else if (employeeType === "Nurse") {
+    } else if (employeeType === "Nurse" || employeeType === "Caregiver") {
       workingDays = details.preferredWorkingDays || [];
-      workingTimeSlots = details.isPartTime && details.preferredTimeSlots?.length > 0
-        ? details.preferredTimeSlots
-        : timeSlots;
-    } else if (employeeType === "Caregiver") {
-      workingDays = details.preferredWorkingDays || [];
-      workingTimeSlots = details.isPartTime && details.preferredTimeSlots?.length > 0
-        ? details.preferredTimeSlots
-        : timeSlots;
+      // Use availableShifts to determine workingTimeSlots
+      const shiftType = details.availableShifts || "Full-Time";
+      switch (shiftType) {
+        case "Day Shift (8:00 AM - 8:00 PM)":
+        case "Day Shift":
+          workingTimeSlots = [
+            "8:00-10:00", "10:00-12:00", "12:00-14:00",
+            "14:00-16:00", "16:00-18:00", "18:00-20:00",
+          ];
+          break;
+        case "Night Shift (8:00 PM - 8:00 AM)":
+        case "Night Shift":
+          workingTimeSlots = [
+            "20:00-22:00", "22:00-0:00", "0:00-2:00",
+            "2:00-4:00", "4:00-6:00", "6:00-8:00",
+          ];
+          break;
+        case "Full-Time (24-hour availability)":
+        case "Full-Time":
+          workingTimeSlots = timeSlots;
+          break;
+        case "Part-Time (Custom time slots)":
+        case "Part-Time":
+          workingTimeSlots = details.preferredTimeSlots || timeSlots;
+          break;
+        default:
+          workingTimeSlots = timeSlots; // Default to Full-Time if shift type is invalid
+      }
     }
 
     // Set current date to Thursday, May 8, 2025
     const currentDate = dayjs("2025-05-08");
     const startOfCurrentWeek = currentDate.startOf("week").add(1, "day"); // Monday of current week (May 5, 2025)
-
-    // Determine if current week has ended (after Sunday of the current week)
     const endOfCurrentWeek = currentDate.endOf("week");
     const nextWeekStart = endOfCurrentWeek.add(1, "day").startOf("week").add(1, "day");
-
-    // Use next week as the new start if current week has ended
     const baseDate = currentDate.isAfter(endOfCurrentWeek) ? nextWeekStart : startOfCurrentWeek;
 
     for (let week = 0; week < 5; week++) {
@@ -158,7 +184,7 @@ const EmployeeSchedules = () => {
           date: currentDay.format("YYYY-MM-DD"),
           dayName,
           displayDate: formattedDate,
-          isToday: currentDay.isSame(currentDate, "day"), // Highlight if this is the current day
+          isToday: currentDay.isSame(currentDate, "day"),
           slots: timeSlots.map((timeSlot) => ({
             timeSlot,
             status: workingDays.includes(dayName) && workingTimeSlots.includes(timeSlot) ? "Available" : "Unassigned",
@@ -187,7 +213,7 @@ const EmployeeSchedules = () => {
             day.slots[slotIndex] = {
               ...day.slots[slotIndex],
               ...slot,
-              status: "Scheduled", // Override status to "Scheduled" for booked slots
+              status: "Scheduled",
               booked: true,
             };
           }
@@ -287,7 +313,7 @@ const EmployeeSchedules = () => {
           </div>
 
           {generateScheduleStructure().weeks.length > 0 ? (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-[60vh] overflow-y-auto">
               {(() => {
                 const { weeks, timeSlots } = processScheduleData();
 
@@ -299,7 +325,7 @@ const EmployeeSchedules = () => {
 
                         <table className="min-w-full border border-gray-200">
                           <thead>
-                            <tr className="bg-gray-50">
+                            <tr className="bg-gray-50 sticky top-0">
                               <th className="py-2 px-3 border-b border-r text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Time
                               </th>
