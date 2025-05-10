@@ -35,12 +35,13 @@ import {
   Send as SendIcon,
   History as HistoryIcon,
   Notifications as NotificationsIcon,
+  Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { AppContent } from "../../context/AppContext";
 
 const NotificationManagement = () => {
-  const { userData, getUserData } = useContext(AppContent);
+  const { userData, getUserData, backendUrl } = useContext(AppContent);
 
   const [tabValue, setTabValue] = useState(0);
   const [users, setUsers] = useState([]);
@@ -48,8 +49,8 @@ const NotificationManagement = () => {
   const [filteredNotifications, setFilteredNotifications] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTypeFilter, setSelectedTypeFilter] = useState("");
-
   const [openSendDialog, setOpenSendDialog] = useState(false);
+  const [openClearDialog, setOpenClearDialog] = useState(false); // State for clear confirmation dialog
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState("");
@@ -65,22 +66,42 @@ const NotificationManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get("http://localhost:4000/api/user/all");
+      const { data } = await axios.get(`${backendUrl}/api/user/all`);
       if (data.success) setUsers(data.usersData);
     } catch (error) {
       console.error("Error loading users", error);
+      toast.error("Failed to load users");
     }
   };
 
   const fetchNotificationHistory = async () => {
     try {
-      const { data } = await axios.get("http://localhost:4000/api/notifications/all");
+      const { data } = await axios.get(`${backendUrl}/api/notifications/all`);
       if (data.success) {
         setNotifications(data.notifications);
         setFilteredNotifications(data.notifications);
       }
     } catch (error) {
       console.error("Error loading notification history", error);
+      toast.error("Failed to load notification history");
+    }
+  };
+
+  const handleClearHistory = async () => {
+    try {
+      const { data } = await axios.delete(`${backendUrl}/api/notifications/clear`, {
+        withCredentials: true,
+      });
+      if (data.success) {
+        setNotifications([]); // Clear notifications
+        setFilteredNotifications([]); // Clear filtered notifications
+        toast.success(data.message);
+        setOpenClearDialog(false);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to clear notification history");
     }
   };
 
@@ -91,7 +112,7 @@ const NotificationManagement = () => {
     const filtered = notifications.filter((n) => {
       const matchesSearch =
         n.senderName?.toLowerCase().includes(lower) ||
-        n.recipientNames?.some(name => name.toLowerCase().includes(lower)) ||
+        n.recipientNames?.some((name) => name.toLowerCase().includes(lower)) ||
         n.message?.toLowerCase().includes(lower) ||
         n.type?.toLowerCase().includes(lower) ||
         n.status?.toLowerCase().includes(lower);
@@ -127,6 +148,10 @@ const NotificationManagement = () => {
     setType("Email");
   };
 
+  const handleCloseClearDialog = () => {
+    setOpenClearDialog(false);
+  };
+
   const handleRoleChange = async (e) => {
     const role = e.target.value;
     setSelectedRole(role);
@@ -134,13 +159,13 @@ const NotificationManagement = () => {
 
     try {
       if (role === "All Users") {
-        const { data } = await axios.get("http://localhost:4000/api/user/all");
+        const { data } = await axios.get(`${backendUrl}/api/user/all`);
         if (data.success) setSelectedUsers(data.usersData);
       } else if (role === "All Employees") {
-        const { data } = await axios.get("http://localhost:4000/api/user/allemployees");
+        const { data } = await axios.get(`${backendUrl}/api/user/allemployees`);
         if (data.success) setSelectedUsers(data.employees);
       } else if (role !== "Selected Users") {
-        const { data } = await axios.get(`http://localhost:4000/api/user/by-role?role=${role}`);
+        const { data } = await axios.get(`${backendUrl}/api/user/by-role?role=${role}`);
         if (data.success) setSelectedUsers(data.users);
       }
     } catch (err) {
@@ -162,7 +187,7 @@ const NotificationManagement = () => {
         senderId: userData.userId,
       };
 
-      const { data } = await axios.post("http://localhost:4000/api/notifications/send", payload);
+      const { data } = await axios.post(`${backendUrl}/api/notifications/send`, payload);
       if (data.success) {
         toast.success("Notification sent successfully!");
         handleCloseSendDialog();
@@ -185,7 +210,13 @@ const NotificationManagement = () => {
         Notifications Management
       </Typography>
 
-      <Tabs value={tabValue} onChange={handleTabChange} textColor="primary" indicatorColor="primary" sx={{ mb: 2 }}>
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        textColor="primary"
+        indicatorColor="primary"
+        sx={{ mb: 2 }}
+      >
         <Tab label="Send Notification" icon={<SendIcon />} iconPosition="start" />
         <Tab label="Notification History" icon={<HistoryIcon />} iconPosition="start" />
       </Tabs>
@@ -248,6 +279,17 @@ const NotificationManagement = () => {
                     <MenuItem value="Both">Both</MenuItem>
                   </Select>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  startIcon={<DeleteIcon />}
+                  onClick={() => setOpenClearDialog(true)}
+                  sx={{ mt: 2 }}
+                >
+                  Clear History
+                </Button>
               </Grid>
             </Grid>
 
@@ -363,6 +405,27 @@ const NotificationManagement = () => {
               Send
             </Button>
           </Tooltip>
+        </DialogActions>
+      </Dialog>
+
+      {/* CLEAR HISTORY CONFIRMATION DIALOG */}
+      <Dialog open={openClearDialog} onClose={handleCloseClearDialog}>
+        <DialogTitle>Confirm Clear History</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to clear all notification history? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseClearDialog}>Cancel</Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={handleClearHistory}
+          >
+            Clear History
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

@@ -19,16 +19,14 @@ import {
   Select,
   FormControl,
   InputLabel,
-  Tabs,
-  Tab,
   Chip,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-import UpdateUserDialog from "./UpdateUserDialog"; // Import UpdateUserDialog
-import DeleteUserDialog from "./DeleteUserDialog"; // Import DeleteUserDialog
+import UpdateUserDialog from "./UpdateUserDialog";
+import DeleteUserDialog from "./DeleteUserDialog";
 
 const UsersManagement = () => {
   const [users, setUsers] = useState([]);
@@ -40,7 +38,6 @@ const UsersManagement = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [tabValue, setTabValue] = useState(0);
 
   const itemsPerPage = 5;
 
@@ -94,33 +91,32 @@ const UsersManagement = () => {
 
   const handleMenuOpen = (event, user) => {
     setAnchorEl(event.currentTarget);
-    setSelectedUser(user); // Ensure selectedUser contains userId
+    setSelectedUser(user);
     console.log("Menu opened for user:", user.name);
-    console.log("Selected User set:", user); // Debug: Log the selected user
+    console.log("Selected User set:", user);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    // Do not reset selectedUser here
   };
 
   const handleEditUser = () => {
-    console.log("Selected User before opening dialog:", selectedUser); // Debug: Log the selected user
+    console.log("Selected User before opening dialog:", selectedUser);
     if (selectedUser) {
-      console.log("Selected User for update:", selectedUser); // Debug: Log the selected user data
-      setOpenUpdateDialog(true); // Open the dialog after setting selectedUser
+      console.log("Selected User for update:", selectedUser);
+      setOpenUpdateDialog(true);
     } else {
-      console.log("No user selected for update."); // Debug: Log if no user is selected
+      console.log("No user selected for update.");
     }
     handleMenuClose();
   };
 
   const handleDeleteUser = () => {
     if (selectedUser) {
-      console.log("Selected User for deletion:", selectedUser); // Debug: Log the selected user data
+      console.log("Selected User for deletion:", selectedUser);
       setOpenDeleteDialog(true);
     } else {
-      console.log("No user selected for deletion."); // Debug: Log if no user is selected
+      console.log("No user selected for deletion.");
     }
     handleMenuClose();
   };
@@ -139,261 +135,125 @@ const UsersManagement = () => {
     );
   };
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
         Users Management
       </Typography>
 
-      {/* Tabs for Users */}
-      <Tabs value={tabValue} onChange={handleTabChange}>
-        <Tab label="All Users" />
-        <Tab label="Guardians" />
-        <Tab label="Adults" />
-        <Tab label="Doctors" />
-        <Tab label="Nurses" />
-        <Tab label="Caregivers" />
-      </Tabs>
-
       {/* All Users Tab */}
-      {tabValue === 0 && (
-        <Box>
-          {/* Search and Filters */}
-          <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Search by name or email"
-              value={searchQuery}
-              onChange={handleSearch}
-              InputProps={{
-                startAdornment: <SearchIcon sx={{ color: "action.active", mr: 1 }} />,
-              }}
-            />
-            <FormControl sx={{ minWidth: 120 }}>
-              <InputLabel>Role</InputLabel>
-              <Select value={filterRole} onChange={handleRoleFilter} label="Role">
-                <MenuItem value="all">All Roles</MenuItem>
-                <MenuItem value="User">User</MenuItem>
-                <MenuItem value="Guardian">Guardian</MenuItem>
-                <MenuItem value="Adult">Adult</MenuItem>
-                <MenuItem value="Doctor">Doctor</MenuItem>
-                <MenuItem value="Nurse">Nurse</MenuItem>
-                <MenuItem value="Caregiver">Caregiver</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl sx={{ minWidth: 120 }}>
-              <InputLabel>Status</InputLabel>
-              <Select value={filterStatus} onChange={handleStatusFilter} label="Status">
-                <MenuItem value="all">All Statuses</MenuItem>
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-
-          {/* User Table */}
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedUsers.map((user) => (
-                  <TableRow key={user.userId}>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.role}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={user.status}
-                        color={user.status === "Active" ? "success" : "error"}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <IconButton onClick={(e) => handleMenuOpen(e, user)}>
-                        <MoreVertIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Pagination */}
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-            <Pagination
-              count={Math.ceil(filteredUsers.length / itemsPerPage)}
-              page={page}
-              onChange={(e, value) => setPage(value)}
-            />
-          </Box>
-
-          {/* User Actions Menu */}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={handleEditUser}>
-              <EditIcon sx={{ mr: 1 }} /> Update
-            </MenuItem>
-            <MenuItem onClick={handleDeleteUser}>
-              <DeleteIcon sx={{ mr: 1 }} /> Delete
-            </MenuItem>
-          </Menu>
-
-          {/* Update User Dialog */}
-          <UpdateUserDialog
-            open={openUpdateDialog}
-            onClose={() => {
-              setOpenUpdateDialog(false);
-              setSelectedUser(null); // Reset selectedUser after dialog closes
+      <Box>
+        {/* Search and Filters */}
+        <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Search by name or email"
+            value={searchQuery}
+            onChange={handleSearch}
+            InputProps={{
+              startAdornment: <SearchIcon sx={{ color: "action.active", mr: 1 }} />,
             }}
-            selectedUser={selectedUser}
-            onUpdate={handleUpdateUser}
           />
+          <FormControl sx={{ minWidth: 120 }}>
+            <InputLabel>Role</InputLabel>
+            <Select value={filterRole} onChange={handleRoleFilter} label="Role">
+              <MenuItem value="all">All Roles</MenuItem>
+              <MenuItem value="User">User</MenuItem>
+              <MenuItem value="Guardian">Guardian</MenuItem>
+              <MenuItem value="Adult">Adult</MenuItem>
+              <MenuItem value="Doctor">Doctor</MenuItem>
+              <MenuItem value="Nurse">Nurse</MenuItem>
+              <MenuItem value="Caregiver">Caregiver</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl sx={{ minWidth: 120 }}>
+            <InputLabel>Status</InputLabel>
+            <Select value={filterStatus} onChange={handleStatusFilter} label="Status">
+              <MenuItem value="all">All Statuses</MenuItem>
+              <MenuItem value="Active">Active</MenuItem>
+              <MenuItem value="Inactive">Inactive</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
 
-          {/* Delete User Dialog */}
-          <DeleteUserDialog
-            open={openDeleteDialog}
-            onClose={() => setOpenDeleteDialog(false)}
-            selectedUser={selectedUser}
-            onDelete={handleDeleteConfirmed}
+        {/* User Table */}
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedUsers.map((user) => (
+                <TableRow key={user.userId}>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={user.status}
+                      color={user.status === "Active" ? "success" : "error"}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <IconButton onClick={(e) => handleMenuOpen(e, user)}>
+                      <MoreVertIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Pagination */}
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+          <Pagination
+            count={Math.ceil(filteredUsers.length / itemsPerPage)}
+            page={page}
+            onChange={(e, value) => setPage(value)}
           />
         </Box>
-      )}
 
-      {/* Guardians Tab */}
-      {tabValue === 1 && (
-        <Box>
-          <Typography variant="h6" gutterBottom>
-            Guardians Management
-          </Typography>
+        {/* User Actions Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleEditUser}>
+            <EditIcon sx={{ mr: 1 }} /> Update
+          </MenuItem>
+          <MenuItem onClick={handleDeleteUser}>
+            <DeleteIcon sx={{ mr: 1 }} /> Delete
+          </MenuItem>
+        </Menu>
 
-          {/* Search and Filters */}
-          <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Search by name or email"
-              value={searchQuery}
-              onChange={handleSearch}
-              InputProps={{
-                startAdornment: <SearchIcon sx={{ color: "action.active", mr: 1 }} />,
-              }}
-            />
-            <FormControl sx={{ minWidth: 120 }}>
-              <InputLabel>Status</InputLabel>
-              <Select value={filterStatus} onChange={handleStatusFilter} label="Status">
-                <MenuItem value="all">All Statuses</MenuItem>
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
+        {/* Update User Dialog */}
+        <UpdateUserDialog
+          open={openUpdateDialog}
+          onClose={() => {
+            setOpenUpdateDialog(false);
+            setSelectedUser(null);
+          }}
+          selectedUser={selectedUser}
+          onUpdate={handleUpdateUser}
+        />
 
-          {/* Guardians Table */}
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Dependents</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedUsers
-                  .filter((user) => user.role === "Guardian")
-                  .map((guardian) => (
-                    <TableRow key={guardian.userId}>
-                      <TableCell>{guardian.name}</TableCell>
-                      <TableCell>{guardian.email}</TableCell>
-                      <TableCell>{guardian.role}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={guardian.status}
-                          color={guardian.status === "Active" ? "success" : "error"}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ display: "flex", flexDirection: "column" }}>
-                          {guardian.dependents?.map((dependent, index) => (
-                            <Typography key={index} variant="body2">
-                              {dependent.name} (Age: {dependent.age})
-                            </Typography>
-                          ))}
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <IconButton onClick={(e) => handleMenuOpen(e, guardian)}>
-                          <MoreVertIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Pagination */}
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-            <Pagination
-              count={Math.ceil(filteredUsers.length / itemsPerPage)}
-              page={page}
-              onChange={(e, value) => setPage(value)}
-            />
-          </Box>
-
-          {/* User Actions Menu */}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem onClick={handleEditUser}>
-              <EditIcon sx={{ mr: 1 }} /> Update
-            </MenuItem>
-            <MenuItem onClick={handleDeleteUser}>
-              <DeleteIcon sx={{ mr: 1 }} /> Delete
-            </MenuItem>
-          </Menu>
-
-          {/* Update User Dialog */}
-          <UpdateUserDialog
-            open={openUpdateDialog}
-            onClose={() => {
-              setOpenUpdateDialog(false);
-              setSelectedUser(null); // Reset selectedUser after dialog closes
-            }}
-            selectedUser={selectedUser}
-            onUpdate={handleUpdateUser}
-          />
-
-          {/* Delete User Dialog */}
-          <DeleteUserDialog
-            open={openDeleteDialog}
-            onClose={() => setOpenDeleteDialog(false)}
-            selectedUser={selectedUser}
-            onDelete={handleDeleteConfirmed}
-          />
-        </Box>
-      )}
+        {/* Delete User Dialog */}
+        <DeleteUserDialog
+          open={openDeleteDialog}
+          onClose={() => setOpenDeleteDialog(false)}
+          selectedUser={selectedUser}
+          onDelete={handleDeleteConfirmed}
+        />
+      </Box>
     </Box>
   );
 };
