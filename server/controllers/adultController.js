@@ -61,7 +61,7 @@ export const registerAdult = async (req, res) => {
         fullName,
         nic,
         dob,
-        email: "Not Available",
+        email: `adult-${userId}@adultcare.placeholder`,
         phoneNo,
         gender,
         address,

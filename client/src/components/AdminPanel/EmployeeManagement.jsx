@@ -45,44 +45,16 @@ import NurseRegistrationForm from "./RegistationForms/NurseRegistrationForm";
 import CaregiverRegistrationForm from "./RegistationForms/CaregiverRegistrationForm";
 import DriverRegistrationForm from "./RegistationForms/DriverRegistrationForm";
 
-// Dummy Data
-const dummyApplications = [
-  {
-    id: 1,
-    name: "Applicant One",
-    appliedRole: "Doctor",
-    status: "Pending",
-    applicationDate: "2023-10-01",
-    comments: "No comments",
-    documents: ["Resume.pdf", "CoverLetter.pdf"],
-  },
-];
 
-const dummyOnboardingTasks = [
-  {
-    id: 1,
-    employeeId: 1,
-    tasks: [
-      { id: 1, name: "Submit Documents", status: "Completed" },
-      { id: 2, name: "Complete Training", status: "In Progress" },
-      { id: 3, name: "Attend Orientation", status: "Pending" },
-    ],
-  },
-];
 
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
-  const [applications, setApplications] = useState(dummyApplications);
-  const [onboardingTasks, setOnboardingTasks] = useState(dummyOnboardingTasks);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [selectedApplication, setSelectedApplication] = useState(null);
-  const [openEmployeeDialog, setOpenEmployeeDialog] = useState(false);
-  const [openApplicationDialog, setOpenApplicationDialog] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [openPermissionDialog, setOpenPermissionDialog] = useState(false);
   const [openTaskDialog, setOpenTaskDialog] = useState(false);
@@ -176,8 +148,6 @@ const EmployeeManagement = () => {
 
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="Employees" />
-        <Tab label="Applications" />
-        <Tab label="Onboarding" />
         <Tab label="Register Employee" />
       </Tabs>
 
@@ -308,83 +278,10 @@ const EmployeeManagement = () => {
         </Box>
       )}
 
-      {/* Applications Tab */}
-      {tabValue === 1 && (
-        <Box>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Applied Role</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Application Date</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {applications.map((application) => (
-                  <TableRow key={application.id}>
-                    <TableCell>{application.name}</TableCell>
-                    <TableCell>{application.appliedRole}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={application.status}
-                        color={
-                          application.status === "Approved"
-                            ? "success"
-                            : application.status === "Rejected"
-                            ? "error"
-                            : "default"
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>{application.applicationDate}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => setSelectedApplication(application)}>
-                        <MoreVertIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      )}
-
-      {/* Onboarding Tab */}
-      {tabValue === 2 && (
-        <Box>
-          <Typography variant="h6" gutterBottom>
-            Onboarding Tasks
-          </Typography>
-          <List>
-            {onboardingTasks.map((task) => (
-              <ListItem key={task.id}>
-                <ListItemIcon>
-                  <TaskIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={`Employee: ${employees.find((e) => e.id === task.employeeId)?.name || "Unknown"}`}
-                  secondary={
-                    <Box>
-                      {task.tasks.map((t) => (
-                        <Typography key={t.id}>
-                          {t.name}: <Chip label={t.status} size="small" />
-                        </Typography>
-                      ))}
-                    </Box>
-                  }
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      )}
+      
 
       {/* Register Employee Tab */}
-      {tabValue === 3 && (
+      {tabValue === 1 && (
   <Box sx={{ mt: 3 }}>
     {activeForm === null && (
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>

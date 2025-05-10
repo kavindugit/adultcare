@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { AppContent } from '../../context/AppContext';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import {
   Container, Typography, Grid, Card, CardContent, CircularProgress,
@@ -26,9 +27,11 @@ import WcIcon from '@mui/icons-material/Wc';
 
 const AdultProfile = () => {
   const { userData } = useContext(AppContent);
+  const { userId } = useParams(); // Get userId from URL (optional)
   const [adultInfo, setAdultInfo] = useState(null);
   const [guardianInfo, setGuardianInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Matching the elderBlissTheme from Guardian Profile for consistency
   const elderBlissTheme = {
@@ -55,25 +58,37 @@ const AdultProfile = () => {
   useEffect(() => {
     const fetchAdultDetails = async () => {
       try {
-        if (!userData || !userData.userId) return;
+        // Determine which userId to use
+        let targetUserId;
+        if (userId) {
+          // Use userId from URL if provided (e.g., /adult-profile/:userId)
+          targetUserId = userId;
+        } else if (userData?.userId) {
+          // Fallback to userData.userId from context if no URL userId
+          targetUserId = userData.userId;
+        } else {
+          throw new Error('No user ID available to load profile');
+        }
 
-        const adultRes = await axios.get(`http://localhost:4000/api/adult/adultProfile/${userData.userId}`);
+        // Fetch adult profile
+        const adultRes = await axios.get(`http://localhost:4000/api/adult/adultProfile/${targetUserId}`);
         setAdultInfo(adultRes.data.data);
 
-        // Updated API endpoint to match the controller
-        const guardianRes = await axios.get(`http://localhost:4000/api/guardian/guardian-by-adult/${userData.userId}`);
+        // Fetch guardian profile
+        const guardianRes = await axios.get(`http://localhost:4000/api/guardian/guardian-by-adult/${targetUserId}`);
         setGuardianInfo(guardianRes.data.guardian);
       } catch (error) {
         console.error('Error fetching adult profile data:', error);
+        setError(error.response?.data?.message || 'Failed to load profile data');
       } finally {
         setLoading(false);
       }
     };
 
     fetchAdultDetails();
-  }, [userData]);
+  }, [userData, userId]);
 
-  if (loading || !userData) {
+  if (loading) {
     return (
       <Box sx={{ 
         display: 'flex', 
@@ -85,7 +100,28 @@ const AdultProfile = () => {
         <Box sx={{ textAlign: 'center' }}>
           <CircularProgress size={60} thickness={4} sx={{ color: elderBlissTheme.primary, mb: 2 }} />
           <Typography variant="h6" sx={{ color: elderBlissTheme.primary, fontWeight: 500 }}>
-            Loading your profile...
+            Loading profile...
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '70vh', 
+        backgroundColor: elderBlissTheme.background 
+      }}>
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="h6" sx={{ color: elderBlissTheme.medical, mb: 2 }}>
+            {error}
+          </Typography>
+          <Typography variant="body1" sx={{ color: elderBlissTheme.textSecondary }}>
+            Please try again or contact support.
           </Typography>
         </Box>
       </Box>
@@ -125,7 +161,7 @@ const AdultProfile = () => {
               <ElderlyIcon sx={{ fontSize: 60 }} />
             </Avatar>
             <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
-              {userData.name || 'Adult Name'}
+              {adultInfo?.name || 'Adult Name'}
             </Typography>
             <Typography variant="subtitle1" sx={{ mb: 3, opacity: 0.9 }}>
               Adult Profile
@@ -149,7 +185,7 @@ const AdultProfile = () => {
               )}
               <Chip 
                 icon={<EmailIcon />} 
-                label={userData.email || 'email@example.com'} 
+                label={adultInfo?.email || 'email@example.com'} 
                 sx={{ 
                   bgcolor: 'rgba(255,255,255,0.2)', 
                   color: '#fff',
@@ -158,7 +194,7 @@ const AdultProfile = () => {
               />
               <Chip 
                 icon={<PhoneIcon />} 
-                label={userData.phoneNo || 'N/A'} 
+                label={adultInfo?.phoneNo || 'N/A'} 
                 sx={{ 
                   bgcolor: 'rgba(255,255,255,0.2)', 
                   color: '#fff',
@@ -198,7 +234,7 @@ const AdultProfile = () => {
                       </Avatar>
                       <Box>
                         <Typography variant="body2" color="textSecondary">NIC</Typography>
-                        <Typography variant="body1" fontWeight={500}>{userData.nic}</Typography>
+                        <Typography variant="body1" fontWeight={500}>{adultInfo?.nic || 'N/A'}</Typography>
                       </Box>
                     </Box>
                   </Grid>
@@ -209,7 +245,7 @@ const AdultProfile = () => {
                       </Avatar>
                       <Box>
                         <Typography variant="body2" color="textSecondary">Gender</Typography>
-                        <Typography variant="body1" fontWeight={500}>{userData.gender}</Typography>
+                        <Typography variant="body1" fontWeight={500}>{adultInfo?.gender || 'N/A'}</Typography>
                       </Box>
                     </Box>
                   </Grid>
@@ -221,7 +257,7 @@ const AdultProfile = () => {
                       <Box>
                         <Typography variant="body2" color="textSecondary">Date of Birth</Typography>
                         <Typography variant="body1" fontWeight={500}>
-                          {new Date(userData.dob).toLocaleDateString()}
+                          {adultInfo?.dob ? new Date(adultInfo.dob).toLocaleDateString() : 'N/A'}
                         </Typography>
                       </Box>
                     </Box>
@@ -233,7 +269,7 @@ const AdultProfile = () => {
                       </Avatar>
                       <Box>
                         <Typography variant="body2" color="textSecondary">Phone</Typography>
-                        <Typography variant="body1" fontWeight={500}>{userData.phoneNo}</Typography>
+                        <Typography variant="body1" fontWeight={500}>{adultInfo?.phoneNo || 'N/A'}</Typography>
                       </Box>
                     </Box>
                   </Grid>
@@ -244,7 +280,7 @@ const AdultProfile = () => {
                       </Avatar>
                       <Box>
                         <Typography variant="body2" color="textSecondary">Address</Typography>
-                        <Typography variant="body1" fontWeight={500}>{userData.address}</Typography>
+                        <Typography variant="body1" fontWeight={500}>{adultInfo?.address || 'N/A'}</Typography>
                       </Box>
                     </Box>
                   </Grid>
@@ -333,7 +369,7 @@ const AdultProfile = () => {
                         </Avatar>
                         <Box>
                           <Typography variant="body2" color="textSecondary">Dietary Preference</Typography>
-                          <Typography variant="body1" fontWeight={500}>{adultInfo.dietaryPreference}</Typography>
+                          <Typography variant="body1" fontWeight={500}>{adultInfo.dietaryPreference || 'N/A'}</Typography>
                         </Box>
                       </Box>
                     </Grid>
@@ -344,7 +380,7 @@ const AdultProfile = () => {
                         </Avatar>
                         <Box>
                           <Typography variant="body2" color="textSecondary">Preferred Language</Typography>
-                          <Typography variant="body1" fontWeight={500}>{adultInfo.preferredLanguage}</Typography>
+                          <Typography variant="body1" fontWeight={500}>{adultInfo.preferredLanguage || 'N/A'}</Typography>
                         </Box>
                       </Box>
                     </Grid>
@@ -356,7 +392,7 @@ const AdultProfile = () => {
                         <Box>
                           <Typography variant="body2" color="textSecondary">Smoking Status</Typography>
                           <Chip 
-                            label={adultInfo.smokingStatus} 
+                            label={adultInfo.smokingStatus || 'N/A'} 
                             size="small"
                             sx={{ 
                               bgcolor: adultInfo.smokingStatus === 'Non-smoker' ? elderBlissTheme.successLight : elderBlissTheme.pendingLight,
@@ -374,7 +410,7 @@ const AdultProfile = () => {
                         <Box>
                           <Typography variant="body2" color="textSecondary">Drinking Status</Typography>
                           <Chip 
-                            label={adultInfo.drinkingStatus} 
+                            label={adultInfo.drinkingStatus || 'N/A'} 
                             size="small"
                             sx={{ 
                               bgcolor: adultInfo.drinkingStatus === 'Non-drinker' ? elderBlissTheme.successLight : elderBlissTheme.pendingLight,
@@ -391,7 +427,7 @@ const AdultProfile = () => {
                         </Avatar>
                         <Box>
                           <Typography variant="body2" color="textSecondary">Home Type</Typography>
-                          <Typography variant="body1" fontWeight={500}>{adultInfo.homeType}</Typography>
+                          <Typography variant="body1" fontWeight={500}>{adultInfo.homeType || 'N/A'}</Typography>
                         </Box>
                       </Box>
                     </Grid>
@@ -435,7 +471,7 @@ const AdultProfile = () => {
                     >
                       <FamilyRestroomIcon sx={{ fontSize: 36 }} />
                     </Avatar>
-                    <Typography variant="h6" fontWeight={500}>{guardianInfo.fullName}</Typography>
+                    <Typography variant="h6" fontWeight={500}>{guardianInfo.fullName || 'N/A'}</Typography>
                     <Typography variant="body2" color="textSecondary" gutterBottom>Primary Guardian</Typography>
                   </Box>
                   
@@ -449,7 +485,7 @@ const AdultProfile = () => {
                         </Avatar>
                         <Box>
                           <Typography variant="body2" color="textSecondary">User ID</Typography>
-                          <Typography variant="body1" fontWeight={500}>{guardianInfo.userId}</Typography>
+                          <Typography variant="body1" fontWeight={500}>{guardianInfo.userId || 'N/A'}</Typography>
                         </Box>
                       </Box>
                     </Grid>
@@ -460,7 +496,7 @@ const AdultProfile = () => {
                         </Avatar>
                         <Box>
                           <Typography variant="body2" color="textSecondary">Phone</Typography>
-                          <Typography variant="body1" fontWeight={500}>{guardianInfo.phoneNo}</Typography>
+                          <Typography variant="body1" fontWeight={500}>{guardianInfo.phoneNo || 'N/A'}</Typography>
                         </Box>
                       </Box>
                     </Grid>
@@ -471,7 +507,7 @@ const AdultProfile = () => {
                         </Avatar>
                         <Box>
                           <Typography variant="body2" color="textSecondary">Email</Typography>
-                          <Typography variant="body1" fontWeight={500}>{guardianInfo.email}</Typography>
+                          <Typography variant="body1" fontWeight={500}>{guardianInfo.email || 'N/A'}</Typography>
                         </Box>
                       </Box>
                     </Grid>
@@ -482,7 +518,7 @@ const AdultProfile = () => {
                         </Avatar>
                         <Box>
                           <Typography variant="body2" color="textSecondary">Address</Typography>
-                          <Typography variant="body1" fontWeight={500}>{guardianInfo.address}</Typography>
+                          <Typography variant="body1" fontWeight={500}>{guardianInfo.address || 'N/A'}</Typography>
                         </Box>
                       </Box>
                     </Grid>
