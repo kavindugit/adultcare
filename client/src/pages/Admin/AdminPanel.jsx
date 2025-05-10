@@ -1,5 +1,6 @@
 // ✅ Corrected Imports
 import * as React from "react";
+import { useContext } from "react"; // Added useContext
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
@@ -29,10 +30,10 @@ import EmployeeManagement from "../../components/AdminPanel/EmployeeManagement";
 import SecurityLogs from "../../components/AdminPanel/SecurityLogs";
 import NotificationManagement from "../../components/AdminPanel/NotificationManagement";
 import PackageSection from "../../components/AdminPanel/PackageSection";
-import AdminInventoryDashboard from "../../InventoryManagement/AdminInventoryDashboard";
-import AdminSessionTable from "../Reservations/AdminSessionTable"; 
-import Scheduling from "../../components/AdminPanel/Scheduling";
 import InventorySection from "../../components/AdminPanel/InventorySection";
+import AdminSessionTable from "../Reservations/AdminSessionTable";
+import Scheduling from "../../components/AdminPanel/Scheduling";
+import { AppContent } from "../../context/AppContext";
 
 // Styled Components
 const Sidebar = styled(Box)(({ theme }) => ({
@@ -57,13 +58,15 @@ const MainContent = styled(Box)(({ theme }) => ({
 }));
 
 const AdminPanel = () => {
+  const { userData } = useContext(AppContent); // Access userData from context
   const [activeSection, setActiveSection] = React.useState("dashboard");
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(true);
 
+  // Use userData for admin info, with fallbacks
   const admin = {
-    name: "John Doe",
-    role: "Super Admin",
-    image: "https://via.placeholder.com/150",
+    name: userData?.name || "Admin User",
+    role: "Admin",
+    image: userData?.image || "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740", // Optional: Add image to userModel if needed
   };
 
   const menuItems = [
@@ -73,7 +76,7 @@ const AdminPanel = () => {
     { id: "packages", text: "Packages", icon: <LocalShippingIcon /> },
     { id: "inventory", text: "Inventory", icon: <InventoryIcon /> },
     { id: "sessions", text: "Sessions", icon: <WorkIcon /> },
-    { id: "sheduling", text: "Scheduling" , icon: <PeopleIcon />},
+    { id: "sheduling", text: "Scheduling", icon: <PeopleIcon /> },
     { id: "payments", text: "Payments", icon: <MonetizationOnIcon /> },
     { id: "notifications", text: "Notifications", icon: <NotificationsIcon /> },
     { id: "security", text: "Security Logs", icon: <SecurityIcon /> },
@@ -96,9 +99,9 @@ const AdminPanel = () => {
       case "inventory":
         return <InventorySection />;
       case "sheduling":
-        return<Scheduling />;
+        return <Scheduling />;
       case "sessions":
-        return <AdminSessionTable />; // ✅ use tabbed sessions component
+        return <AdminSessionTable />;
       default:
         return <Typography variant="h4">Welcome to Admin Panel</Typography>;
     }
@@ -123,7 +126,7 @@ const AdminPanel = () => {
           }}
         >
           <Avatar
-            alt={admin.name}
+            alt={admin.fullName}
             src={admin.image}
             sx={{ width: 80, height: 80, mb: 2 }}
           />
@@ -145,7 +148,8 @@ const AdminPanel = () => {
               key={item.id}
               onClick={() => setActiveSection(item.id)}
               sx={{
-                backgroundColor: activeSection === item.id ? "#0F151D" : "transparent",
+                backgroundColor:
+                  activeSection === item.id ? "#0F151D" : "transparent",
                 borderRadius: 1,
                 mb: 1,
                 "&:hover": { backgroundColor: "#0F151D" },
@@ -161,14 +165,14 @@ const AdminPanel = () => {
       {/* Main Panel */}
       <MainContent sx={{ marginLeft: isSidebarVisible ? "250px" : "0" }}>
         <Box sx={{ mb: 2 }}>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={() => setIsSidebarVisible(!isSidebarVisible)}
             sx={{
-              background: '#183a6d',
-              color: '#fff',
+              background: "#183a6d",
+              color: "#fff",
               fontWeight: 600,
-              '&:hover': { background: '#102347' },
+              "&:hover": { background: "#102347" },
             }}
           >
             {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
