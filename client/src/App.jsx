@@ -37,6 +37,7 @@ import ReportHome from "./pages/MedicationReports/ReportHome"
 import SchedulingPackage from "./pages/Admin/SchedulingPackage"
 import DoctorProfile from "./pages/User/DoctorProfile"
 import RoleBasedProfile from "./pages/User/RoleBasedProfile"
+import ProtectedRoute from "./components/User/ProtectedRoute"
 
 const App = () => {
 
@@ -53,7 +54,10 @@ const App = () => {
         <Route path ="/employee-application" element={<EmployeeApplication/>}/>
         <Route path = "/userprofile" element={<UserProfile/>}/>
         <Route path = "/inventory-dashboard" element={<Dashboard/>}/>
-        <Route path = "/admin" element ={<AdminPanel/>}/>
+        <Route
+            path="/admin"
+            element={<ProtectedRoute element={<AdminPanel />} />}
+          />
         
         <Route path = "/doctor" element = {<DoctorProfile/>}/>
         <Route path = "/guard" element ={<GuardianProfile/>}/>

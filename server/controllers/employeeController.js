@@ -515,3 +515,40 @@ export const getDoctorProfile = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const getNurseProfile = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required" });
+    }
+
+    const nurseProfile = await NurseModel.findOne({ userId }).select('-__v');
+
+    if (!nurseProfile) {
+      return res.status(404).json({ success: false, message: "Nurse profile not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        userId: nurseProfile.userId,
+        licenseNumber: nurseProfile.licenseNumber,
+        yearsOfExperience: nurseProfile.yearsOfExperience,
+        specialization: nurseProfile.specialization,
+        availableShifts: nurseProfile.availableShifts,
+        preferredWorkingDays: nurseProfile.preferredWorkingDays,
+        preferredTimeSlots: nurseProfile.preferredTimeSlots,
+        isPartTime: nurseProfile.isPartTime,
+        certifications: nurseProfile.certifications,
+        salary: nurseProfile.salary,
+        createdAt: nurseProfile.createdAt,
+        updatedAt: nurseProfile.updatedAt
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching nurse profile:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};

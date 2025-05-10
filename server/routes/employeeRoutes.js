@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllSpecializations, getDoctorProfile, getDoctorsBySpecialization, getEmployeeDetails, registerCaregiver, registerDoctor, registerDriver, registerNurse } from '../controllers/employeeController.js';
+import { getAllSpecializations, getDoctorProfile, getDoctorsBySpecialization, getEmployeeDetails, getNurseProfile, registerCaregiver, registerDoctor, registerDriver, registerNurse } from '../controllers/employeeController.js';
 
 const employeeRouter = express.Router();
 
@@ -12,5 +12,6 @@ employeeRouter.get("/doctors/specialization/:specialization", getDoctorsBySpecia
 
 employeeRouter.get('/:employeeType/:employeeId', getEmployeeDetails);
 employeeRouter.get('/doctorProfile/:userId' , getDoctorProfile);
+employeeRouter.get('/nurseProfile/:userId' , getNurseProfile);
 
 export default employeeRouter;

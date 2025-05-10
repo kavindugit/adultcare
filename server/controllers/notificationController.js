@@ -113,3 +113,32 @@ export const getallNotifications = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const deleteAllNotifications = async (req, res) => {
+  try {
+    // Delete all documents in the Notification collection
+    const result = await NotificationModel.deleteMany({});
+
+    // Check if any documents were deleted
+    if (result.deletedCount === 0) {
+      return res.status(200).json({
+        success: true,
+        message: 'No notifications found to delete',
+      });
+    }
+
+    // Return success response
+    return res.status(200).json({
+      success: true,
+      message: 'All notification history deleted successfully',
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    console.error('Error deleting notification history:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to delete notification history',
+      error: error.message,
+    });
+  }
+};
