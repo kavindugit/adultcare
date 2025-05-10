@@ -234,7 +234,7 @@ const AdultProfile = () => {
                       </Avatar>
                       <Box>
                         <Typography variant="body2" color="textSecondary">NIC</Typography>
-                        <Typography variant="body1" fontWeight={500}>{adultInfo?.nic || 'N/A'}</Typography>
+                        <Typography variant="body1" fontWeight={500}>{userData.nic || 'N/A'}</Typography>
                       </Box>
                     </Box>
                   </Grid>
@@ -245,7 +245,7 @@ const AdultProfile = () => {
                       </Avatar>
                       <Box>
                         <Typography variant="body2" color="textSecondary">Gender</Typography>
-                        <Typography variant="body1" fontWeight={500}>{adultInfo?.gender || 'N/A'}</Typography>
+                        <Typography variant="body1" fontWeight={500}>{userData.gender || 'N/A'}</Typography>
                       </Box>
                     </Box>
                   </Grid>
@@ -257,7 +257,7 @@ const AdultProfile = () => {
                       <Box>
                         <Typography variant="body2" color="textSecondary">Date of Birth</Typography>
                         <Typography variant="body1" fontWeight={500}>
-                          {adultInfo?.dob ? new Date(adultInfo.dob).toLocaleDateString() : 'N/A'}
+                          {userData.dob ? new Date(adultInfo.dob).toLocaleDateString() : 'N/A'}
                         </Typography>
                       </Box>
                     </Box>
@@ -269,7 +269,7 @@ const AdultProfile = () => {
                       </Avatar>
                       <Box>
                         <Typography variant="body2" color="textSecondary">Phone</Typography>
-                        <Typography variant="body1" fontWeight={500}>{adultInfo?.phoneNo || 'N/A'}</Typography>
+                        <Typography variant="body1" fontWeight={500}>{userData.phoneNo || 'N/A'}</Typography>
                       </Box>
                     </Box>
                   </Grid>
@@ -280,7 +280,7 @@ const AdultProfile = () => {
                       </Avatar>
                       <Box>
                         <Typography variant="body2" color="textSecondary">Address</Typography>
-                        <Typography variant="body1" fontWeight={500}>{adultInfo?.address || 'N/A'}</Typography>
+                        <Typography variant="body1" fontWeight={500}>{userData.address || 'N/A'}</Typography>
                       </Box>
                     </Box>
                   </Grid>
