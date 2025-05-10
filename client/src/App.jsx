@@ -65,6 +65,9 @@ const App = () => {
         <Route path = "/nurse" element={<NurseProfile/>}/>
         <Route path="/caregiver" element={<CaregiverProfile/>}/>
 
+        <Route path = "/adult/:userId" element={<AdultProfile/>}/>
+
+
         <Route path="/profile" element={<RoleBasedProfile/>}/>
       
       

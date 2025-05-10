@@ -134,7 +134,6 @@ const GuardianProfile = () => {
     );
   }
 
-
   return (
     <Box sx={{ 
       backgroundColor: elderBlissTheme.background, 
@@ -177,7 +176,8 @@ const GuardianProfile = () => {
               display: 'flex', 
               justifyContent: 'center', 
               gap: 2,
-              flexWrap: 'wrap'
+              flexWrap: 'wrap',
+              mb: 3
             }}>
               <Chip 
                 label={userData.email || 'email@example.com'} 
@@ -191,6 +191,34 @@ const GuardianProfile = () => {
                 label={userData.address ? userData.address.substring(0, 20) + (userData.address.length > 20 ? '...' : '') : 'N/A'} 
                 sx={{ bgcolor: 'rgba(255,255,255,0.2)', color: '#fff' }} 
               />
+            </Box>
+            {/* Action Buttons */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              gap: 2, 
+              flexWrap: 'wrap' 
+            }}>
+              <Button
+                variant="contained"
+                onClick={() => navigate('/adult-registration')}
+                sx={{
+                  bgcolor: elderBlissTheme.white,
+                  color: elderBlissTheme.primary,
+                  borderRadius: '8px',
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  px: 3,
+                  py: 1,
+                  '&:hover': {
+                    bgcolor: elderBlissTheme.primaryLight,
+                    color: elderBlissTheme.primary
+                  }
+                }}
+                aria-label="Register a new adult"
+              >
+                Register an Adult
+              </Button>
             </Box>
           </Box>
         </Paper>
@@ -440,7 +468,7 @@ const GuardianProfile = () => {
                             <Button
                               variant="contained"
                               fullWidth
-                              onClick={() => navigate(`/guardian/adult-profile/${adult.userId}`)}
+                              onClick={() => navigate(`/adult/${adult.userId}`)}
                               sx={{ bgcolor: elderBlissTheme.primary }}
                             >
                               View Profile
