@@ -59,5 +59,4 @@ Elder Bliss is a role-based adult care system offering:
 - 📝 Security logs (planned) and audit trail
 
 
-📁 Project Structure
 
